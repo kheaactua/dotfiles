@@ -1,0 +1,14 @@
+{
+  "auths": {
+    "https://index.docker.io/v1/": {},
+    "https://registry.ford.com": {
+      "username": "CghtcnVzczEwMBIJZm9yZC1sZGFw",
+      "password": "AjZa2LLDCNQOEvYRli19NEhsttNDGWxbg0FWBT8i/Cg/fqlBYky69G6IQee8wy1GRgxS7j0h/mTAXNsM+V6G3nz/2WDtA+mC3r1WYXc+YzM="
+    }
+  },
+  "HttpHeaders": {
+    "User-Agent": "Docker-Client/19.03.6 (linux)"
+  },
+  "detachKeys": "ctrl-g,e",
+  "credsStore": "pass"
+}
