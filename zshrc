@@ -166,17 +166,12 @@ if [[ "khea" == "$(hostname)" ]]; then
 	# Not using conan at the moment
 	# export CONAN_SYSREQUIRES_MODE=disabled CONAN_SYSREQUIRES_SUDO=0
 
-	export DEFAULT_PYTHON_VENV="ford"
+	# export DEFAULT_PYTHON_VENV="ford"
 
 	# module load modules
-	module load khea
-	module load \
-		ford/hmi \
-		ford/proxy \
-		ford/qnx \
-		ford/qt \
-		ford/sync \
-		ford/vpn \
+	module load khea \
+		ford/sync    \
+		ford/qt
 	# module load bona
 
 elif [[ "sync-build" == "$(hostname)" ]]; then
@@ -184,8 +179,8 @@ elif [[ "sync-build" == "$(hostname)" ]]; then
 	module load sync
 
 elif [[ "WGC1CVCY3YS13" == "$(hostname)" || "WGC1CV2JWQP13" == "$(hostname)" ]]; then
-	# WGC1CVCY3YS13 = desktop
-	# WGC1CV2JWQP13 = laptop
+	# WGC1CVCY3YS13 = desktop (UPDATE)
+	# WGC1CV2JWQP13 = laptop  (UPDATE)
 	export WINHOME=/c/users/mruss100
 
 	export DISPLAY=:0
