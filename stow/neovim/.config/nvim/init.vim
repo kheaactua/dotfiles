@@ -246,7 +246,7 @@ if g:dein_exists && (v:version >= 800 || has('nvim'))
       " :Wall:   Write every open window. Handy for kicking off tools like guard.
       " :SudoWrite: Write a privileged file with sudo.
       " :SudoEdit:  Edit a privileged file with sudo.
-      call dein#add('tpope/vim-eunuch')
+      call dein#add('lambdalisue/suda.vim')
 
       if has('nvim')
          " Have vim reload a file if it has changed outside of vim:
