@@ -29,3 +29,5 @@
 "fe4","vehicle_signal-lin"
 "f3e","vehicle-signal-tp"
 "800","google_proper_translator"
+"412","diagnostic_GIP"
+"410","diagnostic_selfTest"
