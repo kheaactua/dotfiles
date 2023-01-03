@@ -179,6 +179,7 @@ zvm_after_init_commands+=(_fix_zsh_init)
 # Aliases
 [ -e "${HOME}/.bash_aliases" ] && source "${HOME}/.bash_aliases"
 
+# TODO It'd be nice if I could move this into a subfile or something
 declare modules_enabled=0
 declare -f module > /dev/null;
 if [[ $? == 1 ]]; then
