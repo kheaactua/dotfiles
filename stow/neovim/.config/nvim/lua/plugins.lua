@@ -187,34 +187,37 @@ return packer.startup(function(use)
     config = function()
       local map = require("utils").map
 
+      local actions = require "fzf-lua.actions"
+      require("fzf-lua").setup({
+        actions = {
+          files = {
+            ["ctrl-x"] = actions.file_vsplit,
+          }
+        }
+      })
+
       -- Set up keyboard shortbuts for fzf, the fuzzy finder
       -- This one searches all the files in the current git repo:
       map('n', '<c-k>', '<cmd>lua require("fzf-lua").files()<CR>', { silent = true })
       map('n', '<leader><Tab>', '<cmd>lua require("fzf-lua").buffers()<CR>', { silent = true })
-      map('n', 'gsiw', ':GGrepIW<CR>', { silent = true })
 
       -- Unmap center/<CR> from launching fzf which appears to be mapped by default.
       -- unmap <CR>
 
-      map('n', '<leader>g', '<cmd>lua require("fzf-lua").grep_project()<CR>', { silent = true })
-      if vim.fn.executable('rg') then
-        vim.cmd([[
-          command! -nargs=* -bang GGrepIW
-             \ call fzf#vim#grep(
-             \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(expand('<cword>')),
-             \   1,
-             \   fzf#vim#with_preview({'dir': getcwd()}),
-             \  <bang>1
-             \ )
-        ]])
-      elseif vim.fn.executable('ag') then
-        vim.cmd([[
-          command! -nargs=* -bang GGrepIW
-            \ call fzf#vim#grep(
-            \    'ag --nogroup --column --color -s '.shellescape(expand('<cword>')).' '.getcwd(), 1,
-            \    fzf#vim#with_preview(), <bang>0)
-        ]])
-      end
+      -- map('n', '<leader>g', '<cmd>lua require("fzf-lua").grep_project()<CR>', { silent = true })
+      map('n', '<leader>g', '<cmd>lua require("fzf-lua").live_grep()<CR>', { silent = true })
+
+      vim.keymap.set("n", "gsiw",
+        function()
+          local fzf_lua = require("fzf-lua")
+          local query = vim.api.nvim_command_output([[ echo expand('<cword>') ]])
+          fzf_lua.live_grep({
+            query = query,
+            cwd = fzf_lua.path.git_root(),
+          })
+        end,
+        { silent = true }
+      )
 
       map('n', '<leader>l', '<cmd>lua require("fzf-lua").lines()<CR>', { silent = true })
       map('n', '<leader>w', '<cmd>lua require("fzf-lua").Windows()<CR>', { silent = true })
@@ -290,9 +293,10 @@ return packer.startup(function(use)
         c   = {'clangtidy'},
       })
 
-      fixers = { cpp = {'clang-format'} }
-      fixers['*'] = {'remove_trailing_lines', 'trim_whitespace'}
-      vim.api.nvim_set_var('ale_fixers', fixers)
+      vim.api.nvim_set_var('ale_fixers', {
+        cpp = {'clang-format'},
+        ['*'] = {'remove_trailing_lines', 'trim_whitespace'}
+      })
 
       local map = require("utils").map
       -- Set up mapping to move between errors
