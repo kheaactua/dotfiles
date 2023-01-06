@@ -8,8 +8,10 @@ let hostkv   = substitute(system('uname -v'), '\n', '', '')
 
 " Set up some paths that might be changed later based on the platform.  These
 " are defaulted to their linux path
-let g:dotfiles   = $HOME . '/dotfiles'
-let g:env_folder = $HOME . '/.virtualenvs/default'
+"let g:dotfiles   = $HOME . '/dotfiles'
+let g:dotfiles   = '/home/matt/dotfiles'
+"let g:env_folder = $HOME . '/.virtualenvs/default'
+let g:env_folder = '/home/matt/.virtualenvs/default'
 
 if $TRUE_HOST !=? ''
    let domain='ec'

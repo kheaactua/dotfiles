@@ -1,4 +1,4 @@
-set $mod Mod1
+set $mod Mod4
 # Name the workspaces
 set $ws1   "1: Social"
 set $ws2   "2: Main"
