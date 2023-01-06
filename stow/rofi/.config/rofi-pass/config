@@ -15,7 +15,7 @@ USERNAME_field='user'
 AUTOTYPE_field='pass'
 
 # delay to be used for :delay keyword
-delay=2
+delay=1
 
 ## Programs to be used
 # Editor
