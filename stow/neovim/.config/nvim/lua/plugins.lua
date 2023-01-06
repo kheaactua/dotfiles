@@ -372,12 +372,11 @@ return packer.startup(function(use)
   use 'tpope/vim-eunuch'
 
   -- Colourschemes
+  use 'navarasu/onedark.nvim'
   use 'altercation/vim-colors-solarized'
   use 'kristijanhusak/vim-hybrid-material'
   use 'atelierbram/vim-colors_duotones'
   use 'atelierbram/vim-colors_atelier-schemes'
-
-  -- Other..
   use 'rakr/vim-one'
   use 'arcticicestudio/nord-vim'
   use 'drewtempelmeyer/palenight.vim'
@@ -392,7 +391,9 @@ return packer.startup(function(use)
   }
 
   -- A bunch more...
-  use 'flazz/vim-colorschemes'
+  use {
+    'gmist/vim-palette',
+  }
 
   use {
     'kheaactua/vim-managecolor',
@@ -418,7 +419,6 @@ return packer.startup(function(use)
 --     requires = {{'hrsh7th/vim-vsnip', opt = true}, {'hrsh7th/vim-vsnip-integ', opt = true}}
 --   }
 
-
   -- Local plugins can be included
   -- use '~/projects/personal/hover.nvim'
 
@@ -428,24 +428,11 @@ return packer.startup(function(use)
   -- Post-install/update hook with neovim command
   use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
 
---   -- Use specific branch, dependency and run lua file after load
---   use {
---     'glepnir/galaxyline.nvim', branch = 'main', config = function() require'statusline' end,
---     requires = {'kyazdani42/nvim-web-devicons'}
---   }
-
---   -- Use dependency and run lua function after load
---   use {
---     'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' },
---     config = function() require('gitsigns').setup() end
---   }
-
   -- You can specify multiple plugins in a single call
   -- use {'tjdevries/colorbuddy.vim', {'nvim-treesitter/nvim-treesitter', opt = true}}
 
   -- You can alias plugin names
   use {'dracula/vim', as = 'dracula'}
-
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
