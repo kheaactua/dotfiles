@@ -28,7 +28,7 @@
 [merge]
 	tool = vimdiff
 [credential]
-	helper = cache --timeout=720000
+	helper = cache --timeout=7200000
 [color]
 	ui = auto
 [filter "lfs"]
