@@ -85,33 +85,32 @@ return packer.startup(function(use)
   }
 
   use {
-    'airblade/vim-rooter',
-     config = function()
-      vim.api.nvim_set_var('rooter_silent_chdir', 1)
-      vim.api.nvim_set_var('rooter_patterns', {'.git', '_darcs', '.hg', '.bzr', '.svn'})
+    'notjedi/nvim-rooter.lua',
+    config = function()
+      require'nvim-rooter'.setup {
+      }
     end,
   }
 
+  -- Adding this so I can search/replace and preserve letter case
+  use 'tpope/vim-abolish'
 
-   -- Adding this so I can search/replace and preserve letter case
-   use 'tpope/vim-abolish'
+  -- Highlighting for tmux
+  use 'tmux-plugins/vim-tmux'
 
-   -- Highlighting for tmux
-   use 'tmux-plugins/vim-tmux'
+  -- Plug to assist with commenting out blocks of text:
+  use 'tpope/vim-commentary'
 
-   -- Plug to assist with commenting out blocks of text:
-   use 'tpope/vim-commentary'
+  -- Tabular, align equals
+  use 'godlygeek/tabular'
 
-   -- Tabular, align equals
-   use 'godlygeek/tabular'
+  -- Show markers
+  use 'kshenoy/vim-signature'
 
-   -- Show markers
-   use 'kshenoy/vim-signature'
+  -- Display trailing whitespace
+  use 'ntpeters/vim-better-whitespace'
 
-   -- Display trailing whitespace
-   use 'ntpeters/vim-better-whitespace'
-
-   use 'TheZoq2/neovim-auto-autoread'
+  use 'TheZoq2/neovim-auto-autoread'
 
   use {
     'Hdima/python-syntax',
@@ -191,14 +190,26 @@ return packer.startup(function(use)
       require("fzf-lua").setup({
         actions = {
           files = {
-            ["ctrl-x"] = actions.file_vsplit,
+            ["default"]     = actions.file_edit_or_qf,
+            ["ctrl-x"]      = actions.file_split,
+            ["ctrl-v"]      = actions.file_vsplit,
+            ["ctrl-t"]      = actions.file_tabedit,
+            ["alt-q"]       = actions.file_sel_to_qf,
+            ["alt-l"]       = actions.file_sel_to_ll,
+          },
+          buffers = {
+            ["default"]     = actions.buf_edit,
+            ["ctrl-x"]      = actions.buf_split,
+            ["ctrl-v"]      = actions.buf_vsplit,
+            ["ctrl-t"]      = actions.buf_tabedit,
           }
         }
       })
 
       -- Set up keyboard shortbuts for fzf, the fuzzy finder
       -- This one searches all the files in the current git repo:
-      map('n', '<c-k>', '<cmd>lua require("fzf-lua").files()<CR>', { silent = true })
+      map('n', '<c-k>', '<cmd>lua require("fzf-lua").git_files()<CR>', { silent = true })
+      map('n', '<leader>t', '<cmd>lua require("fzf-lua").tabs()<CR>', { silent = true })
       map('n', '<leader><Tab>', '<cmd>lua require("fzf-lua").buffers()<CR>', { silent = true })
 
       -- Unmap center/<CR> from launching fzf which appears to be mapped by default.
@@ -210,9 +221,9 @@ return packer.startup(function(use)
       vim.keymap.set("n", "gsiw",
         function()
           local fzf_lua = require("fzf-lua")
-          local query = vim.api.nvim_command_output([[ echo expand('<cword>') ]])
+          local current_word = vim.api.nvim_command_output([[ echo expand('<cword>') ]])
           fzf_lua.live_grep({
-            query = query,
+            query = current_word,
             cwd = fzf_lua.path.git_root(),
           })
         end,
@@ -342,7 +353,8 @@ return packer.startup(function(use)
      config = function()
       local map = require("utils").map
       map('n', '<leader>k', ':GRepoFiles<CR>', { silent = true })
-     end
+     end,
+     cond = false -- GRepoFiles calls fzf instead of fzf-lua, this needs to be fixed
   }
 
   -- Vim sugar for the UNIX shell commands that need it the most. Features include:
@@ -376,7 +388,6 @@ return packer.startup(function(use)
     'ayu-theme/ayu-vim',
      config = function()
       vim.api.nvim_set_var('ayucolor', 'mirage')
-      vim.api.nvim_set_var('rooter_patterns', {'.git', '_darcs', '.hg', '.bzr', '.svn'})
     end,
   }
 
@@ -434,11 +445,6 @@ return packer.startup(function(use)
 
   -- You can alias plugin names
   use {'dracula/vim', as = 'dracula'}
-
-
-  -- if packer_plugins["vim-rooter"] and packer_plugins["vim-rooter"].loaded then
-  --   print("Setting up vim rooter")
-  -- end
 
 
   -- Automatically set up your configuration after cloning packer.nvim
