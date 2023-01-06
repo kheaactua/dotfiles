@@ -157,9 +157,9 @@ endif
 " colo hydrangea
 " colo flatland
 " colo argonaut
-" colo ayu
+colo ayu
 " colo argonaut
-colo doorhinge
+" colo doorhinge
 
 
 """"""""""""""""""""""" Lightline """"""""""""""""""""""""
