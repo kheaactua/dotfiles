@@ -1,5 +1,8 @@
-# "Decode As" entries file for Wireshark 3.7.0.
+# "Decode As" entries file for Wireshark 4.1.0.
 #
 # This file is regenerated each time "Decode As" preferences
 # are saved within Wireshark. Making manual changes should be safe,
 # however.
+decode_as_entry: tcp.port,30510,(none),SOME/IP
+decode_as_entry: tcp.port,45915,(none),SOME/IP
+decode_as_entry: udp.port,30490,(none),SOME/IP

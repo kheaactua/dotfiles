@@ -155,9 +155,9 @@ endif
 
 " Colour schemes
 " colo hydrangea
-" colo flatland
+colo flatland
 " colo argonaut
-colo ayu
+" colo ayu
 " colo argonaut
 " colo doorhinge
 
@@ -322,6 +322,18 @@ ab appraoch approach
 ab yeild yield
 ab lsit list
 
+" Directory aliases.  TODO generalize this somehow
+" nnoremap <leader>2 :@"<CR>
+" vmap <space> "xy:@x<CR> " https://stackoverflow.com/a/31441749/1861346
+let $fsb_r=expand($PHX_FSB_ROOT)
+let $fsb_s=$fsb_r . "/source/phoenix_hi/package"
+let $fsb_p=$fsb_r . "/package/phoenix"
+let $s_vsomeip=$fsb_s . "/vsomeip-source/src"
+let $s_diag=$fsb_s . "/diagnostic-source/src"
+let $s_ucl=$fsb_s . "/ucl-source/src"
+let $s_capicxx_example=$fsb_s . "/capicxx-example-source/src"
+let $s_capicxx_cmake_modules=$fsb_s . "/capicxx-cmake-modules/src"
+
 " Append modeline after last line in buffer.
 " Use substitute() instead of printf() to handle '%%s' modeline in LaTeX
 " files.
@@ -335,6 +347,10 @@ nnoremap <silent> <leader>wl :call AppendModeline()<CR>
 
 " Echo full file path
 command! Ep :echo expand('%:p')
+
+" Open init.vim in a tab
+let $init_vim=g:dotfiles . '/stow/neovim/.config/nvim/init.vim'
+command! Settings :tabe $init_vim
 
 " Run bpfmt, really gotta handle the path better
 if executable('/f/phoenix/aosp/out/soong/host/linux-x86/bin/bpfmt')

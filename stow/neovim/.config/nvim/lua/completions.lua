@@ -24,7 +24,7 @@ if cmp_status then
       ['<CR>'] = cmp.mapping.confirm({ select = true }),
       -- ['<Tab>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
       -- ['<S-Tab>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-      ["<Tab>"] = cmp.mapping(function(fallback)
+      ["<Down>"] = cmp.mapping(function(fallback)
         if nil == luasnip then
           return
         end
@@ -39,16 +39,8 @@ if cmp_status then
         end
       end, { "i", "s" }),
 
-      ["<c-j>"] = cmp.mapping(function(fallback)
-        if nil == luasnip then
-          return
-        end
-        if luasnip.expand_or_jumpable() then
-          luasnip.expand_or_jump()
-        end
-      end, { "i", "s" }),
 
-      ["<S-Tab>"] = cmp.mapping(function(fallback)
+      ["<Up>"] = cmp.mapping(function(fallback)
         if nil == luasnip then
           return
         end
@@ -58,6 +50,15 @@ if cmp_status then
           luasnip.jump(-1)
         else
           fallback()
+        end
+      end, { "i", "s" }),
+
+      ["<c-j>"] = cmp.mapping(function(fallback)
+        if nil == luasnip then
+          return
+        end
+        if luasnip.expand_or_jumpable() then
+          luasnip.expand_or_jump()
         end
       end, { "i", "s" }),
 
@@ -82,19 +83,21 @@ if cmp_status then
     capabilities = require('cmp_nvim_lsp').default_capabilities()
   }
 
-  require('lspconfig').cmake.setup {
-    capabilities = require('cmp_nvim_lsp').default_capabilities()
-  }
+  if 1 == vim.fn.executable("cmake-language-server") then
+    require('lspconfig').cmake.setup {
+      capabilities = require('cmp_nvim_lsp').default_capabilities()
+    }
+  end
 
   -- require('lspconfig').kotlin.setup {
   --   capabilities = require('cmp_nvim_lsp').default_capabilities()
   -- }
 
-  -- if 1 == vim.fn.executable("bash-language-server") then
-  --   require('lspconfig').bashls.setup {
-  --     capabilities = require('cmp_nvim_lsp').default_capabilities()
-  --   }
-  -- end
+  if 1 == vim.fn.executable("bash-language-server") then
+    require('lspconfig').bashls.setup {
+      capabilities = require('cmp_nvim_lsp').default_capabilities()
+    }
+  end
 
   -- require('lspconfig').gopls.setup {
   --   capabilities = require('cmp_nvim_lsp').default_capabilities()

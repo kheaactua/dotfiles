@@ -194,8 +194,9 @@ return packer.startup(function(use)
             ["ctrl-x"]      = actions.file_split,
             ["ctrl-v"]      = actions.file_vsplit,
             ["ctrl-t"]      = actions.file_tabedit,
-            ["alt-q"]       = actions.file_sel_to_qf,
-            ["alt-l"]       = actions.file_sel_to_ll,
+            ["alt-q"]       = actions.file_sel_to_qf, -- dunno what this does
+            ["alt-l"]       = actions.file_sel_to_ll, -- dunno what this does
+            ["ctrl-l"]      = require'fzf-lua.actions'.arg_add, -- dunno what this does
           },
           buffers = {
             ["default"]     = actions.buf_edit,
@@ -203,12 +204,25 @@ return packer.startup(function(use)
             ["ctrl-v"]      = actions.buf_vsplit,
             ["ctrl-t"]      = actions.buf_tabedit,
           }
+        },
+        buffers = {
+          actions = {
+            ["ctrl-x"] = actions.buf_split,
+            ["ctrl-d"] = actions.buf_del,
+          }
+        },
+        tabs = {
+          actions = {
+            ["ctrl-x"] = actions.buf_split,
+            ["ctrl-d"] = actions.buf_del,
+          }
         }
       })
 
       -- Set up keyboard shortbuts for fzf, the fuzzy finder
       -- This one searches all the files in the current git repo:
       map('n', '<c-k>', '<cmd>lua require("fzf-lua").git_files()<CR>', { silent = true })
+      map('n', '<leader>h', '<cmd>lua require("fzf-lua").oldfiles()<CR>', { silent = true })
       map('n', '<leader>t', '<cmd>lua require("fzf-lua").tabs()<CR>', { silent = true })
       map('n', '<leader><Tab>', '<cmd>lua require("fzf-lua").buffers()<CR>', { silent = true })
 
@@ -382,6 +396,7 @@ return packer.startup(function(use)
   use 'drewtempelmeyer/palenight.vim'
   use 'morhetz/gruvbox'
   use 'mhartington/oceanic-next'
+  use {'dracula/vim', as = 'dracula'}
 
   use {
     'ayu-theme/ayu-vim',
@@ -425,14 +440,18 @@ return packer.startup(function(use)
   -- -- Plugins can have post-install/update hooks
   -- use {'iamcco/markdown-preview.nvim', run = 'cd app && yarn install', cmd = 'MarkdownPreview'}
 
-  -- Post-install/update hook with neovim command
-  use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
-
-  -- You can specify multiple plugins in a single call
-  -- use {'tjdevries/colorbuddy.vim', {'nvim-treesitter/nvim-treesitter', opt = true}}
-
-  -- You can alias plugin names
-  use {'dracula/vim', as = 'dracula'}
+  -- Better highlighting
+  use {
+    'nvim-treesitter/nvim-treesitter',
+    run = ':TSUpdate',
+    config = function()
+      require('nvim-treesitter.configs').setup {
+        ensure_installed = "all",
+        highlight = { enable = true },
+        indent = { enable = true }
+      }
+    end
+  }
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
