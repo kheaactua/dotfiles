@@ -118,18 +118,30 @@ return packer.startup(function(use)
   }
 
   use {
-    'shawncplus/phpcomplete.vim',
-    ft = {'php'}
-  }
-
-  use {
-    'psf/black',
-    branch = 'stable',
-    ft = {'py', 'fsb'},
-    cond = vim.fn.executable('black'),
+    "jose-elias-alvarez/null-ls.nvim",
+    requires = { "nvim-lua/plenary.nvim" },
     config = function()
-      vim.api.nvim_set_var('black_linelength', 150)
-    end,
+      local nl = require("null-ls")
+
+      nl.setup({
+        -- python
+        nl.builtins.formatting.black.with({
+          extra_args = { "--line-length=120" }
+        }),
+        -- nl.builtins.diagnostics.black.with({
+        --   extra_args = { "--line-length=120" }
+        -- }),
+
+        -- nl.builtins.diagnostics.cmake_lint.with({
+        --   extra_args = { "--line-width=120" }
+        -- }),
+        nl.builtins.formatting.isort,
+      })
+
+      local map = require("utils").map
+      map('n', '<leader>fu', '<cmd>lua vim.lsp.buf.format({ timeout_ms = 2000 })<CR>', { silent = true })
+      map('n', '<leader>fU', '<cmd>lua vim.lsp.buf.range_formatting()<CR>', { silent = true })
+    end
   }
 
   use {
@@ -172,6 +184,7 @@ return packer.startup(function(use)
     end,
   }
 
+  use 'nvim-telescope/telescope.nvim'
 
   -- Install fzf, the fuzzy searcher (also loads Ultisnips)
   use {
@@ -254,6 +267,10 @@ return packer.startup(function(use)
   -- Configurations for neovim's language client
   use {
     'neovim/nvim-lspconfig',
+    requires = {
+      "williamboman/mason.nvim",
+      "williamboman/mason-lspconfig.nvim",
+    },
     config = function()
       vim.api.nvim_set_var('clang_path', '/usr')
 
@@ -278,6 +295,8 @@ return packer.startup(function(use)
 
       map('n', '[z', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', { silent = true })
       map('n', ']z', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', { silent = true })
+
+      require("_lsp").setup()
     end
   }
   use { 'ojroques/nvim-lspfuzzy', required = { 'fzf' } }
@@ -328,7 +347,7 @@ return packer.startup(function(use)
       map('i', '[w', '<Plug>(ale_previous_wrap)', { silent = true })
       map('i', ']w', '<Plug>(ale_next_wrap)',     { silent = true} )
 
-      vim.cmd([[ autocmd FileType c,cpp,h,hpp nnoremap <buffer><Leader>fu :ALEFix<CR> ]])
+      vim.cmd([[ autocmd FileType c,cpp,h,hpp nnoremap <buffer><leader>fu :ALEFix<CR> ]])
 
     end,
   }
@@ -359,7 +378,7 @@ return packer.startup(function(use)
   }
 
   -- syntax highlighting for *.hal, *.bp, and *.rc files.
-  use 'https://github.ford.com/MRUSS100/aosp-vim-syntax.git'
+  -- use 'https://github.ford.com/MRUSS100/aosp-vim-syntax.git'
   use 'rubberduck203/aosp-vim'
 
   use {

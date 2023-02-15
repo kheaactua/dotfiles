@@ -79,9 +79,6 @@ if cmp_status then
     }
   end
 
-  require('lspconfig').pylsp.setup {
-    capabilities = require('cmp_nvim_lsp').default_capabilities()
-  }
 
   if 1 == vim.fn.executable("cmake-language-server") then
     require('lspconfig').cmake.setup {
