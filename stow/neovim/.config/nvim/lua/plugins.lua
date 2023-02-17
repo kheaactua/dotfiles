@@ -124,18 +124,20 @@ return packer.startup(function(use)
       local nl = require("null-ls")
 
       nl.setup({
-        -- python
-        nl.builtins.formatting.black.with({
-          extra_args = { "--line-length=120" }
-        }),
-        -- nl.builtins.diagnostics.black.with({
-        --   extra_args = { "--line-length=120" }
-        -- }),
+        sources={
+          -- python
+          nl.builtins.formatting.black.with({
+            extra_args = { "--line-length=120" }
+          }),
+          -- nl.builtins.diagnostics.black.with({
+          --   extra_args = { "--line-length=120" }
+          -- }),
 
-        -- nl.builtins.diagnostics.cmake_lint.with({
-        --   extra_args = { "--line-width=120" }
-        -- }),
-        nl.builtins.formatting.isort,
+          -- nl.builtins.diagnostics.cmake_lint.with({
+          --   extra_args = { "--line-width=120" }
+          -- }),
+          nl.builtins.formatting.isort,
+        },
       })
 
       local map = require("utils").map
