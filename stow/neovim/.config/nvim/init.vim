@@ -352,6 +352,14 @@ command! Ep :echo expand('%:p')
 let $init_vim=g:dotfiles . '/stow/neovim/.config/nvim/init.vim'
 command! Settings :tabe $init_vim
 
+function! Open_fsb_dot()
+   badd +0 ~/dotfiles/dotfiles-secret/ford/bin/fsb.dot
+   badd +0 /f/phoenix/aosp/matt/phx-profiles/pdc/_qnx_tools.ksh
+   tabe
+   edit ~/dotfiles/dotfiles-secret/ford/bin/fsb.dot
+   split /f/phoenix/aosp/matt/phx-profiles/pdc/_qnx_tools.ksh
+endfunction
+
 " Run bpfmt, really gotta handle the path better
 if executable('/f/phoenix/aosp/out/soong/host/linux-x86/bin/bpfmt')
    command! Bp :w | !/f/phoenix/aosp/out/soong/host/linux-x86/bin/bpfmt -w %
@@ -360,7 +368,6 @@ endif
 augroup FILE_FORMATTING
    " Formatters that aren't done _via_ the LSP
    autocmd FileType bp nnoremap <buffer><Leader>fu :Bp<CR>
-   autocmd FileType python nnoremap <buffer><Leader>fu :Black<CR>
 augroup END
 
 " vim: ts=3 sts=3 sw=3 expandtab nowrap ff=unix :
