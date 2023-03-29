@@ -120,7 +120,7 @@ augroup whitespace
    autocmd FileType sh,ps1,dot      setlocal ts=2 sw=2 sts=2 expandtab
    autocmd FileType bzl,javascript  setlocal ts=4 sw=4 sts=4 expandtab
    autocmd FileType go              setlocal ts=2 sw=2 sts=2 expandtab
-   autocmd FileType fsb             setlocal ts=2 sw=2 sts=2 noexpandtab
+   autocmd FileType fsb             setlocal ts=2 sw=2 sts=2 expandtab
 augroup END
 
 " Set the comment string for certain filetypes to

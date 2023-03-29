@@ -14,6 +14,8 @@ source "${DOTFILES_DIR}/detect_docker.dot"
 source "${DOTFILES_DIR}/rclib.dot"
 source "${DOTFILES_DIR}/lib.dot"
 
+declare -r DOTFILES_SECRET_DIR="${DOTFILES_DIR}/dotfiles-secret"
+
 ARGUMENT_STR_LIST=(
 	"home"
 )
@@ -262,7 +264,7 @@ fi
 
 # GPG-Agent
 if [[ "1" != "${skip_gnupg}" ]]; then
-	dotfiles_install_gnupg "${h}" "${DOTFILES_DIR}/dotfiles-secret"
+	dotfiles_install_gnupg "${h}" "${DOTFILES_SECRET_DIR}"
 else
 	echo "Skipped installing gnupg"
 fi
@@ -273,7 +275,16 @@ if [[ ! -e "${h}/.ssh/tmp" ]]; then
 fi
 
 for s in ${stows[@]}; do
-	stow -d "${DOTFILES_DIR}/stow" -t "${h}" "$s"
+	stow -d "${DOTFILES_DIR}/stow" -t "${h}" "${s}"
 done
+
+# Run stow on the dotfiles-secret stows
+if [[ -e "${DOTFILES_SECRET_DIR}" ]]; then
+	for s in gh; do
+		stow -d "${DOTFILES_SECRET_DIR}/stow" -t "${h}" "${s}"
+	done
+else
+	echo "Couldn't find ${DOTFILES_SECRET_DIR}/stow, skipping stow"
+fi
 
 # vim: ts=3 sw=3 sts=0 ff=unix noet :
