@@ -239,7 +239,7 @@ fi
 
 # Load default python virtual env.
 if [[ "undefined" == "${DEFAULT_PYTHON_VENV:-undefined}" ]]; then
-	DEFAULT_PYTHON_VENV="py38"
+	DEFAULT_PYTHON_VENV="default"
 fi
 
 # The issue is that tmux copies my path, which includes the python venv, so
@@ -277,6 +277,7 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 # Dir colours
 [ -e "${HOME}/.dir_colors/dircolors" ] && eval "$(dircolors ${HOME}/.dir_colors/dircolors)"
 
+# Note: I use this less and less..
 declare DEVEL_ENV="${HOME}/workspace/system-setup-scripts/devel/activate.sh"
 if [[ -e "${DEVEL_ENV}" ]]; then
 	source "${DEVEL_ENV}"

@@ -127,16 +127,18 @@ return packer.startup(function(use)
         sources={
           -- python
           nl.builtins.formatting.black.with({
-            extra_args = { "--line-length=120" }
+            extra_args = { "--line-length=120" },
+            filetypes = {"py", "fsb"},
           }),
-          -- nl.builtins.diagnostics.black.with({
-          --   extra_args = { "--line-length=120" }
-          -- }),
+          nl.builtins.diagnostics.pylint.with({
+            extra_args = { "--max-line-length=120" }
+          }),
 
           -- nl.builtins.diagnostics.cmake_lint.with({
           --   extra_args = { "--line-width=120" }
           -- }),
           nl.builtins.formatting.isort,
+          -- nl.builtins.formatting.clang_format,
         },
       })
 
