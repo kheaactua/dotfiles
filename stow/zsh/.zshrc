@@ -39,6 +39,8 @@ COMPLETION_WAITING_DOTS="true"
 # On the WSL, it's handy to use Windows $env:temp space
 WSL_TEMP_GUESS=${HOME}/tmp
 if [[ -O ${WSL_TEMP_GUESS} && -d ${WSL_TEMP_GUESS} ]]; then
+	# # Shouldn't this be this?:
+	# alias win_tmp=$(wslpath -u "C:\Users\$(whoami)\AppData\Local\Temp")
 	TMPDIR="${WSL_TEMP_GUESS}"
 fi
 
