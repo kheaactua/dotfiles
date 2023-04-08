@@ -44,7 +44,7 @@ if [[ "$(_exists ag)" == 1 ]]; then
 fi
 if [[ $(_exists nvim) == 1 ]]; then
 	alias vi=nvim
-	alias vimdiff="vim -d"
+	alias vimdiff="nvim -d"
 else
 	alias vi=vim
 fi
@@ -118,10 +118,6 @@ function gf()
 	git fetch "${remote}" $@
 }
 
-function rebase_to_master() {
-	git fetch $(git_current_remote) && \
-	git rebase $(git_current_remote)/master
-}
 
 function vigd() {
 	local remote=${1:-$(git_current_remote)}; shift
@@ -145,7 +141,6 @@ alias gpg-reload="gpg-connect-agent reloadagent /bye"
 alias pwsh="pwsh -ExecutionPolicy ByPass"
 alias powershell.exe="powershell.exe -ExecutionPolicy ByPass"
 
-alias apt-search="apt-cache search '' | sort | cut --delimiter ' ' --fields 1 | fzf --multi --cycle --reverse --preview 'apt-cache show {1}' | xargs -r sudo apt install -y"
 
 alias reboot="echo no........"
 
@@ -153,5 +148,10 @@ alias plex-refresh="/usr/lib/plexmediaserver/Plex\ Media\ Scanner -s -v"
 
 # https://superuser.com/a/999132/184123
 alias sqlite="rlwrap -a -c -i sqlite3"
+
+if [[ "${WSL_VERSION}" != 0 ]]; then
+	# Will have to deal with the username if I start using the WSL in more places..
+	alias win_tmp=$(wslpath -u "C:\\Users\\mruss100\\AppData\\Local\\Temp")
+fi;
 
 # vim: ts=3 sts=0 sw=3 noet ft=sh ff=unix :
