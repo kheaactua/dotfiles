@@ -1,5 +1,8 @@
 #!/bin/bash
 
-if [ -r /proc/version ]; then
-    [[ $(grep -oE 'gcc version ([0-9]+)' /proc/version | awk '{print $3}') > 5 ]] && echo "2" || echo "1"
+wsl_version=$(uname -r | grep --color=never -oP '(?<=WSL)([0-9+])')
+if [[ "$?" != 0 ]]; then
+  wsl_version=0
 fi
+
+echo -n $wsl_version
