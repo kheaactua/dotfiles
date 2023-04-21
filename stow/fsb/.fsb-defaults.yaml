@@ -7,12 +7,14 @@ global:
     git-protocol: ssh
     jobs: "1"
     nexus-credential-source: netrc
+    no-artifacts: false
     offline: false
     output-build-summary: true
     pkg-jobs: "-1"
-    qnx-jlevel: "8"
+    qnx-jlevel: "6"
     toolchain: toolchain
     build-summary-console-log-length: "1000"
+    version-id-conf: /f/phoenix/phx-fsb/version/version_id_conf.json
     # git mirroring can be disabled by setting the above git-mirror-root to "", e.g.
     #    git-mirror-root: ""
     #
