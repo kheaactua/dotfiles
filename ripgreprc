@@ -50,5 +50,14 @@ fsb:*.fsb
 --type-add
 fd:include:fidl,fdepl
 
+--type-add
+jamv2:Jamfile.v2
+
+--type-add
+jamprop:*.jam
+
+--type-add
+jam:include:jamprop,jamv2
+
 # Using glob patterns to include/exclude files or folders
 --glob=!git/*
