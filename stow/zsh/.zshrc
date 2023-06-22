@@ -287,4 +287,6 @@ else
 	# echo "No development environment available, please run \`conan install\` to create ${DEVEL_ENV}"
 fi
 
+export FSB_CONFIG_FILE=/f/phoenix/phx-fsb/.fsb.yaml
+
 # vim: sw=4 sts=0 ts=4 noet ff=unix :
