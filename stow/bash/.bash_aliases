@@ -13,6 +13,7 @@ fi
 
 alias df="df -h"
 alias tclsh="rlwrap tclsh"
+alias ip="ip --color"
 
 if [[ "$(_exists exa)" == 1 ]]; then
    alias ls="exa --header --long --sort=newest --tree --all --level=1 --ignore-glob=\".git|.github|.clang-format|.gitignore\""
@@ -149,9 +150,24 @@ alias plex-refresh="/usr/lib/plexmediaserver/Plex\ Media\ Scanner -s -v"
 # https://superuser.com/a/999132/184123
 alias sqlite="rlwrap -a -c -i sqlite3"
 
-if [[ "${WSL_VERSION}" != 0 ]]; then
-	# Will have to deal with the username if I start using the WSL in more places..
-	alias win_tmp=$(wslpath -u "C:\\Users\\mruss100\\AppData\\Local\\Temp")
-fi;
+function cdl() {
+	# alias cdl='curl -LnOC -'
+	if [[ "-o" == "$1" ]]; then
+		shift
+		output_dir=$1
+		shift
+	else
+		output_dir="/tmp"
+	fi
+	curl -o "${output_dir}/$(basename $1)" -LnC - "$1"
+	# echo curl -LnOC - "$1"
+}
+
+if [[ $(_exists wslpath) == 1 ]]; then
+	if [[ "${WSL_VERSION}" != 0 ]]; then
+		# Will have to deal with the username if I start using the WSL in more places..
+		alias win_tmp=$(wslpath -u "C:\\Users\\mruss100\\AppData\\Local\\Temp")
+	fi;
+fi
 
 # vim: ts=3 sts=0 sw=3 noet ft=sh ff=unix :
