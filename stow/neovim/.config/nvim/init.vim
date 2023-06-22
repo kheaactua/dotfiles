@@ -155,11 +155,14 @@ endif
 
 " Colour schemes
 " colo hydrangea
-colo flatland
+" colo flatland
 " colo argonaut
 " colo ayu
 " colo argonaut
 " colo doorhinge
+" colo nord
+" colo cobalt
+colo palenight
 
 
 """"""""""""""""""""""" Lightline """"""""""""""""""""""""
