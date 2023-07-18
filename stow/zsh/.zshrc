@@ -208,8 +208,6 @@ if [[ "khea" == "$(hostname)" ]]; then
 	# Not using conan at the moment
 	# export CONAN_SYSREQUIRES_MODE=disabled CONAN_SYSREQUIRES_SUDO=0
 
-	# export DEFAULT_PYTHON_VENV="ford"
-
 	# module load modules
 	module load khea
 	# module load bona

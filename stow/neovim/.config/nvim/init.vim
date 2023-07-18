@@ -146,6 +146,8 @@ if !exists('g:gui_oni') && has('termguicolors')
   set termguicolors
 endif
 
+let &runtimepath.=','.expand("~/.local/bin")
+
 if has('nvim-0.5')
    lua require('utils')
    lua require('plugins')
@@ -297,6 +299,9 @@ vnoremap // y/<C-R>"<CR>
 " " Search of IP addresses
 " nnoremap /ip /\<\(\d\{1,3\}\.\d\{1,3\}\.\d\{1,3\}\.\d\{1,3\}\\|localhost\)\><CR>
 
+" Search for merge lines
+nnoremap <leader>m /^\(<\\|=\\|>\)\{7\}<CR>
+
 " Match <> brackets
 set matchpairs+=<:>
 
@@ -310,6 +315,8 @@ set mouse=a
 " Abbreviations.  Check https://github.com/tpope/vim-abolish for how to make
 " these case insensitive (if I need it)
 ab flaot float
+ab typoename typename
+ab typoname typename
 ab boid void
 ab laster laser
 ab jsut just
@@ -331,11 +338,6 @@ ab lsit list
 let $fsb_r=expand($PHX_FSB_ROOT)
 let $fsb_s=$fsb_r . "/source/phoenix_hi/package"
 let $fsb_p=$fsb_r . "/package/phoenix"
-let $s_vsomeip=$fsb_s . "/vsomeip-source/src"
-let $s_diag=$fsb_s . "/diagnostic-source/src"
-let $s_ucl=$fsb_s . "/ucl-source/src"
-let $s_capicxx_example=$fsb_s . "/capicxx-example-source/src"
-let $s_capicxx_cmake_modules=$fsb_s . "/capicxx-cmake-modules/src"
 
 " Append modeline after last line in buffer.
 " Use substitute() instead of printf() to handle '%%s' modeline in LaTeX
@@ -357,10 +359,37 @@ command! Settings :tabe $init_vim
 
 function! Open_fsb_dot()
    badd +0 ~/dotfiles/dotfiles-secret/ford/bin/fsb.dot
-   badd +0 /f/phoenix/aosp/matt/phx-profiles/pdc/_qnx_tools.ksh
+   badd +0 /f/phoenix/aosp/matt/phx-profiles/pdc/qnx_profile.dot
    tabe
    edit ~/dotfiles/dotfiles-secret/ford/bin/fsb.dot
-   split /f/phoenix/aosp/matt/phx-profiles/pdc/_qnx_tools.ksh
+   split /f/phoenix/aosp/matt/phx-profiles/pdc/qnx_profile.dot
+endfunction
+
+function! Open_system_la()
+   badd +0 $fsb_r/output/phoenix_hi/package/bsp-os-images/src/apps/qnx_ap/target/hypervisor/host/out_8155/system.build_la
+   tabe
+   edit $fsb_r/output/phoenix_hi/package/bsp-os-images/src/apps/qnx_ap/target/hypervisor/host/out_8155/system.build_la
+endfunction
+
+function! Hi_vsomeip_log()
+   syn match log_payload_unset 	'.*\(failed. Event payload not\).*'
+   syn match log_credential_error 	'.*\(rejecting new connection\|Receiving credentials failed\|Broken pipe\).*'
+   syn match log_connection_id 	'\(0x\|\)[a-fA-F0-9]\{4\}:[a-zA-Z0-9-_]\+'
+
+   syn match log_subscribe "\s\zsSUBSCRIB\w\+"
+   syn match log_subscribe_pending ".*a remote subscription is already pending.*"
+   syn match log_830f ".*0fe2\..*\.830f.*"
+
+
+   " Warning, Constant, String, Type, Number
+   " See highlight-groups
+
+   hi def link log_830f 		Number
+   hi def link log_payload_unset 		WarningMsg
+   hi def link log_credential_error 		ErrorMsg
+   hi def link log_subscribe_pending 		ErrorMsg
+   hi def link log_subscribe 		Type
+   hi def link log_connection_id 		Constant
 endfunction
 
 " Run bpfmt, really gotta handle the path better
