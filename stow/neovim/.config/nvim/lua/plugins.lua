@@ -113,8 +113,7 @@ return packer.startup(function(use)
   use 'TheZoq2/neovim-auto-autoread'
 
   use {
-    'Hdima/python-syntax',
-    ft = {'py', 'fsb'},
+    "https://github.com/github/copilot.vim"
   }
 
   use {
@@ -328,33 +327,11 @@ return packer.startup(function(use)
   -- Plugin for working with surroundings of words
   use 'tpope/vim-surround'
 
-  -- A plugin for asynchronous linting while you type
-  use {
-    'w0rp/ale',
-    ft = {'sh', 'zsh', 'bash', 'c', 'cpp', 'cmake', 'html', 'markdown', 'racket', 'vim', 'tex'},
-    cmd = 'ALEEnable',
-    config = function()
-      vim.cmd[[ALEEnable]]
 
-      vim.api.nvim_set_var('ale_linters', {
-        cpp = {'clangtidy'},
-        c   = {'clangtidy'},
-      })
 
-      vim.api.nvim_set_var('ale_fixers', {
-        cpp = {'clang-format'},
-        ['*'] = {'remove_trailing_lines', 'trim_whitespace'}
-      })
 
-      local map = require("utils").map
-      -- Set up mapping to move between errors
-      map('i', '[w', '<Plug>(ale_previous_wrap)', { silent = true })
-      map('i', ']w', '<Plug>(ale_next_wrap)',     { silent = true} )
 
-      vim.cmd([[ autocmd FileType c,cpp,h,hpp nnoremap <buffer><leader>fu :ALEFix<CR> ]])
 
-    end,
-  }
 
   use {
     'itchyny/lightline.vim',
@@ -380,6 +357,8 @@ return packer.startup(function(use)
     'PProvost/vim-ps1',
     ft = {'ps1'}
   }
+
+  use 'azabiong/vim-highlighter'
 
   -- syntax highlighting for *.hal, *.bp, and *.rc files.
   -- use 'https://github.ford.com/MRUSS100/aosp-vim-syntax.git'
@@ -463,18 +442,6 @@ return packer.startup(function(use)
   -- -- Plugins can have post-install/update hooks
   -- use {'iamcco/markdown-preview.nvim', run = 'cd app && yarn install', cmd = 'MarkdownPreview'}
 
-  -- Better highlighting
-  use {
-    'nvim-treesitter/nvim-treesitter',
-    run = ':TSUpdate',
-    config = function()
-      require('nvim-treesitter.configs').setup {
-        ensure_installed = "all",
-        highlight = { enable = true },
-        indent = { enable = true }
-      }
-    end
-  }
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins

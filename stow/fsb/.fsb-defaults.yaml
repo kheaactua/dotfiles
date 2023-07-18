@@ -7,14 +7,14 @@ global:
     git-protocol: ssh
     jobs: "1"
     nexus-credential-source: netrc
-    no-artifacts: false
+    no-artifacts: true
     offline: false
     output-build-summary: true
     pkg-jobs: "-1"
     qnx-jlevel: "6"
     toolchain: toolchain
     build-summary-console-log-length: "1000"
-    version-id-conf: /f/phoenix/phx-fsb/version/version_id_conf.json
+
     # git mirroring can be disabled by setting the above git-mirror-root to "", e.g.
     #    git-mirror-root: ""
     #
@@ -23,6 +23,10 @@ global:
     #fsb-root: # Path to the root of the FSB suite installation: e.g. /home/<username>/.local/share/Ford/fsb-suite-2022-02-5
     #pbos-home: # Path to the directory containing bin/pbos: e.g. /home/<username>/.local/share/Ford/fsb-suite-2022-02-5/services/pbos
     #fsb-tools-home: # Path to the directory containing the tools, directories (bin, share...): e.g. /home/<username>/.local/share/Ford/fsb-suite-2022-02-5/tools
+    fsb-root: /home/matt/.local/share/Ford/fsb-suite-YYYY-MM-ID
+    pbos-home: /home/matt/.local/share/Ford/fsb-suite-YYYY-MM-ID/services/pbos
+    fsb-tools-home: /home/matt/.local/share/Ford/fsb-suite-YYYY-MM-ID/tools
+
     #
     # Samples for project specific configs
     # Entries below can ONLY be set in your project config,

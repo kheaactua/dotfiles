@@ -20,6 +20,8 @@ shopt -s histappend
 HISTSIZE=1000
 HISTFILESIZE=2000
 
+export HISTFILE=/home/$USER/.zsh_history
+
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
@@ -114,5 +116,7 @@ fi
 if [[ "1" == "$(_exists direnv)" ]]; then
 	eval "$(direnv hook bash)"
 fi
+
+. "$HOME/.cargo/env"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
