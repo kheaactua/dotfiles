@@ -2,6 +2,7 @@ local fn = vim.fn
 -- TODO At least use 'home' and 'username' or something here
 vim.api.nvim_set_var('dotfiles', '/home/matt/dotfiles')
 
+
 local ensure_packer = function()
   local fn = vim.fn
   local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
@@ -393,7 +394,7 @@ return packer.startup(function(use)
   use 'kristijanhusak/vim-hybrid-material'
   use 'atelierbram/vim-colors_duotones'
   use 'atelierbram/vim-colors_atelier-schemes'
-  use 'rakr/vim-one'
+  use 'rakr/vim-ne'
   use 'arcticicestudio/nord-vim'
   use 'drewtempelmeyer/palenight.vim'
   use 'morhetz/gruvbox'

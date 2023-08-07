@@ -45,7 +45,9 @@ if [[ "$(_exists ag)" == 1 ]]; then
 fi
 if [[ $(_exists nvim) == 1 ]]; then
 	alias vi=nvim
+	alias vim=nvim
 	alias vimdiff="nvim -d"
+	export EDITOR=nvim
 else
 	alias vi=vim
 fi
