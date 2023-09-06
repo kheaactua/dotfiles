@@ -139,6 +139,10 @@ augroup SHORTCUTS
    autocmd FileType c,cpp noremap wcc :exec 's/\(\<'.expand('<cword>') .'\>\)/\/* \1 *\//g'<CR>
 augroup END
 
+" Highlight non-ascci characters
+syntax match nonascii "[^\x00-\x7F]"
+highlight nonascii guibg=Red ctermbg=2
+
 set nocompatible  " Dein also wants this
 
 " Enable true colour support:
@@ -181,9 +185,6 @@ endfunction
 
 """""""""""""""""""""" /Lightline """"""""""""""""""""""""
 
-
-" For vim-cpp-enhanced-highlight, turn on highlighting of class scope:
-let g:cpp_class_scope_highlight = 1
 
 " Have vim reload a file if it has changed outside
 " of vim:

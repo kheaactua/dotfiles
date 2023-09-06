@@ -97,4 +97,4 @@
 [mergetool "nvim"]
 	path = /bin/nvim
 
-; vim: ts=2 sw=2 sts=0 noet :
+; vim: ts=2 sw=2 sts=0 noet ft=gitconfig :

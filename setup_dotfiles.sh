@@ -280,7 +280,7 @@ done
 
 # Run stow on the dotfiles-secret stows
 if [[ -e "${DOTFILES_SECRET_DIR}" ]]; then
-	for s in gh github; do
+	for s in gh git; do
 		stow -d "${DOTFILES_SECRET_DIR}/stow" -t "${h}" "${s}"
 	done
 else
