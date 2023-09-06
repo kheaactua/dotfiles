@@ -1,6 +1,8 @@
 python
 import sys
 import os
+import hexdump
+
 # Installed: libstdc++6-10-dbg_10.2.0-5ubuntu1~20.04_amd64.deb
 sys.path.insert(0, '/usr/share/gcc/python')
 from libstdcxx.v6.printers import register_libstdcxx_printers
