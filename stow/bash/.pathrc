@@ -20,6 +20,12 @@ path_remove() {
   export ${var}=$(echo -n $(eval echo \$${var}) | awk -v RS=: -v ORS=: '$0 != "'$1'"' | sed 's/:$//');
 }
 
+# Like path_remove but returns the value rather than setting it
+path_filter() {
+  local var=${2:-PATH}
+  echo -n $(eval echo \$${var}) | awk -v RS=: -v ORS=: '$0 != "'$1'"' | sed 's/:$//'
+}
+
 # Clean out path
 declare -a start_path;
 declare -a new_path;
