@@ -393,6 +393,32 @@ function! Hi_vsomeip_log()
    hi def link log_connection_id 		Constant
 endfunction
 
+" https://stackoverflow.com/a/1270689/1861346
+" :syn clear Repeat | g/^\(.*\)\n\ze\%(.*\n\)*\1$/exe 'syn match Repeat "^' . escape(getline('.'), '".\^$*[]') . '$"' | nohlsearch
+function! HighlightRepeats() range
+  let lineCounts = {}
+  let lineNum = a:firstline
+  while lineNum <= a:lastline
+    let lineText = getline(lineNum)
+    if lineText != ""
+      let lineCounts[lineText] = (has_key(lineCounts, lineText) ? lineCounts[lineText] : 0) + 1
+    endif
+    let lineNum = lineNum + 1
+  endwhile
+  exe 'syn clear Repeat'
+  for lineText in keys(lineCounts)
+    if lineCounts[lineText] >= 2
+      exe 'syn match Repeat "^' . escape(lineText, '".\^$*[]') . '$"'
+    endif
+  endfor
+endfunction
+
+command! -range=% HighlightRepeats <line1>,<line2>call HighlightRepeats()
+
+function! Annotate_fdepl()
+  exe '%s/\v(\w+ID\s*\=\s*)(\d+)/\=submatch(1) . submatch(2) . "  \/\/ 0x" . printf(\'%04x\', submatch(2))'
+endfunction
+
 " Run bpfmt, really gotta handle the path better
 if executable('/f/phoenix/aosp/out/soong/host/linux-x86/bin/bpfmt')
    command! Bp :w | !/f/phoenix/aosp/out/soong/host/linux-x86/bin/bpfmt -w %

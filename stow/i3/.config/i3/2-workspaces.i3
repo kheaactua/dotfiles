@@ -10,7 +10,7 @@ bindsym $mod+8 workspace $ws8
 bindsym $mod+9 workspace $ws9
 bindsym $mod+0 workspace $ws10
 bindsym $mod+T workspace $ws11
-bindsym $mod+Y workspace $ws12
+bindsym $mod+M workspace $ws12
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace $ws1
@@ -24,7 +24,7 @@ bindsym $mod+Shift+8 move container to workspace $ws8
 bindsym $mod+Shift+9 move container to workspace $ws9
 bindsym $mod+Shift+0 move container to workspace $ws10
 bindsym $mod+Shift+T move container to workspace $ws11
-bindsym $mod+Shift+Y move container to workspace $ws12
+bindsym $mod+Shift+M move container to workspace $ws12
 
 # Make the currently focused window a scratchpad
 bindsym $mod+Shift+minus move scratchpad

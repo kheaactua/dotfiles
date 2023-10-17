@@ -65,6 +65,14 @@ function dotfiles_install_cargo()
   fi
 }
 
+function dotfiles_install_cargo_crates()
+{
+  # This function isn't complete, isn't even tested.. Right now it's better
+  # thought of as a list of crates to install
+  crates=( exa choose sd )
+  cargo install ${crates[@]}
+}
+
 function dotfiles_install_netrc()
 {
   local home=${1:-${HOME}}

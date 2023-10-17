@@ -2,7 +2,6 @@ local fn = vim.fn
 -- TODO At least use 'home' and 'username' or something here
 vim.api.nvim_set_var('dotfiles', '/home/matt/dotfiles')
 
-
 local ensure_packer = function()
   local fn = vim.fn
   local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
@@ -138,13 +137,13 @@ return packer.startup(function(use)
           --   extra_args = { "--line-width=120" }
           -- }),
           nl.builtins.formatting.isort,
-          -- nl.builtins.formatting.clang_format,
+          nl.builtins.formatting.clang_format,
         },
       })
 
       local map = require("utils").map
       map('n', '<leader>fu', '<cmd>lua vim.lsp.buf.format({ timeout_ms = 2000 })<CR>', { silent = true })
-      map('n', '<leader>fU', '<cmd>lua vim.lsp.buf.range_formatting()<CR>', { silent = true })
+      map('v', '<leader>fU', '<cmd>lua vim.lsp.buf.format({ timeout_ms = 2000 })<CR>', { silent = true })
     end
   }
 
@@ -394,7 +393,6 @@ return packer.startup(function(use)
   use 'kristijanhusak/vim-hybrid-material'
   use 'atelierbram/vim-colors_duotones'
   use 'atelierbram/vim-colors_atelier-schemes'
-  use 'rakr/vim-ne'
   use 'arcticicestudio/nord-vim'
   use 'drewtempelmeyer/palenight.vim'
   use 'morhetz/gruvbox'
