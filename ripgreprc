@@ -59,5 +59,8 @@ jamprop:*.jam
 --type-add
 jam:include:jamprop,jamv2
 
+--type-add
+fileset:fileset
+
 # Using glob patterns to include/exclude files or folders
 --glob=!git/*

@@ -11,7 +11,7 @@ global:
     offline: false
     output-build-summary: true
     pkg-jobs: "-1"
-    qnx-jlevel: "6"
+    qnx-jlevel: "8"
     toolchain: toolchain
     build-summary-console-log-length: "1000"
 
@@ -169,7 +169,7 @@ log-config:
         output: stdout
         truncate: false
         encoder: fsb-text
-        time-format: "15:04:05.00000"
+        time-format: "15:04:05"
         columns:
           - time-stamp
           - level
@@ -182,7 +182,7 @@ log-config:
         truncate: true
         split-by-activity: true
         encoder: fsb-text
-        time-format: "15:04:05.00000"
+        time-format: "15:04:05"
         columns:
           - level
           - activity
