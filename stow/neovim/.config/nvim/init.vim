@@ -416,7 +416,7 @@ endfunction
 command! -range=% HighlightRepeats <line1>,<line2>call HighlightRepeats()
 
 function! Annotate_fdepl()
-  exe '%s/\v(\w+ID\s*\=\s*)(\d+)/\=submatch(1) . submatch(2) . "  \/\/ 0x" . printf(\'%04x\', submatch(2))'
+  exe '%s/\v(\w+ID\s*\=\s*)(\d+)/\=submatch(1) . submatch(2) . "  \/\/ 0x" . printf(''%04x'', submatch(2))'
 endfunction
 
 " Run bpfmt, really gotta handle the path better
