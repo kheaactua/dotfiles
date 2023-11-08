@@ -1,6 +1,7 @@
 # Attributes that can be used by many fsb components
 global:
-    build-summary-console-log-length: 20
+    build-summary-console-log-length: 1000
+    ci-docker-container-home: /proj/jenkins
     ci-mode: false
     git-clone-mode: full
     git-mirror-root: /f/phoenix/.fsb/git_mirror
@@ -13,8 +14,7 @@ global:
     pkg-jobs: "-1"
     qnx-jlevel: "8"
     toolchain: toolchain
-    build-summary-console-log-length: "1000"
-
+    vsp-docker-image-creation-script: create_vsp_docker_image.sh
     # git mirroring can be disabled by setting the above git-mirror-root to "", e.g.
     #    git-mirror-root: ""
     #
@@ -23,9 +23,9 @@ global:
     #fsb-root: # Path to the root of the FSB suite installation: e.g. /home/<username>/.local/share/Ford/fsb-suite-2022-02-5
     #pbos-home: # Path to the directory containing bin/pbos: e.g. /home/<username>/.local/share/Ford/fsb-suite-2022-02-5/services/pbos
     #fsb-tools-home: # Path to the directory containing the tools, directories (bin, share...): e.g. /home/<username>/.local/share/Ford/fsb-suite-2022-02-5/tools
-    fsb-root: /home/matt/.local/share/Ford/fsb-suite-2023-11-1
-    pbos-home: /home/matt/.local/share/Ford/fsb-suite-2023-11-1/services/pbos
-    fsb-tools-home: /home/matt/.local/share/Ford/fsb-suite-2023-11-1/tools
+    # fsb-root: ${HOME}/.local/share/Ford/fsb-suite-2023-11-1
+    # pbos-home: ${HOME}/.local/share/Ford/fsb-suite-2023-11-1/services/pbos
+    # fsb-tools-home: ${HOME}/.local/share/Ford/fsb-suite-2023-11-1/tools
 
     #
     # Samples for project specific configs
@@ -184,18 +184,6 @@ log-config:
         encoder: fsb-text
         time-format: "15:04:05"
         columns:
-          - level
-          - activity
-          - message
-          - fields
-      - log-level: debug
-        output: /tmp/debug-fsb/
-        truncate: true
-        split-by-activity: false
-        encoder: fsb-text
-        time-format: "15:04:05"
-        columns:
-          - time-stamp
           - level
           - activity
           - message
