@@ -23,9 +23,9 @@ global:
     #fsb-root: # Path to the root of the FSB suite installation: e.g. /home/<username>/.local/share/Ford/fsb-suite-2022-02-5
     #pbos-home: # Path to the directory containing bin/pbos: e.g. /home/<username>/.local/share/Ford/fsb-suite-2022-02-5/services/pbos
     #fsb-tools-home: # Path to the directory containing the tools, directories (bin, share...): e.g. /home/<username>/.local/share/Ford/fsb-suite-2022-02-5/tools
-    fsb-root: /home/matt/.local/share/Ford/fsb-suite-YYYY-MM-ID
-    pbos-home: /home/matt/.local/share/Ford/fsb-suite-YYYY-MM-ID/services/pbos
-    fsb-tools-home: /home/matt/.local/share/Ford/fsb-suite-YYYY-MM-ID/tools
+    fsb-root: /home/matt/.local/share/Ford/fsb-suite-2023-11-1
+    pbos-home: /home/matt/.local/share/Ford/fsb-suite-2023-11-1/services/pbos
+    fsb-tools-home: /home/matt/.local/share/Ford/fsb-suite-2023-11-1/tools
 
     #
     # Samples for project specific configs
@@ -61,7 +61,7 @@ ccache:
 #               time before adding a new file to the cache
 dl-cache:
     dl-cache-dir: /f/phoenix/.fsb/dl_cache
-    max-size: 50
+    max-size: 128
     size-management: start
 
 # PBOS configuration
