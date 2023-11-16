@@ -16,8 +16,6 @@
 	path = ~/dotfiles/gitconfig.ford.inc
 [includeIf "gitdir:/tmp/**/"]
 	path = ~/dotfiles/gitconfig.ford.inc
-[url "https://gist.github.com"]
-	insteadOf = ssh://gist.github.com
 [url "https://github.com"]
 	insteadOf = ssh://github.com
 [commit]

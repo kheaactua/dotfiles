@@ -1,1 +1,1 @@
-bindsym Print exec ~/.config/rofi/bin/menu_screenshot
+bindsym Print exec ~/.config/rofi/applets/bin/screenshot.sh

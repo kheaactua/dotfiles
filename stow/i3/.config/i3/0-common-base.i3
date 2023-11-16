@@ -50,7 +50,7 @@ bindsym $mod+Return exec i3-sensible-terminal
 bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
-bindsym $mod+d exec ~/.config/rofi/launcher.sh
+bindsym $mod+d exec ~/.config/rofi/launchers/type-7/launcher.sh
 
 # start rofi-pass, a password manager that
 # uses rofi:
