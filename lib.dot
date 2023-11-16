@@ -2,6 +2,10 @@
 # Source after "${DOTFILES_DIR:-${HOME}/dotfiles}/detect_docker.dot"
 # One day I'll convert this to pwsh so it can run on Windows as well.
 
+function dotfiles_hostname() {
+  echo "$(hostname)" | tr '[:upper:]' '[:lower:]'
+}
+
 function symlink()
 {
   local -r target=${1}; shift
@@ -148,9 +152,10 @@ function dotfiles_install_zplug()
 
 function dotfiles_install_i3_config()
 {
+  local -r lower_hostname=$(dotfiles_hostname)
   local i3_dir=${1:-${DOTFILES_DIR:-${HOME}/dotfiles}/stow/i3/.config/i3}
-  ln -s ${i3_dir}/$(hostname).i3 ${i3_dir}/config
-  symlink "${i3_dir}/$(hostname).i3" "${i3_dir}/config" 1
+  ln -s ${i3_dir}/${lower_hostname}.i3 ${i3_dir}/config
+  symlink "${i3_dir}/${lower_hostname}.i3" "${i3_dir}/config" 1
 }
 
 function assemble_i3_config()
@@ -161,7 +166,7 @@ function assemble_i3_config()
   local parts_dir=${1:-${DOTFILES_DIR:-${HOME}/dotfiles}/config/i3}
   local dest=${2:-${HOME}/.config/i3/config}
 
-  local files=($(find "${parts_dir}" -iname '*-common*.part' -or -iname \*$(hostname)\*.part | sort))
+  local files=($(find "${parts_dir}" -iname '*-common*.part' -or -iname \*$(dotfiles_hostname)\*.part | sort))
   if [[ -e "${dest}" ]]; then
     rm "${dest}"
   fi
@@ -179,7 +184,7 @@ function dotfiles_install_i3()
     mkdir -p "${home}/.config/i3"
     dotfiles_install_i3_config "${DOTFILES_DIR:-${HOME}/dotfiles}/stow/i3/.config/i3"
     mkdir -p "${home}/.screenlayout"
-    symlink "${DOTFILES_DIR:-${HOME}/dotfiles}/stow/screenlayout/.screenlayout/host.sh" "${home}/.screenlayout/$(hostname).sh" 1
+    symlink "${DOTFILES_DIR:-${HOME}/dotfiles}/stow/screenlayout/.screenlayout/host.sh" "${home}/.screenlayout/$(dotfiles_hostname).sh" 1
   fi
 
   if [[ ! -e "${home}/bin" ]]; then

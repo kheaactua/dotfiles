@@ -16,7 +16,7 @@ set $ws11 "T"
 set $ws12 "Y"
 
 include ~/.config/i3/0-common-base.i3
-include ~/.config/i3/1-host-ugc15x24r53.i3
+include ~/.config/i3/1-host-ugc14vw7pz3.i3
 include ~/.config/i3/2-workspaces.i3
 include ~/.config/i3/4-*.i3
 include ~/.config/i3/5-*.i3
