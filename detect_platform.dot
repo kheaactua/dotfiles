@@ -1,0 +1,30 @@
+#!/bin/bash
+
+function detect_wsl() {
+  wsl_version=$(uname -r | grep --color=never -oP '(?<=WSL)([0-9+])')
+  if [[ "$?" != 0 ]]; then
+    wsl_version=0
+  fi
+
+  echo -n $wsl_version
+}
+
+function detect_docker()
+{
+    if [ -f /.dockerenv ]; then
+        echo 1
+    else
+        echo 0
+    fi
+}
+
+function detect_platform() {
+  if [[ "$(uname -o)" == Android || "$(uname -a)" =~ aarch64 ]]; then
+    platform=android_aarch64
+  elif [[ "$(uname -o)" =~ "Linux" ]]; then
+    platform="linux_$(uname -m)"
+  else
+    platform="$(uname -o)_$(uname -m)"
+  fi
+  echo $platform
+}
