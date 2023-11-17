@@ -231,7 +231,7 @@ elif [[ "ugc15x24r53" == "$(hostname)" ]]; then
 		)
 		for f in ${apt_sources[@]}; do
 			if [[ -e "${f}" ]]; then
-			sudo mv /etc/apt/sources.list.d/$f /etc/apt/sources.list.d/${f/.save/};
+				sudo mv /etc/apt/sources.list.d/$f /etc/apt/sources.list.d/${f/.save/};
 			fi
 		done
 	}
