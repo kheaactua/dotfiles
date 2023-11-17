@@ -213,23 +213,26 @@ elif [[ "ugc15x24r53" == "$(hostname)" ]]; then
 	function fix_apt_sources() {
 		# This is a little sketchy, but so is landscape renaming these all the
 		# time, so manage the file list manually
+		local -r ubuntu_version_code=$(detect_version_code)
 		apt_sources=( \
-			archive_uri-http_apt_llvm_org_jammy_-jammy.list \
-			git-core-ubuntu-ppa-jammy.list
-			github_git-lfs.list
-			us-ubuntu.list
-			signal.list
-			microsoft-edge.list
-			mozillateam-ubuntu-ppa-jammy.list
-			deadsnakes-ubuntu-ppa-jammy.list
-			sur5r-i3.list
-			neovim-ppa-ubuntu-stable-jammy.list
-			wireshark-dev-ubuntu-stable-jammy.list
-			neovim-ppa-ubuntu-unstable-jammy.list
-			wireshark-dev-ubuntu-stable-jammy.list
+			archive_uri-http_apt_llvm_org_${ubuntu_version_code}_-${ubuntu_version_code}.list.save \
+			git-core-ubuntu-ppa-${ubuntu_version_code}.list.save
+			github_git-lfs.list.save
+			us-ubuntu.list.save
+			signal-xenial.list.save
+			microsoft-edge.list.save
+			mozillateam-ubuntu-ppa-${ubuntu_version_code}.list.save
+			deadsnakes-ubuntu-ppa-${ubuntu_version_code}.list.save
+			sur5r-i3.list.save
+			neovim-ppa-ubuntu-stable-${ubuntu_version_code}.list.save
+			wireshark-dev-ubuntu-stable-${ubuntu_version_code}.list.save
+			neovim-ppa-ubuntu-unstable-${ubuntu_version_code}.list.save
+			wireshark-dev-ubuntu-stable-${ubuntu_version_code}.list.save
 		)
 		for f in ${apt_sources[@]}; do
+			if [[ -e "${f}" ]]; then
 			sudo mv /etc/apt/sources.list.d/$f /etc/apt/sources.list.d/${f/.save/};
+			fi
 		done
 	}
 
