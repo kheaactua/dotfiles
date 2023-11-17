@@ -49,15 +49,16 @@ if [[ -e "${HOME}/.pathrc" ]]; then
 	source "${HOME}/.pathrc"
 fi
 
-declare WSL_VERSION=0
-if [[ -e "${DOTFILES_DIR}/detect_wsl_version.sh" ]]; then
-	WSL_VERSION="$(${DOTFILES_DIR}/detect_wsl_version.sh)"
-fi
 
+declare WSL_VERSION=0
 declare IN_DOCKER=0
-if [[ -e "${DOTFILES_DIR}/detect_docker.dot" ]]; then
-	source "${DOTFILES_DIR}/detect_docker.dot"
+declare PLATFORM=linux_x86_64
+if [[ -e "${DOTFILES_DIR}/detect_platform.sh" ]]; then
+	source "${DOTFILES_DIR}/detect_platform.sh"
+
+	WSL_VERSION="$(detect_wsl)"
 	IN_DOCKER="$(detect_docker)"
+	PLATFORM="$(detect_platform)"
 fi
 
 if [[ -e "${HOME}/.zplug" ]]; then
@@ -75,16 +76,7 @@ if [[ -e "${HOME}/.zplug" ]]; then
 		fpath+=("${LINUXBREWHOME}/.linuxbrew/share/zsh/site-functions")
 	fi
 
-	if [[ -f /proc/sys/fs/binfmt_misc/WSLInterop && "1" == "${WSL_VERSION}" ]]; then
-		# Pure Prompt https://github.com/sindresorhus/pure
-		fpath+=('/usr/local/lib/node_modules/pure-prompt/functions')
-
-		zplug "akarzim/zsh-docker-aliases"
-
-		ZSH_THEME=""
-		zplug "mafredri/zsh-async", from:github
-		zplug "sindresorhus/pure," use:pure.zsh, from:github, as:theme
-	elif [[ "$(uname -o)" == Android || "$(uname -a)" =~ aarch64 ]]; then
+	if [[ "${PLATFORM}" == android_aarch64 ]]; then
 		# Pure Prompt https://github.com/sindresorhus/pure
 		fpath+=('/usr/local/lib/node_modules/pure-prompt/functions')
 
@@ -127,7 +119,9 @@ if [[ "1" == $(_exists urxvt) ]]; then
 	export TERMINAL=urxvt
 fi
 
-export EDITOR=vim
+if [[ "1" == "$(_exists nvim)" ]]; then
+	export EDITOR=nvim
+fi
 
 # Autocompletion with an arrow-key driven interface
 zstyle ':completion:*' menu select
@@ -216,6 +210,29 @@ elif [[ "ugc15x24r53" == "$(hostname)" ]]; then
 	# Ford Desktop
 	module load ford/sync
 
+	function fix_apt_sources() {
+		# This is a little sketchy, but so is landscape renaming these all the
+		# time, so manage the file list manually
+		apt_sources=( \
+			archive_uri-http_apt_llvm_org_jammy_-jammy.list \
+			git-core-ubuntu-ppa-jammy.list
+			github_git-lfs.list
+			us-ubuntu.list
+			signal.list
+			microsoft-edge.list
+			mozillateam-ubuntu-ppa-jammy.list
+			deadsnakes-ubuntu-ppa-jammy.list
+			sur5r-i3.list
+			neovim-ppa-ubuntu-stable-jammy.list
+			wireshark-dev-ubuntu-stable-jammy.list
+			neovim-ppa-ubuntu-unstable-jammy.list
+			wireshark-dev-ubuntu-stable-jammy.list
+		)
+		for f in ${apt_sources[@]}; do
+			sudo mv /etc/apt/sources.list.d/$f /etc/apt/sources.list.d/${f/.save/};
+		done
+	}
+
 elif [[ "sync-android" == "$(hostname)" ]]; then
 
 	module load sync
@@ -278,7 +295,7 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 [ -e "${HOME}/.dir_colors/dircolors" ] && eval "$(dircolors ${HOME}/.dir_colors/dircolors)"
 
 # Note: I use this less and less..
-declare DEVEL_ENV="${HOME}/workspace/system-setup-scripts/devel/activate.sh"
+declare DEVEL_ENV="${HOME}/workspace/system-setup-scripts/devel/conanbuildenv.sh"
 if [[ -e "${DEVEL_ENV}" ]]; then
 	source "${DEVEL_ENV}"
 else
