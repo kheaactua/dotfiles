@@ -260,8 +260,6 @@ return packer.startup(function(use)
         { silent = true }
       )
 
-      map('n', '<leader>l', '<cmd>lua require("fzf-lua").lines()<CR>', { silent = true })
-      map('n', '<leader>w', '<cmd>lua require("fzf-lua").Windows()<CR>', { silent = true })
 
    end,
 
@@ -273,33 +271,121 @@ return packer.startup(function(use)
     requires = {
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
+      "mhartington/formatter.nvim",
     },
     config = function()
-      vim.api.nvim_set_var('clang_path', '/usr')
+      require("mason").setup()
+      require("mason-lspconfig").setup()
 
-      local map = require("utils").map
-      map('n', '<leader>rd', '<cmd>lua vim.lsp.buf.declaration()<CR>', { silent = true })
-      map('n', '<leader>rj', '<cmd>lua vim.lsp.buf.definition()<CR>', { silent = true })
-      map('n', '<leader>ty', '<cmd>lua vim.lsp.buf.hover()<CR>', { silent = true })
-      map('n', '<leader>rk', '<cmd>lua vim.lsp.buf.signature_help()<CR>', { silent = true })
-      map('n', '<leader>rf', '<cmd>lua vim.lsp.buf.references()<CR>', { silent = true })
-      map('n', '<leader>ds', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', { silent = true })
-      map('n', '<leader>rw', '<cmd>lua vim.lsp.buf.rename()<CR>', { silent = true })
-      map('n', '<leader>c ', '<cmd>lua vim.lsp.buf.code_action()<CR>', { silent = true })
-      map('n', '<leader>m ', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', { silent = true })
-      map('n', '<leader>el', '<cmd>lua print(vim.lsp.get_log_path())<CR>', { silent = true })
+      mlc = require("mason-lspconfig")
+      mlc.setup {
+        -- vim.lsp.set_log_level("debug"),
+        ensure_installed = { "clangd", "yamlls", "bashls", "cmake", "dockerls", "gopls", "jsonls", "marksman", "pyright", "vimls" },
+        automatic_installation = true,
+      }
 
-      -- Various mappings to open the corresponding header/source file in a new split
-      map('n', '<leader>of', '<cmd>ClangdSwitchSourceHeader<CR>', { silent = true })
-      map('n', '<leader>oh', '<cmd>vsp<CR><cmd>ClangdSwitchSourceHeader<CR>', { silent = true })
-      map('n', '<leader>oj', '<cmd>below sp<CR><cmd>ClangdSwitchSourceHeader<CR>', { silent = true })
-      map('n', '<leader>ok', '<cmd>sp<CR><cmd>ClangdSwitchSourceHeader<CR>', { silent = true })
-      map('n', '<leader>ol', '<cmd>below vsp<CR><cmd>ClangdSwitchSourceHeader<CR>', { silent = true })
+      mlc.setup_handlers {
+          -- The first entry (without a key) will be the default handler
+          -- and will be called for each installed server that doesn't have
+          -- a dedicated handler.
+          function (server_name) -- default handler (optional)
+              -- print("Handing " .. server_name .. " with default handler")
+              require("lspconfig")[server_name].setup {}
+          end,
+          -- Next, you can provide a dedicated handler for specific servers.
+          -- For example, a handler override for the `rust_analyzer`:
+          -- ["rust_analyzer"] = function ()
+          --     require("rust-tools").setup {}
+          -- end
+      }
 
-      map('n', '[z', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', { silent = true })
-      map('n', ']z', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', { silent = true })
+      -- local map = require("utils").map
+      -- map('n', '<leader>rd', '<cmd>lua vim.lsp.buf.declaration()<CR>', { silent = true })
+      -- map('n', '<leader>rj', '<cmd>lua vim.lsp.buf.definition()<CR>', { silent = true })
+      -- map('n', '<leader>ty', '<cmd>lua vim.lsp.buf.hover()<CR>', { silent = true })
+      -- map('n', '<leader>rk', '<cmd>lua vim.lsp.buf.signature_help()<CR>', { silent = true })
+      -- map('n', '<leader>rf', '<cmd>lua vim.lsp.buf.references()<CR>', { silent = true })
+      -- map('n', '<leader>ds', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', { silent = true })
+      -- map('n', '<leader>rw', '<cmd>lua vim.lsp.buf.rename()<CR>', { silent = true })
+      -- map('n', '<leader>c ', '<cmd>lua vim.lsp.buf.code_action()<CR>', { silent = true })
+      -- map('n', '<leader>m ', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', { silent = true })
+      -- map('n', '<leader>el', '<cmd>lua print(vim.lsp.get_log_path())<CR>', { silent = true })
 
-      require("_lsp").setup()
+      -- -- Various mappings to open the corresponding header/source file in a new split
+      -- map('n', '<leader>of', '<cmd>ClangdSwitchSourceHeader<CR>', { silent = true })
+      -- map('n', '<leader>oh', '<cmd>vsp<CR><cmd>ClangdSwitchSourceHeader<CR>', { silent = true })
+      -- map('n', '<leader>oj', '<cmd>below sp<CR><cmd>ClangdSwitchSourceHeader<CR>', { silent = true })
+      -- map('n', '<leader>ok', '<cmd>sp<CR><cmd>ClangdSwitchSourceHeader<CR>', { silent = true })
+      -- map('n', '<leader>ol', '<cmd>below vsp<CR><cmd>ClangdSwitchSourceHeader<CR>', { silent = true })
+
+      -- map('n', '[z', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', { silent = true })
+      -- map('n', ']z', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', { silent = true })
+
+      -- map('n', '<leader>fu', '<cmd>lua vim.lsp.buf.format({ timeout_ms = 2000 })<CR>', { silent = true })
+      -- map('v', '<leader>fU', '<cmd>lua vim.lsp.buf.format({ timeout_ms = 2000 })<CR>', { silent = true })
+
+      -- Global mappings.
+      -- See `:help vim.diagnostic.*` for documentation on any of the below functions
+      vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
+      vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
+      vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+      vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
+
+      -- Use LspAttach autocommand to only map the following keys
+      -- after the language server attaches to the current buffer
+      vim.api.nvim_create_autocmd('LspAttach', {
+        group = vim.api.nvim_create_augroup('UserLspConfig', {}),
+        callback = function(ev)
+          -- Enable completion triggered by <c-x><c-o>
+          vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+
+          -- Buffer local mappings.
+          -- See `:help vim.lsp.*` for documentation on any of the below functions
+          local opts = { buffer = ev.buf }
+          vim.keymap.set('n', '<leader>rD', vim.lsp.buf.declaration, opts)
+          vim.keymap.set('n', '<leader>rd', vim.lsp.buf.definition, opts)
+          vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+          vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+          vim.keymap.set('n', '<leader>rk', vim.lsp.buf.signature_help, opts)
+          -- vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
+          -- vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
+          -- vim.keymap.set('n', '<space>wl', function()
+          --   print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+          -- end, opts)
+          vim.keymap.set('n', '<leaderty', vim.lsp.buf.type_definition, opts)
+          vim.keymap.set('n', '<leader>rw', vim.lsp.buf.rename, opts)
+          vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
+          vim.keymap.set('n', '<leader>rf', vim.lsp.buf.references, opts)
+          vim.keymap.set('n', '<leader>fu', function()
+            vim.lsp.buf.format { async = true }
+          end, opts)
+          vim.keymap.set('v', '<leader>fu', function()
+            vim.lsp.buf.format { async = true }
+          end, opts)
+        end,
+      })
+
+      formatter = require('formatter')
+      formatter.setup({
+        -- Enable or disable logging
+        logging = true,
+
+        -- Set the log level
+        log_level = vim.log.levels.WARN,
+        -- log_level = vim.log.levels.DEBUG,
+
+        filetype = {
+          ["yaml"] = {
+            require("formatter.filetypes.yaml").yamlfmt
+          },
+          ["*"] = {
+            -- "formatter.filetypes.any" defines default configurations for any
+            -- filetype
+            require("formatter.filetypes.any").remove_trailing_whitespace
+          }
+        }
+      })
+
     end
   }
   use { 'ojroques/nvim-lspfuzzy', required = { 'fzf' } }
@@ -326,12 +412,6 @@ return packer.startup(function(use)
 
   -- Plugin for working with surroundings of words
   use 'tpope/vim-surround'
-
-
-
-
-
-
 
   use {
     'itchyny/lightline.vim',
@@ -440,7 +520,6 @@ return packer.startup(function(use)
 
   -- -- Plugins can have post-install/update hooks
   -- use {'iamcco/markdown-preview.nvim', run = 'cd app && yarn install', cmd = 'MarkdownPreview'}
-
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
