@@ -25,6 +25,7 @@
 	commitGraph = true
 	commentchar = @
 	excludesfile = ~/dotfiles/gitignore
+	pager = delta
 [gc]
 	writeCommitGraph = true
 [merge]
@@ -46,10 +47,31 @@
 	prune = true
 [rebase]
 	autoStash = true
-	autoSquash = true
+	; autoSquash = true
 
-[include]
-	path = ~/dotfiles/delta/themes.gitconfig
+[diff]
+	colorMoved = default
+
+[uploadpack]
+	allowFilter = true
+
+[init]
+	defaultBranch = main
+
+[merge "tool"]
+	path = /bin/nvim
+[mergetool "nvim"]
+	path = /bin/nvim
+
+[merge]
+	  conflictstyle = diff3
+
+[diff]
+	  colorMoved = default
+
+[interactive]
+	; diffFilter = delta --color-only
+	diffFilter = delta --color-only --features=interactive
 
 [pager]
 	diff = delta
@@ -57,10 +79,9 @@
 	reflog = delta
 	show = delta
 
-[interactive]
-	diffFilter = delta --color-only --features=interactive
-
 [delta]
+	navigate = true    # use n and N to move between diff sections
+	light = false      # set to true if you're in a terminal w/ a light background color (e.g. the default macOS terminal)
 	; features = decorations
 	; features = collared-trogon
 	; features = tangara-chilensis
@@ -80,19 +101,5 @@
 	hunk-header-file-style = red
 	hunk-header-line-number-style = "#067a00"
 	hunk-header-style = file line-number syntax
-
-[diff]
-	colorMoved = default
-
-[uploadpack]
-	allowFilter = true
-
-[init]
-	defaultBranch = main
-
-[merge "tool"]
-	path = /bin/nvim
-[mergetool "nvim"]
-	path = /bin/nvim
 
 ; vim: ts=2 sw=2 sts=0 noet ft=gitconfig :

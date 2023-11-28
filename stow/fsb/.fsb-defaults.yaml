@@ -178,7 +178,7 @@ log-config:
           - message
           - fields
       - log-level: info
-        output: /tmp/fsb/
+        output: logs
         truncate: true
         split-by-activity: true
         encoder: fsb-text
