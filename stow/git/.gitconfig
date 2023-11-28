@@ -3,19 +3,19 @@
 	email = matthew.g.russell@gmail.com
 	signingkey = 9DADF75304599BD8
 [includeIf "gitdir:~/workspace/capi/**/"]
-	path = ~/dotfiles/gitconfig.ford.inc
+	path = 	/.gitconfig-ford
 [includeIf "gitdir:~/workspace/phx-fsb/**/"]
-	path = ~/dotfiles/gitconfig.ford.inc
+	path = 	/.gitconfig-ford
 [includeIf "gitdir:~/workspace/ford/**/"]
-	path = ~/dotfiles/gitconfig.ford.inc
+	path = 	/.gitconfig-ford
 [includeIf "gitdir:/src/**/"]
-	path = ~/dotfiles/gitconfig.ford.inc
+	path = 	/.gitconfig-ford
 [includeIf "gitdir:/f/**/*"]
-	path = ~/dotfiles/gitconfig.ford.inc
+	path = 	/.gitconfig-ford
 [includeIf "gitdir:/f/**/"]
-	path = ~/dotfiles/gitconfig.ford.inc
+	path = 	/.gitconfig-ford
 [includeIf "gitdir:/tmp/**/"]
-	path = ~/dotfiles/gitconfig.ford.inc
+	path = 	/.gitconfig-ford
 [url "https://github.com"]
 	insteadOf = ssh://github.com
 [commit]
