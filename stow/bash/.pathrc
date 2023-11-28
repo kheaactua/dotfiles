@@ -3,17 +3,17 @@
 # Modified to input which VAR.  To be bash/zsh agnostic I had to use evals
 path_append() {
   local var=${2:-PATH}
-	path_remove "$1" "${var}";
-	if [[ -e "$1" ]]; then
+  path_remove "$1" "${var}";
+  if [[ -e "$1" ]]; then
     export ${var}="$(eval echo \$${var}):$1";
-	fi
+  fi
 }
 path_prepend() {
   local var=${2:-PATH}
-	path_remove "$1" "${var}";
-	if [[ -e "$1" ]]; then
+  path_remove "$1" "${var}";
+  if [[ -e "$1" ]]; then
     export ${var}="$1:$(eval echo \$${var})";
-	fi
+  fi
 }
 path_remove() {
   local var=${2:-PATH}
@@ -46,9 +46,9 @@ export PATH=$(echo -n "${PATH}" | awk -v RS=: -v ORS=: '/virtualenv/ {next} {pri
 # TODO See if I can replace this and the MANPATH with Environmental Modules.
 #      They're finally being updated again.
 if [[ -e ${HOME}/.linuxbrew ]]; then
-	export LINUXBREWHOME=${HOME}/.linuxbrew
+  export LINUXBREWHOME=${HOME}/.linuxbrew
 elif [[ -e /home/linuxbrew/.linuxbrew ]]; then
-	export LINUXBREWHOME=/home/linuxbrew/.linuxbrew
+  export LINUXBREWHOME=/home/linuxbrew/.linuxbrew
 fi
 
 # Directories we'll prepend
@@ -60,11 +60,12 @@ declare -a adirs;
 # Relative direcoties to HOME that we'll prepend
 declare -a rdirs;
 rdirs=( \
-	bin utils .composer/vendor/bin .rvm/bin .local/bin .fzf/bin \
-	.pyenv/bin utils/bin .cargo/bin \
-	build/kotlin-language-server/server/build/install/server/bin \
-	.sdkman/candidates/gradle/current/bin \
-	go/bin \
+  bin utils .composer/vendor/bin .rvm/bin .local/bin .fzf/bin \
+  .pyenv/bin utils/bin .cargo/bin \
+  build/kotlin-language-server/server/build/install/server/bin \
+  .sdkman/candidates/gradle/current/bin \
+  go/bin \
+  platform-tools \
 );
 
 for d in ${rdirs[@]}; do
@@ -74,20 +75,21 @@ for d in ${rdirs[@]}; do
 done
 
 pdirs+=( \
-	${LINUXBREWHOME}/bin \
+  ${LINUXBREWHOME}/bin \
 )
 
 adirs+=( \
   /var/lib/snapd/bin \
+  /usr/local/go/bin \
 )
 
 # This is not a great place for this.
 if [[ "undefined" != "${ANDROID_SDK_ROOT:-undefined}" ]]; then
-	dirs+=(                                         \
-		"${ANDROID_SDK_ROOT}/tools"                   \
-		"${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin" \
-		"${ANDROID_SDK_ROOT}/platform-tools"          \
-	)
+  dirs+=(                                         \
+    "${ANDROID_SDK_ROOT}/tools"                   \
+    "${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin" \
+    "${ANDROID_SDK_ROOT}/platform-tools"          \
+  )
 fi
 
 for d in ${dirs[@]};  do path_prepend "${d}"; done
@@ -96,8 +98,8 @@ for d in ${adirs[@]}; do path_append "${d}"; done
 
 # If pyenv exists, initialise it
 if [[ -e "${HOME}/.pyenv/bin" ]]; then
-	eval "$(pyenv init -)"
-	eval "$(pyenv virtualenv-init -)"
+  eval "$(pyenv init -)"
+  eval "$(pyenv virtualenv-init -)"
 fi
 
 # Build MAN path

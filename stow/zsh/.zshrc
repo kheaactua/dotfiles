@@ -20,11 +20,6 @@ if [[ -e "${DOTFILES_DIR}/doupdate.sh" && ! "$(hostname)" =~ sync* ]]; then
 	"${DOTFILES_DIR}/doupdate.sh" > /dev/null
 fi
 
-# Uncomment if I want history shared across all terminals
-# setopt histignorealldups sharehistory
-setopt no_share_history
-#unsetopt share_history
-
 # Keep 1000 lines of history within the shell and save it to ${HOME}/.zsh_history:
 HISTSIZE=1000
 SAVEHIST=1000
@@ -48,7 +43,6 @@ fi
 if [[ -e "${HOME}/.pathrc" ]]; then
 	source "${HOME}/.pathrc"
 fi
-
 
 declare WSL_VERSION=0
 declare IN_DOCKER=0
@@ -126,6 +120,11 @@ fi
 # Autocompletion with an arrow-key driven interface
 zstyle ':completion:*' menu select
 
+# Uncomment if I want history shared across all terminals
+# setopt histignorealldups sharehistory
+setopt no_share_history
+#unsetopt share_history
+
 # This option allows me to tab complete branch names with the oh-my-zsh git aliases.
 # http://zsh.sourceforge.net/Doc/Release/Options.html#index-COMPLETEALIASES
 setopt nocomplete_aliases
@@ -134,7 +133,7 @@ setopt nocomplete_aliases
 export DISABLE_UNTRACKED_FILES_DIRTY=true
 
 # Get number pad return/enter key to work
-#bindkey "${terminfo[kent]}" accept-line
+# bindkey "${terminfo[kent]}" accept-line
 
 # Beginning/end of line
 bindkey "^A" beginning-of-line

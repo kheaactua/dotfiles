@@ -171,7 +171,14 @@ return packer.startup(function(use)
     cond = false,
   }
 
-  use 'tpope/vim-obsession'
+  use {
+    'echasnovski/mini.nvim',
+    branch = 'stable',
+    config = function()
+      require('mini.sessions').setup()
+    end,
+  }
+
   use 'mhinz/vim-startify'
   use {
     'szw/vim-maximizer',
@@ -253,6 +260,7 @@ return packer.startup(function(use)
           local fzf_lua = require("fzf-lua")
           local current_word = vim.api.nvim_command_output([[ echo expand('<cword>') ]])
           fzf_lua.live_grep({
+            cmd = grep_cmd,
             query = current_word,
             cwd = fzf_lua.path.git_root(),
           })
@@ -260,6 +268,8 @@ return packer.startup(function(use)
         { silent = true }
       )
 
+      map('n', '<leader>l', '<cmd>lua require("fzf-lua").lines()<CR>', { silent = true })
+      map('n', '<leader>w', '<cmd>lua require("fzf-lua").Windows()<CR>', { silent = true })
 
    end,
 
