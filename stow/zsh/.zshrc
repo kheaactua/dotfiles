@@ -47,13 +47,17 @@ fi
 declare WSL_VERSION=0
 declare IN_DOCKER=0
 declare PLATFORM=linux_x86_64
-if [[ -e "${DOTFILES_DIR}/detect_platform.sh" ]]; then
-	source "${DOTFILES_DIR}/detect_platform.sh"
+set -x
+if [[ -e "${DOTFILES_DIR}/detect_platform.dot" ]]; then
+	source "${DOTFILES_DIR}/detect_platform.dot"
 
 	WSL_VERSION="$(detect_wsl)"
 	IN_DOCKER="$(detect_docker)"
 	PLATFORM="$(detect_platform)"
+else
+	echo "Warning: Cannot detect platform"
 fi
+set +x
 
 if [[ -e "${HOME}/.zplug" ]]; then
 	source "${HOME}/.zplug/init.zsh"
@@ -205,11 +209,11 @@ if [[ "khea" == "$(hostname)" ]]; then
 	module load khea
 	# module load bona
 
-elif [[ "ugc15x24r53" == "$(hostname)" ]]; then
+elif [[ "UGC14VW7PZ3" == "$(hostname)" ]]; then
 	# Ford Desktop
 	module load ford/sync
 
-	function fix_apt_sources() {
+	function fix-apt-sources() {
 		# This is a little sketchy, but so is landscape renaming these all the
 		# time, so manage the file list manually
 		local -r ubuntu_version_code=$(detect_version_code)
