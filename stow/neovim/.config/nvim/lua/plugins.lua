@@ -117,37 +117,6 @@ return packer.startup(function(use)
   }
 
   use {
-    "jose-elias-alvarez/null-ls.nvim",
-    requires = { "nvim-lua/plenary.nvim" },
-    config = function()
-      local nl = require("null-ls")
-
-      nl.setup({
-        sources={
-          -- python
-          nl.builtins.formatting.black.with({
-            extra_args = { "--line-length=120" },
-            filetypes = {"py", "fsb"},
-          }),
-          nl.builtins.diagnostics.pylint.with({
-            extra_args = { "--max-line-length=120" }
-          }),
-
-          -- nl.builtins.diagnostics.cmake_lint.with({
-          --   extra_args = { "--line-width=120" }
-          -- }),
-          nl.builtins.formatting.isort,
-          nl.builtins.formatting.clang_format,
-        },
-      })
-
-      local map = require("utils").map
-      map('n', '<leader>fu', '<cmd>lua vim.lsp.buf.format({ timeout_ms = 2000 })<CR>', { silent = true })
-      map('v', '<leader>fU', '<cmd>lua vim.lsp.buf.format({ timeout_ms = 2000 })<CR>', { silent = true })
-    end
-  }
-
-  use {
     'mhinz/vim-signify',
     config = function()
       vim.api.nvim_set_option('updatetime', 100)
