@@ -6,7 +6,7 @@ exec "xset dpms 600"
 
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
-exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+# exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 
 # Lock screen
 bindsym Ctrl+mod1+L exec ${HOME}/bin/do_lock.sh
