@@ -56,6 +56,9 @@ bindsym $mod+d exec ~/.config/rofi/launchers/type-7/launcher.sh
 # uses rofi:
 bindsym $mod+p exec --no-startup-id rofi-pass
 
+# Always turn numlock on:
+exec_always --no-startup-id numlockx on
+
 # # translate highlighted text
 # bindsym ctrl+shift+j exec notitranslation
 
