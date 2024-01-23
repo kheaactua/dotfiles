@@ -127,11 +127,11 @@ augroup END
 " double slashes (used for vim-commentary):
 augroup FTOptions
     autocmd!
-    autocmd FileType c,cpp,cs,java,bzl,javascript,php setlocal commentstring=//\ %s
-    autocmd FileType sh,jdb,cmake                     setlocal commentstring=#\ %s
-    autocmd FileType tmpl                             setlocal commentstring=##\ %s
-    autocmd FileType fsb                              setlocal commentstring=#\ %s
-    autocmd FileType i3                               setlocal commentstring=#\ %s
+    autocmd FileType c,cpp,cs,java,bzl,javascript,php,fidl setlocal commentstring=//\ %s
+    autocmd FileType sh,jdb,cmake                          setlocal commentstring=#\ %s
+    autocmd FileType tmpl                                  setlocal commentstring=##\ %s
+    autocmd FileType fsb                                   setlocal commentstring=#\ %s
+    autocmd FileType i3                                    setlocal commentstring=#\ %s
 augroup END
 
 augroup SHORTCUTS
@@ -303,6 +303,10 @@ vnoremap // y/<C-R>"<CR>
 " Search for merge lines
 nnoremap <leader>m /^\(<\\|=\\|>\)\{7\}<CR>
 
+" Shortcut to copy to clipboard
+vnoremap <leader>y "+y
+nnoremap <leader>y "+y
+
 " Match <> brackets
 set matchpairs+=<:>
 
@@ -356,7 +360,8 @@ command! Ep :echo expand('%:p')
 
 " Open init.vim in a tab
 let $init_vim=g:dotfiles . '/stow/neovim/.config/nvim/init.vim'
-command! Settings :tabe $init_vim
+let $init_vim_plugins=g:dotfiles . '/stow/neovim/.config/nvim/lua/plugins.lua'
+command! Settings :tabe $init_vim | vsp $init_vim_plugins
 
 function! Open_fsb_dot()
    badd +0 ~/dotfiles/dotfiles-secret/ford/bin/fsb.dot
