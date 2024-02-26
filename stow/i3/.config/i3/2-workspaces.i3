@@ -8,6 +8,9 @@ workspace $ws2 output $monitor_center
 workspace $ws3 output $monitor_right
 workspace $ws4 output $monitor_center
 workspace $ws5 output $monitor_center
+workspace $ws7 output $monitor_center
+workspace $ws9 output $monitor_center
+workspace $ws10 output $monitor_center
 workspace $ws12 output $monitor_right
 
 # switch to workspace
