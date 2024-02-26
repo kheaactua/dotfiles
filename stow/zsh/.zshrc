@@ -47,7 +47,6 @@ fi
 declare WSL_VERSION=0
 declare IN_DOCKER=0
 declare PLATFORM=linux_x86_64
-set -x
 if [[ -e "${DOTFILES_DIR}/detect_platform.dot" ]]; then
 	source "${DOTFILES_DIR}/detect_platform.dot"
 
@@ -57,7 +56,6 @@ if [[ -e "${DOTFILES_DIR}/detect_platform.dot" ]]; then
 else
 	echo "Warning: Cannot detect platform"
 fi
-set +x
 
 if [[ -e "${HOME}/.zplug" ]]; then
 	source "${HOME}/.zplug/init.zsh"
@@ -126,7 +124,29 @@ zstyle ':completion:*' menu select
 
 # Uncomment if I want history shared across all terminals
 # setopt histignorealldups sharehistory
-setopt no_share_history
+# setopt no_share_history
+# Trying these: https://stackoverflow.com/a/28647561/1861346
+
+# This option works like APPEND_HISTORY except that new history lines are added
+# to the $HISTFILE incrementally (as soon as they are entered), rather than
+# waiting until the shell exits. The file will still be periodically re-written
+# to trim it when the number of lines grows 20% beyond the value specified by
+# $SAVEHIST (see also the HIST_SAVE_BY_COPY option).
+setopt inc_append_history
+
+# Do not enter command lines into the history list if they are duplicates of
+# the previous event.
+setopt hist_ignore_dups
+
+# Remove command lines from the history list when the first character on the
+# line is a space, or when one of the expanded aliases contains a leading
+# space. Only normal aliases (not global or suffix aliases) have this
+# behaviour. Note that the command lingers in the internal history until the
+# next command is entered before it vanishes, allowing you to briefly reuse or
+# edit the line. If you want to make it vanish right away without entering
+# another command, type a space and press return.
+setopt hist_ignore_space
+
 #unsetopt share_history
 
 # This option allows me to tab complete branch names with the oh-my-zsh git aliases.
@@ -211,7 +231,7 @@ if [[ "khea" == "$(hostname)" ]]; then
 
 elif [[ "UGC14VW7PZ3" == "$(hostname)" ]]; then
 	# Ford Desktop
-	module load ford/sync
+	# module load ford/sync
 
 	function fix-apt-sources() {
 		# This is a little sketchy, but so is landscape renaming these all the
@@ -239,11 +259,19 @@ elif [[ "UGC14VW7PZ3" == "$(hostname)" ]]; then
 		done
 	}
 
+	function check-eth() {
+		for d in wls5 enp2s0 enp0s31f6; ip -4 a show dev $d
+
+		echo "route:"
+		ip route show | rg '10\.2\.0.\d*'
+	}
+
 elif [[ "sync-android" == "$(hostname)" ]]; then
 
-	module load sync
+	# module load sync
 
 elif [[ "WGC1CV2JWQP13" == "$(hostname)" ]]; then
+	# TODO hostname is wrong
 	# Ford Laptop
 	export WINHOME=/c/users/mruss100
 

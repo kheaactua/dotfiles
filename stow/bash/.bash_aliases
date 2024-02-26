@@ -144,7 +144,6 @@ alias gpg-reload="gpg-connect-agent reloadagent /bye"
 alias pwsh="pwsh -ExecutionPolicy ByPass"
 alias powershell.exe="powershell.exe -ExecutionPolicy ByPass"
 
-
 alias reboot="echo no........"
 
 alias plex-refresh="/usr/lib/plexmediaserver/Plex\ Media\ Scanner -s -v"
@@ -152,7 +151,13 @@ alias plex-refresh="/usr/lib/plexmediaserver/Plex\ Media\ Scanner -s -v"
 # https://superuser.com/a/999132/184123
 alias sqlite="rlwrap -a -c -i sqlite3"
 
+# Follow symlinks
+alias rg="rg -L"
+
 function cdl() {
+	# Used to download phx images.  Now that phx-utils works better I don't use
+	# this anymore
+
 	# alias cdl='curl -LnOC -'
 	if [[ "-o" == "$1" ]]; then
 		shift
