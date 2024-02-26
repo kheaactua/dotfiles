@@ -199,6 +199,7 @@ function dotfiles_install_i3()
 
 # Shuts the screen off the first time, but after a period of inactivity
 # Assumes i3lock-fancy-rapid is installed
+# TODO use `which` and get this from the path
 if [[ -e /usr/local/bin/i3lock-fancy-rapid || -e /bin/i3lock-fancy-rapid ]]; then
   /usr/local/bin/i3lock-fancy-rapid 5 3 \\
       -t "Enter Password" --clock --indicator --ignore-empty-password \\

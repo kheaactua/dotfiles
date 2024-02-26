@@ -3,19 +3,19 @@
 	email = matthew.g.russell@gmail.com
 	signingkey = 9DADF75304599BD8
 [includeIf "gitdir:~/workspace/capi/**/"]
-	path = 	/.gitconfig-ford
+	path = 	~/.gitconfig-ford
 [includeIf "gitdir:~/workspace/phx-fsb/**/"]
-	path = 	/.gitconfig-ford
+	path = 	~/.gitconfig-ford
 [includeIf "gitdir:~/workspace/ford/**/"]
-	path = 	/.gitconfig-ford
+	path = 	~/.gitconfig-ford
 [includeIf "gitdir:/src/**/"]
-	path = 	/.gitconfig-ford
+	path = 	~/.gitconfig-ford
 [includeIf "gitdir:/f/**/*"]
-	path = 	/.gitconfig-ford
+	path = 	~/.gitconfig-ford
 [includeIf "gitdir:/f/**/"]
-	path = 	/.gitconfig-ford
+	path = 	~/.gitconfig-ford
 [includeIf "gitdir:/tmp/**/"]
-	path = 	/.gitconfig-ford
+	path = 	~/.gitconfig-ford
 [url "https://github.com"]
 	insteadOf = ssh://github.com
 [commit]
@@ -31,7 +31,7 @@
 [merge]
 	tool = nvimdiff
 [credential]
-	helper = cache --timeout=7200000
+	helper = cache --timeout=6048009
 [color]
 	ui = auto
 [filter "lfs"]
