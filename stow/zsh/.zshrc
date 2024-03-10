@@ -47,6 +47,7 @@ fi
 declare WSL_VERSION=0
 declare IN_DOCKER=0
 declare PLATFORM=linux_x86_64
+
 if [[ -e "${DOTFILES_DIR}/detect_platform.dot" ]]; then
 	source "${DOTFILES_DIR}/detect_platform.dot"
 

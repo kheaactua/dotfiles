@@ -59,6 +59,22 @@ if [[ -e "${HOME}/bin/yubioath-desktop-5.0.1-linux.AppImage" ]]; then
    alias yubiAuth="${HOME}/bin/yubioath-desktop-5.0.1-linux.AppImage"
 fi
 
+function pdfwb() {
+	input=$1
+	output=${1/pdf/bw.pdf}
+
+	gs \
+	 -sOutputFile=$output \
+	 -sDEVICE=pdfwrite \
+	 -sColorConversionStrategy=Gray \
+	 -dProcessColorModel=/DeviceGray \
+	 -dCompatibilityLevel=1.4 \
+	 -dNOPAUSE \
+	 -dBATCH \
+	 -dPDFSETTINGS=/ebook \
+	 $input
+}
+
 function git_current_remote() {
 	# This is a hack for now, soon this should be changes to detect if we're in
 	# a repo workspace and use the python manifest tools to select the proper
