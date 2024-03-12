@@ -254,8 +254,9 @@ elif [[ "UGC14VW7PZ3" == "$(hostname)" ]]; then
 			wireshark-dev-ubuntu-stable-${ubuntu_version_code}.list.save
 		)
 		for f in ${apt_sources[@]}; do
-			if [[ -e "${f}" ]]; then
-				sudo mv /etc/apt/sources.list.d/$f /etc/apt/sources.list.d/${f/.save/};
+			local abs_f=/etc/apt/sources.list.d/$f
+			if [[ -e "${abs_f}" ]]; then
+			  sudo mv "${abs_f}" ${abs_f/.save/};
 			fi
 		done
 	}
