@@ -15,6 +15,11 @@ set $ws10 "10"
 set $ws11 "T"
 set $ws12 "Y"
 
+# Specify the displays
+set $monitor_left "DP-6"
+set $monitor_center "DP-2"
+set $monitor_right "DP-0"
+
 include ~/.config/i3/0-common-base.i3
 include ~/.config/i3/1-host-ugc14vw7pz3.i3
 include ~/.config/i3/2-workspaces.i3
