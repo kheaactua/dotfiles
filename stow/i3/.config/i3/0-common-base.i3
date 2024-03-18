@@ -30,6 +30,9 @@ set $refresh_i3status pkill -RTMIN+1 i3blocks
 bindsym XF86AudioRaiseVolume exec amixer -q -D pulse sset Master 5%+ && $refresh_i3status
 bindsym XF86AudioLowerVolume exec amixer -q -D pulse sset Master 5%- && $refresh_i3statusp
 bindsym XF86AudioMute exec amixer -q -D pulse sset Master toggle && $refresh_i3status
+# If these don't work, chek the default sink
+# pacmd list-sinks
+# pacmd set-default-sink 1
 
 
 # Sreen brightness controls
