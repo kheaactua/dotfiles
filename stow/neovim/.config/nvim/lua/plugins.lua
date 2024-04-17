@@ -60,6 +60,9 @@ return packer.startup(function(use)
 
  use {
     'tpope/vim-fugitive',
+    requires = {
+      { "tpope/vim-rhubarb" }
+    },
     config = function()
       vim.opt.diffopt:append('vertical')
     end,
@@ -113,7 +116,10 @@ return packer.startup(function(use)
   use 'TheZoq2/neovim-auto-autoread'
 
   use {
-    "https://github.com/github/copilot.vim"
+    "CopilotC-Nvim/CopilotChat.nvim",
+    requires = {
+      { "https://github.com/github/copilot.vim" }
+    }
   }
 
   use {
@@ -241,7 +247,13 @@ return packer.startup(function(use)
       map('n', '<leader>w', '<cmd>lua require("fzf-lua").Windows()<CR>', { silent = true })
 
    end,
+  }
 
+  use {
+    'kevinhwang91/nvim-bqf', ft = 'qf',
+    requires = {
+      'dyng/ctrlsf.vim',
+    }
   }
 
   -- Configurations for neovim's language client
@@ -250,6 +262,7 @@ return packer.startup(function(use)
     requires = {
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
+      "nvimtools/none-ls.nvim",
       "mhartington/formatter.nvim",
     },
     config = function()
@@ -367,7 +380,31 @@ return packer.startup(function(use)
 
     end
   }
-  use { 'ojroques/nvim-lspfuzzy', required = { 'fzf' } }
+  use {
+    'ojroques/nvim-lspfuzzy',
+    requires = {
+      {'junegunn/fzf'},
+      {'junegunn/fzf.vim'},  -- to enable preview (optional)
+    },
+    config = function()
+      require('lspfuzzy').setup {
+        methods = 'all',         -- either 'all' or a list of LSP methods (see below)
+        jump_one = true,         -- jump immediately if there is only one location
+        save_last = false,       -- save last location results for the :LspFuzzyLast command
+        callback = nil,          -- callback called after jumping to a location
+        fzf_preview = {          -- arguments to the FZF '--preview-window' option
+          'right:+{2}-/2'          -- preview on the right and centered on entry
+        },
+        fzf_action = {               -- FZF actions
+          ['ctrl-t'] = 'tab split',  -- go to location in a new tab
+          ['ctrl-v'] = 'vsplit',     -- go to location in a vertical split
+          ['ctrl-x'] = 'split',      -- go to location in a horizontal split
+        },
+        fzf_modifier = ':~:.',   -- format FZF entries, see |filename-modifiers|
+        fzf_trim = true,         -- trim FZF entries
+      }
+    end
+  }
 
   use 'mhinz/vim-sayonara' -- Plugin to make it easy to delete a buffer and close the file:
 

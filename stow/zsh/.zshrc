@@ -248,7 +248,6 @@ elif [[ "UGC14VW7PZ3" == "$(hostname)" ]]; then
 			mozillateam-ubuntu-ppa-${ubuntu_version_code}.list.save
 			deadsnakes-ubuntu-ppa-${ubuntu_version_code}.list.save
 			sur5r-i3.list.save
-			neovim-ppa-ubuntu-stable-${ubuntu_version_code}.list.save
 			wireshark-dev-ubuntu-stable-${ubuntu_version_code}.list.save
 			neovim-ppa-ubuntu-unstable-${ubuntu_version_code}.list.save
 			wireshark-dev-ubuntu-stable-${ubuntu_version_code}.list.save
@@ -302,6 +301,9 @@ if [[ 0 == "${INVENV}" ]]; then
 	declare python_venv="${HOME}/.virtualenvs/${DEFAULT_PYTHON_VENV}"
 	[ -e "${python_venv}/bin" ] && source "${python_venv}/bin/activate"
 fi
+
+# Cargo
+[ -e "/${HOME}/.cargo/env" ] && source "/${HOME}/.cargo/env"
 
 # vcpkg
 [ -e "${VCPKG_ROOT}/scripts/vcpkg_completion.bash" ] && source "${VCPKG_ROOT}/scripts/vcpkg_completion.bash"
