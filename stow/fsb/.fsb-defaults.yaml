@@ -6,7 +6,7 @@ global:
     git-clone-mode: full
     git-mirror-root: /f/fsb-storage/git_mirror
     git-protocol: ssh
-    jobs: "1"
+    jobs: "8"
     nexus-credential-source: netrc
     no-artifacts: true
     offline: false

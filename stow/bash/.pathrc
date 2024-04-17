@@ -66,6 +66,7 @@ rdirs=( \
   .sdkman/candidates/gradle/current/bin \
   go/bin \
   platform-tools \
+  .local/share/bob/nvim-bin
 );
 
 for d in ${rdirs[@]}; do
