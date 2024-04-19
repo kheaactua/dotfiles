@@ -332,6 +332,9 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 # Dir colours
 [ -e "${HOME}/.dir_colors/dircolors" ] && eval "$(dircolors ${HOME}/.dir_colors/dircolors)"
 
+# copilot
+[ -e "${HOME}/.copilot.dot" ] && source "${HOME}/.copilot.dot"
+
 # Note: I use this less and less..
 declare DEVEL_ENV="${HOME}/workspace/system-setup-scripts/devel/conanbuildenv.sh"
 if [[ -e "${DEVEL_ENV}" ]]; then
