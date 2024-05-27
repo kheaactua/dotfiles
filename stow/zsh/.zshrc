@@ -233,6 +233,7 @@ if [[ "khea" == "$(hostname)" ]]; then
 elif [[ "UGC14VW7PZ3" == "$(hostname)" ]]; then
 	# Ford Desktop
 	# module load ford/sync
+	module load ford/quarry
 
 	function fix-apt-sources() {
 		# This is a little sketchy, but so is landscape renaming these all the

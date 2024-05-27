@@ -382,6 +382,7 @@ function! Hi_vsomeip_log()
    syn match log_credential_error 	'.*\(rejecting new connection\|Receiving credentials failed\|Broken pipe\).*'
    syn match log_connection_id 	'\(0x\|\)[a-fA-F0-9]\{4\}:[a-zA-Z0-9-_]\+'
 
+   syn match log_tcp_debug "\zsTCP-DEBUG"
    syn match log_subscribe "\s\zsSUBSCRIB\w\+"
    syn match log_subscribe_pending ".*a remote subscription is already pending.*"
    syn match log_830f ".*0fe2\..*\.830f.*"
@@ -391,6 +392,7 @@ function! Hi_vsomeip_log()
    " See highlight-groups
 
    hi def link log_830f 		Number
+   hi def link log_tcp_debug 		Number
    hi def link log_payload_unset 		WarningMsg
    hi def link log_credential_error 		ErrorMsg
    hi def link log_subscribe_pending 		ErrorMsg
