@@ -153,6 +153,7 @@ endif
 let &runtimepath.=','.expand("~/.local/bin")
 
 if has('nvim-0.5')
+   lcd /home/matt/dotfiles/stow/neovim/.config/nvim/lua
    lua require('utils')
    lua require('plugins')
    lua require('completions')
