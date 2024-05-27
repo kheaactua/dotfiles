@@ -117,15 +117,27 @@ return packer.startup(function(use)
 
   use {
     "CopilotC-Nvim/CopilotChat.nvim",
+    branch = 'canary',
     requires = {
-      { "https://github.com/github/copilot.vim" }
-    }
+      { "github/copilot.vim", 'nvim-lua/plenary.nvim' }
+    },
+    config = function()
+      require("CopilotChat").setup()
+    end,
   }
 
   use {
     'mhinz/vim-signify',
     config = function()
       vim.api.nvim_set_option('updatetime', 100)
+    end,
+  }
+  use {
+    'mhinz/vim-grepper',
+    config = function()
+      local map = require("utils").map
+      map('n', '<leader>G', ":Grepper -tool rg -buffer -cword -noprompt<CR>", { silent = true })
+      map('n', '<leader>GG', ":Grepper -tool rg -cword -noprompt<CR>", { silent = true })
     end,
   }
 
@@ -255,6 +267,8 @@ return packer.startup(function(use)
       'dyng/ctrlsf.vim',
     }
   }
+  -- optional, highly recommended
+  use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
 
   -- Configurations for neovim's language client
   use {
@@ -449,10 +463,6 @@ return packer.startup(function(use)
   -- use 'maximbaz/lightline-ale'
   -- use 'kosayoda/nvim-lightbulb'
 
-  use {
-    'PProvost/vim-ps1',
-    ft = {'ps1'}
-  }
 
   use 'azabiong/vim-highlighter'
 
