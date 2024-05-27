@@ -119,7 +119,7 @@ return packer.startup(function(use)
     "CopilotC-Nvim/CopilotChat.nvim",
     branch = 'canary',
     requires = {
-      { "github/copilot.vim", 'nvim-lua/plenary.nvim' }
+      { "github/copilot.vim", 'nvim-lua/plenary.nvim', 'nvim-treesitter/nvim-treesitter' }
     },
     config = function()
       require("CopilotChat").setup()
@@ -394,6 +394,7 @@ return packer.startup(function(use)
 
     end
   }
+
   use {
     'ojroques/nvim-lspfuzzy',
     requires = {
@@ -517,14 +518,14 @@ return packer.startup(function(use)
     'gmist/vim-palette',
   }
 
-  use {
-    'kheaactua/vim-managecolor',
-    config = function()
-      dotfiles_dir=vim.api.nvim_get_var('dotfiles')
-      vim.api.nvim_set_var('colo_search_path', dotfiles_dir .. '/bundles/dein')
-      vim.api.nvim_set_var('colo_cache_file',  dotfiles_dir .. '/colos.json')
-    end,
-  }
+  -- use {
+  --   'kheaactua/vim-managecolor',
+  --   config = function()
+  --     dotfiles_dir=vim.api.nvim_get_var('dotfiles')
+  --     vim.api.nvim_set_var('colo_search_path', dotfiles_dir .. '/bundles/dein')
+  --     vim.api.nvim_set_var('colo_cache_file',  dotfiles_dir .. '/colos.json')
+  --   end,
+  -- }
 
   -- /Colourschemes
 
