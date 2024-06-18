@@ -2,6 +2,10 @@
 
 # Assign windows to a Workspace
 assign [class="qBittorrent"] $ws10
+assign [class="torguard"] $ws10
+
+# starting some apps in floating mode
+for_window [title="^TorGuard$"] floating enable, border normal 0
 
 # Put Workspaces on specific monitors
 # DVI-D-2 = Wide Dell
