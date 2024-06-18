@@ -13,7 +13,7 @@ set $ws8  "8"
 set $ws9  "9: VPN"
 set $ws10 "10"
 set $ws11 "T"
-set $ws12 "Y"
+set $ws12 "M"
 
 # Specify the displays
 set $monitor_left "DP-6"
