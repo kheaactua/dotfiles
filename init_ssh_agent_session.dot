@@ -1,0 +1,16 @@
+function init_ssh_agent()
+{
+	# From eval `ssh-agent`
+	export SSH_AUTH_SOCK=~/.ssh/ssh-agent.$HOSTNAME.sock
+	ssh-add -l 2>/dev/null >/dev/null
+	if [ $? -ge 2 ]; then
+	  ssh-agent -a "$SSH_AUTH_SOCK" >/dev/null
+	fi
+	if [[ -z "$SSH_AGENT_PID" ]]; then
+		export SSH_AGENT_PID=$(pidof ssh-agent)
+	fi
+
+	fd 'id_rsa' -E '*.pub' ~/dotfiles/dotfiles-secret -x ssh-add
+}
+
+# vim: sw=4 sts=0 ts=4 noet ff=unix :

@@ -254,6 +254,12 @@ set hlsearch
 inoremap <C-S> <Esc>:w<CR>
 " map alt/apple or something-S for khea
 
+" Clean out colour codes
+function! CleanNonPrintables()
+   %s/.\d\+;\d\+\(m\|;\d\+m\)//g
+   %s/[^[:print:]]//g
+endfunction
+
 " Remove trailing space
 nnoremap <leader>rt :silent! %s/\s\+$//e<CR>
 let @r='\rt'

@@ -15,6 +15,9 @@ fi
 
 source "${DOTFILES_DIR}/init_gpg_session.dot"
 
+# Currently only loads init_ssh_agent, doesn't run it
+source "${DOTFILES_DIR}/init_ssh_agent_session.dot"
+
 if [[ -e "${DOTFILES_DIR}/doupdate.sh" && ! "$(hostname)" =~ sync* ]]; then
 	# Update the dotfiles repo to make sure we have all changes:
 	"${DOTFILES_DIR}/doupdate.sh" > /dev/null
@@ -85,7 +88,7 @@ if [[ -e "${HOME}/.zplug" ]]; then
 	else
 		zplug "lib/completion", from:oh-my-zsh           # Provides completion of dot directories
 		zplug "jeffreytse/zsh-vi-mode"
-		zplug "akarzim/zsh-docker-aliases"
+		zplug "kheaactua/zsh-docker-aliases", from:github
 
 		# Really fast theme, configured at the head and tail of zshrc
 		zplug romkatv/powerlevel10k, as:theme, depth:1
