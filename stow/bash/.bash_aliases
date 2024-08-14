@@ -1,14 +1,14 @@
 if [[ "undefined" == "${DOTFILES_DIR:-undefined}" ]]; then
-	export DOTFILES_DIR="${HOME}/dotfiles"
-	if [[ ! -e "${DOTFILES_DIR}" ]]; then
-		# Just guess
-		export DOTFILES_DIR=$(realpath -- ~matt/dotfiles)
-	fi
+   export DOTFILES_DIR="${HOME}/dotfiles"
+   if [[ ! -e "${DOTFILES_DIR}" ]]; then
+      # Just guess
+      export DOTFILES_DIR=$(realpath -- ~matt/dotfiles)
+   fi
 fi
 if ! typeset -f _exists > /dev/null ; then
-	if [[ -e "${DOTFILES_DIR}/rclib.dot" ]]; then
-		source "${DOTFILES_DIR}/rclib.dot"
-	fi
+   if [[ -e "${DOTFILES_DIR}/rclib.dot" ]]; then
+      source "${DOTFILES_DIR}/rclib.dot"
+   fi
 fi
 
 alias df="df -h"
@@ -44,12 +44,12 @@ if [[ "$(_exists ag)" == 1 ]]; then
    alias ag="ag -iU --color-line-number 34 --color-path 31"
 fi
 if [[ $(_exists nvim) == 1 ]]; then
-	alias vi=nvim
-	alias vim=nvim
-	alias vimdiff="nvim -d"
-	export EDITOR=nvim
+   alias vi=nvim
+   alias vim=nvim
+   alias vimdiff="nvim -d"
+   export EDITOR=nvim
 else
-	alias vi=vim
+   alias vi=vim
 fi
 
 alias grep="grep --color=always --exclude-dir={.git}"
@@ -60,37 +60,43 @@ if [[ -e "${HOME}/bin/yubioath-desktop-5.0.1-linux.AppImage" ]]; then
 fi
 
 function pdfwb() {
-	input=$1
-	output=${1/pdf/bw.pdf}
+   input=$1
+   output=${1/pdf/bw.pdf}
 
-	gs \
-	 -sOutputFile=$output \
-	 -sDEVICE=pdfwrite \
-	 -sColorConversionStrategy=Gray \
-	 -dProcessColorModel=/DeviceGray \
-	 -dCompatibilityLevel=1.4 \
-	 -dNOPAUSE \
-	 -dBATCH \
-	 -dPDFSETTINGS=/ebook \
-	 $input
+   gs \
+    -sOutputFile=$output \
+    -sDEVICE=pdfwrite \
+    -sColorConversionStrategy=Gray \
+    -dProcessColorModel=/DeviceGray \
+    -dCompatibilityLevel=1.4 \
+    -dNOPAUSE \
+    -dBATCH \
+    -dPDFSETTINGS=/ebook \
+    $input
 }
 
 function git_current_remote() {
-	# This is a hack for now, soon this should be changes to detect if we're in
-	# a repo workspace and use the python manifest tools to select the proper
-	# tool.
-	# Currently this returns this first remote
-	grc=$(git config remotes.default)
+   # This is a hack for now, soon this should be changes to detect if we're in
+   # a repo workspace and use the python manifest tools to select the proper
+   # tool.
+   # Currently this returns this first remote
+   grc=$(git config remotes.default)
 
-	if [[ "" != "${grc}" ]]; then
-		echo "${grc}"
-	else
-		echo $(git remote | head -n 1)
-	fi
+   if [[ "" != "${grc}" ]]; then
+      echo "${grc}"
+   else
+      echo $(git remote | head -n 1)
+   fi
 }
 
 function gcr() {
-	git_current_remote
+   git_current_remote
+}
+
+function git_set_default_remote()
+{
+   local -r default_remote=${1:-origin}
+   git config remotes.default "${default_remote}"
 }
 
 # A better test would be whether I'm running zsh..
@@ -123,25 +129,26 @@ alias rs="repo sync -j8 -q -c --no-tags"
 alias rl="repo sync -j8 -q -c --no-tags"
 alias gpsup='git push --set-upstream $(git_current_remote) $(git_current_branch)'
 alias ggsup='git branch --set-upstream-to=$(git_current_remote)/$(git_current_branch)'
+alias gcdr=git_set_default_remote
 
 if [[ "$(alias gf 2>/dev/null)" != "" ]]; then
-	unalias gf
+   unalias gf
 fi
 function gf()
 {
-	local -r remote=${1:-$(git_current_remote)}
-	if [[ "" != "$1" ]]; then
-		shift
-	fi
+   local -r remote=${1:-$(git_current_remote)}
+   if [[ "" != "$1" ]]; then
+      shift
+   fi
 
-	git fetch "${remote}" $@
+   git fetch "${remote}" $@
 }
 
 
 function vigd() {
-	local remote=${1:-$(git_current_remote)}; shift
-	local branch=${2:-$(git_current_branch)}
-	vi -p $(git diff --name-only "${branch}" "$(git merge-base "${branch}" "${remote}")")
+   local remote=${1:-$(git_current_remote)}; shift
+   local branch=${2:-$(git_current_branch)}
+   vi -p $(git diff --name-only "${branch}" "$(git merge-base "${branch}" "${remote}")")
 }
 
 # alias glog="git log --follow --name-status"
@@ -171,26 +178,26 @@ alias sqlite="rlwrap -a -c -i sqlite3"
 alias rg="rg -L"
 
 function cdl() {
-	# Used to download phx images.  Now that phx-utils works better I don't use
-	# this anymore
+   # Used to download phx images.  Now that phx-utils works better I don't use
+   # this anymore
 
-	# alias cdl='curl -LnOC -'
-	if [[ "-o" == "$1" ]]; then
-		shift
-		output_dir=$1
-		shift
-	else
-		output_dir="/tmp"
-	fi
-	curl -o "${output_dir}/$(basename $1)" -LnC - "$1"
-	# echo curl -LnOC - "$1"
+   # alias cdl='curl -LnOC -'
+   if [[ "-o" == "$1" ]]; then
+      shift
+      output_dir=$1
+      shift
+   else
+      output_dir="/tmp"
+   fi
+   curl -o "${output_dir}/$(basename $1)" -LnC - "$1"
+   # echo curl -LnOC - "$1"
 }
 
 if [[ $(_exists wslpath) == 1 ]]; then
-	if [[ "${WSL_VERSION}" != 0 ]]; then
-		# Will have to deal with the username if I start using the WSL in more places..
-		alias win_tmp=$(wslpath -u "C:\\Users\\mruss100\\AppData\\Local\\Temp")
-	fi;
+   if [[ "${WSL_VERSION}" != 0 ]]; then
+      # Will have to deal with the username if I start using the WSL in more places..
+      alias win_tmp=$(wslpath -u "C:\\Users\\mruss100\\AppData\\Local\\Temp")
+   fi;
 fi
 
 # vim: ts=3 sts=0 sw=3 noet ft=sh ff=unix :

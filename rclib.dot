@@ -30,14 +30,27 @@ fi
 
 # This is done in an annoying way because once in a pipe, any sourceing or even
 # variable setting seems to be scope locked to that block
-declare files_str=$(find "${DOTFILES_DIR}/dotfiles-secret" "${DOTFILES_DIR}/scripts" -type f -name '*.dot' -print |
-while IFS= read -r file; do
-    echo $file
-done)
-declare -a files=($(echo ${files_str}))
+declare -a search_dirs
+if [[ -e "${DOTFILES_DIR}/dotfiles-secret" ]]; then
+    search_dirs+=("${DOTFILES_DIR}/dotfiles-secret")
+fi
+if [[ -e "${DOTFILES_DIR}/scripts" ]]; then
+    search_dirs+=("${DOTFILES_DIR}/scripts")
+fi
+if [[ "${#search_dirs[@]}" -gt 0 ]]; then
+    declare files_str=$(find ${search_dirs[@]} -type f -name '*.dot' -print |
+    while IFS= read -r file; do
+        echo $file
+    done)
+    declare -a files=($(echo ${files_str}))
 
-for file in ${files[@]}; do
-    source ${file}
-done;
-unset files
-unset files_str
+    for file in ${files[@]}; do
+        source ${file}
+    done;
+
+    unset files
+    unset files_str
+    unset search_dirs
+fi
+
+# vim: ts=4 sw=4 sts=0 expandtab
