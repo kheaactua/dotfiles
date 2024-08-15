@@ -155,7 +155,7 @@ let &runtimepath.=','.expand("~/.local/bin")
 if has('nvim-0.5')
    lcd /home/matt/dotfiles/stow/neovim/.config/nvim/lua
    lua require('utils')
-   lua require('plugins')
+   lua require("init")
    lua require('completions')
 endif
 
@@ -169,7 +169,7 @@ endif
 " colo doorhinge
 " colo nord
 " colo cobalt
-colo palenight
+" colo palenight
 
 
 """"""""""""""""""""""" Lightline """"""""""""""""""""""""
@@ -231,7 +231,7 @@ endif
 " Make W the same as w
 " https://stackoverflow.com/a/3878710/1861346
 command Q q
-command W w
+" command W w
 command Wqa wqa
 " command Tabe tabe
 
