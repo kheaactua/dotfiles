@@ -10,7 +10,7 @@ else
 fi
 
 declare -r DOTFILES_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-source "${DOTFILES_DIR}/detect_docker.dot"
+source "${DOTFILES_DIR}/detect_platform.dot"
 source "${DOTFILES_DIR}/rclib.dot"
 source "${DOTFILES_DIR}/lib.dot"
 

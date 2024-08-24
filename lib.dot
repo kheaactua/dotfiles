@@ -1,5 +1,5 @@
 # Requires ${DOTFILES_DIR:-${HOME}/dotfiles}
-# Source after "${DOTFILES_DIR:-${HOME}/dotfiles}/detect_docker.dot"
+# Source after "${DOTFILES_DIR:-${HOME}/dotfiles}/detect_platform.dot"
 # One day I'll convert this to pwsh so it can run on Windows as well.
 
 function dotfiles_hostname() {
