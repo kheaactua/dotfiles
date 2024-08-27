@@ -503,7 +503,6 @@
       "simplewhite",
       "solarized8_light_low",
       "sierra",
-      "herald",
       "neverland2",
       "nets-away",
       "colorful",
@@ -1034,9 +1033,7 @@
       "PapayaWhip",
       "Revolution",
       "Tomorrow-Night-Eighties",
-      "VIvid",
       "abbott",
-      "abra",
       "anotherdark",
       "argonaut",
       "atom",
@@ -1059,7 +1056,6 @@
       "clarity",
       "clue",
       "cobalt",
-      "cobalt2",
       "codeschool",
       "colorsbox-steighties",
       "colorzone",
@@ -1096,7 +1092,6 @@
       "guardian",
       "guepardo",
       "h80",
-      "herald",
       "herokudoc-gvim",
       "herokudoc",
       "hotpot",
@@ -5286,17 +5281,6 @@
       "name": "hemisu",
       "path": "github.com/flazz/vim-colorschemes/colors",
       "tags": [],
-      "variants": []
-    },
-    {
-      "__class__": "ColorScheme",
-      "__module__": "cmds",
-      "defaultVariant": null,
-      "name": "herald",
-      "path": "github.com/flazz/vim-colorschemes/colors",
-      "tags": [
-        "whitelist"
-      ],
       "variants": []
     },
     {
