@@ -1,18 +1,19 @@
 # Attributes that can be used by many fsb components
 global:
     build-summary-console-log-length: 1000
+    ci-disable-vsp-base-image-mirror: false
     ci-docker-container-home: /proj/jenkins
     ci-mode: false
     git-clone-mode: full
     git-mirror-root: /f/fsb-storage/git_mirror
     git-protocol: ssh
-    jobs: "8"
+    jobs: 8
     nexus-credential-source: netrc
     no-artifacts: true
     offline: false
     output-build-summary: true
     pkg-jobs: "-1"
-    qnx-jlevel: "8"
+    qnx-jlevel: 8
     toolchain: toolchain
     vsp-docker-image-creation-script: create_vsp_docker_image.sh
     # git mirroring can be disabled by setting the above git-mirror-root to "", e.g.
@@ -37,6 +38,7 @@ global:
     #source-dir: # Absolute path to the source directory. Default value is <fsb-project-root>/source
     #hidden-output-dir: # Absolute path to the hidden output directory (used by UnionFS). Default value is <fsb-project-root>/.fsb/output
     #hidden-copy-dir: # Absolute path to the hidden copy directory (used by UnionFS). Default value is <fsb-project-root>/.fsb/copy
+    #no-artifacts: # Controls the FSB_CREATE_ARTIFACTS in .fsb files. When true, sets FSB_CREATE_ARTIFACTS to False. Default value is true. This can be set on the command line like --no-artifacts=false
 # Compiler cache configuration
 #     ccache-enable: true to enable, false to disable the ccache functionality
 #     ccache-dir: path of the compiler cache
@@ -53,6 +55,10 @@ ccache:
 
 # Download cache configuration
 #     dl-cache-dir: path of the download cache
+#     raw-download: true to enable, false to disable the raw-download feature.
+#       The raw-download is an optional and extra step to download from dl-cache
+#       without lock, if not successful, fsb will continue with the regular download.
+#       Enabling raw-download could be helpful when the dl-cache lock is not stable.
 #     max-size: the maximum cache size (in GB)
 #     size-management: the way to manage the cache size, valid values are "none", "start", "always"
 #       none: no cache size management
@@ -132,6 +138,15 @@ code-signing:
 engine:
     continue-on-fail: false
     num-workers: 0
+
+# progress-bar: all parameters that affect the behavior of the progress bar
+#     enable: true to enable, false to disable the progress bar
+#     max-lines: Number of lines to allow the progress bar to use. At least 5 is recommended to ensure quick cycling out of finished packages.
+#                If there are not enough lines for both the main bars and at least one package bar, FSB may hang. Use caution.
+#                When set to -1, no limit is imposed. When set to 0 (default), half the terminal height is used, or 5, whichever is greater.
+#     keep-done: When set, pops finished package bars to above the main bar, rather than removing them. Default off.
+#     engine-only: When set, only shows the bars for the overall build, rather than also showing each package. This is always set when
+#                  stdout goes to a file rather than a terminal.
 
 # log-streams: an array of streams (stdout, stderr, or a file) specifications.
 #     log-level: valid values are: "debug", "info", "warn", "error", "dpanic", "panic", "fatal" (full caps also accepted).

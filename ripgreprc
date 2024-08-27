@@ -62,5 +62,8 @@ jam:include:jamprop,jamv2
 --type-add
 fileset:fileset
 
+--type-add
+conan:conanfile.py
+
 # Using glob patterns to include/exclude files or folders
 --glob=!git/*

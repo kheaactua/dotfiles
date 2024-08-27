@@ -74,6 +74,29 @@ return {
     end,
   },
 
+  {
+    'mhinz/vim-grepper',
+    init = function()
+      local map = require("utils").map
+      map('n', '<leader>G', ":Grepper -tool rg -buffer -cword -noprompt<CR>", { silent = true })
+      map('n', '<leader>GG', ":Grepper -tool rg -cword -noprompt<CR>", { silent = true })
+
+
+      -- vim.keymap.set("n", "<leader>G",
+      --   function()
+      --     local current_word = vim.api.nvim_command_output([[ echo expand('<cword>') ]])
+      --     fzf_lua.live_grep({
+      --       cmd = grep_cmd,
+      --       query = current_word,
+      --       cwd = fzf_lua.path.git_root(),
+      --     })
+      --   end,
+      --   { silent = true }
+      -- )
+
+    end,
+  },
+
   'vimlab/split-term.vim',
 
   -- {
@@ -100,9 +123,94 @@ return {
   -- },
 
   'mhinz/vim-startify',
+  -- {
+  --   'szw/vim-maximizer',
+  --   init = function()
+  --     local map = require("utils").map
+  --     map('n', '<leader>z', ':MaximizerToggle<CR>', { silent = true })
+  --     map('v', '<leader>z', ':MaximizerToggle<CR>gv', { silent = true })
+  --     map('i', '<leader>z', '<C-o>:MaximizerToggle<CR>', { silent = true })
+
+  --     map('n', '<C-w>z', ':MaximizerToggle<CR>', { silent = true })
+  --     map('v', '<C-w>z', ':MaximizerToggle<CR>gv', { silent = true })
+  --     map('i', '<C-w>z', '<C-o>:MaximizerToggle<CR>', { silent = true })
+  --   end,
+  -- },
 
   -- Gaze deeply into unknown regions using the power of the moon.
   'nvim-telescope/telescope.nvim',
+
+  -- Install fzf, the fuzzy searcher (also loads Ultisnips)
+  {
+    'ibhagwan/fzf-lua',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      local map = require("utils").map
+
+      local actions = require "fzf-lua.actions"
+      require("fzf-lua").setup({
+        actions = {
+          files = {
+            ["default"]     = actions.file_edit_or_qf,
+            ["ctrl-x"]      = actions.file_split,
+            ["ctrl-v"]      = actions.file_vsplit,
+            ["ctrl-t"]      = actions.file_tabedit,
+            ["alt-q"]       = actions.file_sel_to_qf, -- dunno what this does
+            ["alt-l"]       = actions.file_sel_to_ll, -- dunno what this does
+            ["ctrl-l"]      = require'fzf-lua.actions'.arg_add, -- dunno what this does
+          },
+          buffers = {
+            ["default"]     = actions.buf_edit,
+            ["ctrl-x"]      = actions.buf_split,
+            ["ctrl-v"]      = actions.buf_vsplit,
+            ["ctrl-t"]      = actions.buf_tabedit,
+          }
+        },
+        buffers = {
+          actions = {
+            ["ctrl-x"] = actions.buf_split,
+            ["ctrl-d"] = actions.buf_del,
+          }
+        },
+        tabs = {
+          actions = {
+            ["ctrl-x"] = actions.buf_split,
+            ["ctrl-d"] = actions.buf_del,
+          }
+        }
+      })
+
+      -- Set up keyboard shortbuts for fzf, the fuzzy finder
+      -- This one searches all the files in the current git repo:
+      map('n', '<c-k>', '<cmd>lua require("fzf-lua").git_files()<CR>', { silent = true })
+      map('n', '<leader>h', '<cmd>lua require("fzf-lua").oldfiles()<CR>', { silent = true })
+      map('n', '<leader>t', '<cmd>lua require("fzf-lua").tabs()<CR>', { silent = true })
+      map('n', '<leader><Tab>', '<cmd>lua require("fzf-lua").buffers()<CR>', { silent = true })
+
+      -- Unmap center/<CR> from launching fzf which appears to be mapped by default.
+      -- unmap <CR>
+
+      -- map('n', '<leader>g', '<cmd>lua require("fzf-lua").grep_project()<CR>', { silent = true })
+      map('n', '<leader>g', '<cmd>lua require("fzf-lua").live_grep()<CR>', { silent = true })
+
+      vim.keymap.set("n", "gsiw",
+        function()
+          local fzf_lua = require("fzf-lua")
+          local current_word = vim.api.nvim_command_output([[ echo expand('<cword>') ]])
+          fzf_lua.live_grep({
+            cmd = grep_cmd,
+            query = current_word,
+            cwd = fzf_lua.path.git_root(),
+          })
+        end,
+        { silent = true }
+      )
+
+      map('n', '<leader>l', '<cmd>lua require("fzf-lua").lines()<CR>', { silent = true })
+      map('n', '<leader>w', '<cmd>lua require("fzf-lua").Windows()<CR>', { silent = true })
+
+   end,
+  },
 
   -- Better quickfix window
   {
@@ -150,7 +258,7 @@ return {
   'tpope/vim-eunuch',
 
   -- Colourschemes
-  'navarasu/onedark.nvim',
+  'joshdick/onedark.nvim',
   'altercation/vim-colors-solarized',
   'kristijanhusak/vim-hybrid-material',
   'atelierbram/vim-colors_duotones',
@@ -160,6 +268,15 @@ return {
   'morhetz/gruvbox',
   'mhartington/oceanic-next',
   {'dracula/vim', as = 'dracula'},
+
+  {
+    'kheaactua/vim-managecolor',
+    init = function()
+      dotfiles_dir=vim.api.nvim_get_var('dotfiles')
+      vim.api.nvim_set_var('colo_search_path', dotfiles_dir .. '/bundles/dein')
+      vim.api.nvim_set_var('colo_cache_file',  dotfiles_dir .. '/colos.json')
+    end,
+  },
 
   {
     'ayu-theme/ayu-vim',
