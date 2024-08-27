@@ -367,7 +367,7 @@ command! Ep :echo expand('%:p')
 
 " Open init.vim in a tab
 let $init_vim=g:dotfiles . '/stow/neovim/.config/nvim/init.vim'
-let $init_vim_plugins=g:dotfiles . '/stow/neovim/.config/nvim/lua/plugins.lua'
+let $init_vim_plugins=g:dotfiles . '/stow/neovim/.config/nvim/lua/plugins/init.lua'
 command! Settings :tabe $init_vim | vsp $init_vim_plugins
 
 function! Open_fsb_dot()
