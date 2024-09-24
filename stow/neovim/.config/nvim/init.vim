@@ -170,6 +170,7 @@ endif
 " colo nord
 " colo cobalt
 " colo palenight
+colo habamax
 
 
 """"""""""""""""""""""" Lightline """"""""""""""""""""""""

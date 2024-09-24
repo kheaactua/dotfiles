@@ -62,12 +62,12 @@ declare -a rdirs;
 rdirs=( \
   bin utils .composer/vendor/bin .rvm/bin .local/bin .fzf/bin \
   .pyenv/bin utils/bin .cargo/bin \
-  build/kotlin-language-server/server/build/install/server/bin \
-  .sdkman/candidates/gradle/current/bin \
   go/bin \
   platform-tools \
   .local/share/bob/nvim-bin
 );
+  # build/kotlin-language-server/server/build/install/server/bin \
+  # .sdkman/candidates/gradle/current/bin \
 
 for d in ${rdirs[@]}; do
   if [[ -e "${HOME}/$d" ]]; then
@@ -97,11 +97,12 @@ for d in ${dirs[@]};  do path_prepend "${d}"; done
 for d in ${pdirs[@]}; do path_prepend "${d}"; done
 for d in ${adirs[@]}; do path_append "${d}"; done
 
-# If pyenv exists, initialise it
-if [[ -e "${HOME}/.pyenv/bin" ]]; then
-  eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
-fi
+# If pyenv exists, initialise it.
+# Disabled now because I haven't used pyenv in years.
+# if [[ -e "${HOME}/.pyenv/bin" ]]; then
+#   eval "$(pyenv init -)"
+#   eval "$(pyenv virtualenv-init -)"
+# fi
 
 # Build MAN path
 dirs=(${LINUXBREWHOME}/man ${HOME}/.rvm/man ${HOME}/.local/man);
@@ -111,11 +112,27 @@ done
 path_prepend "${LINUXBREWHOME:-bad_path}/share/man" MANPATH
 path_prepend "${LINUXBREWHOME:-bad_path}/share/info" INFOPATH
 
+# Setup the fpath for completions
+declare -a fdirs;
+if [ -n "$ZSH_VERSION" ]; then
+  fdirs=( \
+    # "${LINUXBREWHOME}/.linuxbrew/share/zsh/site-functions"
+
+    # Pure Prompt https://github.com/sindresorhus/pure
+    # /usr/local/lib/node_modules/pure-prompt/functions
+
+    ${HOME}/dotfiles/completions
+  )
+  for f in $fdirs; do
+    fpath+=($f)
+  done
+fi
+
 if [ -n "$ZSH_VERSION" ]; then
   # Remove duplicate paths https://til.hashrocket.com/posts/7evpdebn7g-remove-duplicates-in-zsh-path
-  typeset -aU path dirs adirs pdirs
+  typeset -aU path dirs adirs pdirs fdirs
 else
-  unset path dirs adirs pdirs
+  unset path dirs adirs pdirs fdirs
 fi
 
 # Clean up path (remove duplicates).  Don't need because path_* functions check

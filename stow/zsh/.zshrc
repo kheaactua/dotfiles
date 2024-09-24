@@ -13,10 +13,10 @@ if [[ -e "${DOTFILES_DIR}/rclib.dot" ]]; then
 	source "${DOTFILES_DIR}/rclib.dot"
 fi
 
-source "${DOTFILES_DIR}/init_gpg_session.dot"
-
-# Currently only loads init_ssh_agent, doesn't run it
-source "${DOTFILES_DIR}/init_ssh_agent_session.dot"
+if [[ -e "${DOTFILES_DIR}/agents.dot" ]]; then
+	source "${DOTFILES_DIR}/agents.dot"
+	init_gpg_agent
+fi
 
 if [[ -e "${DOTFILES_DIR}/doupdate.sh" && ! "$(hostname)" =~ sync* ]]; then
 	# Update the dotfiles repo to make sure we have all changes:
@@ -77,9 +77,7 @@ if [[ -e "${HOME}/.zplug" ]]; then
 	fi
 
 	if [[ "${PLATFORM}" == android_aarch64 ]]; then
-		# Pure Prompt https://github.com/sindresorhus/pure
-		fpath+=('/usr/local/lib/node_modules/pure-prompt/functions')
-
+		# Haven't used zsh on android in uears...
 		zplug "lib/completion", from:oh-my-zsh           # Provides completion of dot directories
 
 		ZSH_THEME=""
@@ -98,9 +96,7 @@ if [[ -e "${HOME}/.zplug" ]]; then
 	fi
 
 	# Bookmarks in fzf
-	if [[ "1" == "$(_exists fzf)" ]]; then
-		zplug "urbainvaes/fzf-marks"
-	fi
+	_exists fzf && zplug "urbainvaes/fzf-marks"
 
 	# Install plugins if there are plugins that have not been installed
 	if ! zplug check --verbose; then
@@ -114,12 +110,12 @@ if [[ -e "${HOME}/.zplug" ]]; then
 	zplug load
 fi
 
-if [[ "1" == $(_exists urxvt) ]]; then
+if _exists urxvt; then
 	# Set the terminal to urxvt, for i3wm:
 	export TERMINAL=urxvt
 fi
 
-if [[ "1" == "$(_exists nvim)" ]]; then
+if _exists nvim; then
 	export EDITOR=nvim
 fi
 
@@ -195,7 +191,7 @@ function _fix_zsh_init() {
 	# # Alt + up arrow
 	# bindkey '^[^[[A' up-line-or-history-global
 
-	[[ "1" == "$(_exists direnv)" ]] && eval "$(direnv hook zsh)" 2> /dev/null
+	_exists direnv && eval "$(direnv hook zsh)" 2> /dev/null
 }
 zvm_after_init_commands+=(_fix_zsh_init)
 
@@ -312,9 +308,9 @@ fi
 # vcpkg
 [ -e "${VCPKG_ROOT}/scripts/vcpkg_completion.bash" ] && source "${VCPKG_ROOT}/scripts/vcpkg_completion.bash"
 
-if [[ "1" == "$(_exists fd)" ]]; then
+if _exists fd; then
 	declare fzfcmd=fd
-elif [[ "1" == "$(_exists fdfind)" ]]; then
+elif _exists fdfind; then
 	declare fzfcmd=fdfind
 fi
 if [[ "undefined" == "${fzfcmd:-undefined}" ]]; then
