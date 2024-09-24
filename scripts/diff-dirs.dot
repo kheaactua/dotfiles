@@ -5,7 +5,7 @@ function diff-dirs()
     local -r dir_a=$(realpath $1)
     local -r dir_b=$(realpath $2)
 
-    if [[ "0" == $(_exists sd) ]]; then
+    if ! _exists sd; then
         echo "Function relies on sd (TODO make it work with sed)" 1>&2
     fi
 

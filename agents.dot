@@ -1,0 +1,48 @@
+function init_gpg_agent()
+{
+	_exists gpgconf || return 1
+
+	# Attempting to use gpg-agent over ssh-agent.  Do this before doupdate or else
+	# it'll prompt for the SSH passphrase rather than the keyring passphrase
+	# https://eklitzke.org/using-gpg-agent-effectively
+	#
+	# Also, according to
+	# https://wiki.archlinux.org/title/SSH_keys#Start_ssh-agent_with_systemd_user
+	# , we should probably check whether SSH_CONNECTION is set, and not set
+	# SSH_AUTH_SOCK if it is.
+	if [[ "undefined" == "${SSH_AUTH_SOCK:-undefined}" ]]; then
+		export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+	fi
+	export GPG_TTY=$(tty)
+	gpg-connect-agent updatestartuptty /bye >/dev/null
+}
+
+function init_ssh_agent()
+{
+	local debug=0
+	if [[ "${1}" == "debug" ]]; then
+		debug=1
+	fi;
+
+	export SSH_AUTH_SOCK=~/.ssh/ssh-agent.$(hostname).sock
+	ssh-add -l 2>/dev/null >/dev/null
+	if [ $? -ge 2 ]; then
+		if [[ "${debug}" -eq 1 ]]; then
+			ssh-agent -d -a "$SSH_AUTH_SOCK" 2>&1 | tee -a /tmp/ssh-agent.log
+		else
+			ssh-agent -a "$SSH_AUTH_SOCK" >/dev/null
+		fi
+	fi
+		export SSH_AGENT_PID=$(pidof ssh-agent)
+	if [[ $debug -eq 1 ]]; then
+		echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK"
+		echo "SSH_AGENT_PID=$SSH_AGENT_PID"
+	fi
+
+	# fd 'id_rsa' -E '*.pub' ~/dotfiles/dotfiles-secret -x ssh-add
+	ssh-add /home/matt/dotfiles/dotfiles-secret/ford/keys/ssh/id_rsa-github.ford.com
+
+	# TODO https://rabexc.org/posts/pitfalls-of-ssh-agents might have a better way to do this
+}
+
+# vim: sw=4 sts=0 ts=4 noet ff=unix :

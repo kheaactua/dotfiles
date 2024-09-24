@@ -258,7 +258,7 @@ return {
   'tpope/vim-eunuch',
 
   -- Colourschemes
-  'joshdick/onedark.nvim',
+  'joshdick/onedark.vim',
   'altercation/vim-colors-solarized',
   'kristijanhusak/vim-hybrid-material',
   'atelierbram/vim-colors_duotones',

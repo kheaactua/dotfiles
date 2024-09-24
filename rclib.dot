@@ -4,23 +4,24 @@ function _exists() {
     if [ -n "${ZSH_VERSION}" ]; then
         local -r _not_found_pattern="not found$"
         if [[ "$(which "${1}" 2> /dev/null)" =~ ${_not_found_pattern} ]]; then
-            echo 0
+            return 1
         else
-            echo 1
+            return 0
         fi
     else
         which "${1}" 2>&1 > /dev/null
         if [[ 0 != "$?" ]]; then
-            echo 0
+            return 1
         else
-            echo 1
+            return 0
         fi
     fi
 }
 
 if [[ -z "$BASH_VERSION" && -n "${ZSH_VERSION}" ]]; then
     # Helpful arm-ldd function
-    if [[ "1" == "$(_exists patchelf)" ]]; then
+    # (don't think I've used this in 4 years)
+    if _exists patchelf; then
         func="function arm-ldd() { patchelf --print-needed $1 }"
     else
         func="function arm-ldd() { readelf -d $1 | grep \"\(NEEDED\)\" | sed -r \"s/.*\[(.*)\]/\1/\" }"

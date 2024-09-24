@@ -163,16 +163,16 @@ if [[ "1" != "${skip_tmux}" ]]; then
 	dotfiles_install_tpm "${h}"
 fi
 
-if [[ "1" == "$(_exists screen)" ]]; then
+if _exists screen; then
 	stows+=('screen')
 fi
-if [[ "1" == "$(_exists sqlite3)" ]]; then
+if _exists sqlite3; then
 	stows+=('sqlite')
 fi
-if [[ "1" == "$(_exists vncserver)" || "1" == "$(_exists tightvncserver)" ]]; then
+if _exists vncserver || _exists tightvncserver; then
 	stows+=('vnc')
 fi
-if [[ "1" == "$(_exists wireshark)" ]]; then
+if _exists wireshark; then
 	stows+=('wireshark')
 fi
 
@@ -218,12 +218,12 @@ if [[ "1" != "${skip_i3}" ]]; then
 fi
 
 # Setup pwsh on linux
-if [[ "1" == "$(_exists pwsh)" ]]; then
+if _exists pwsh; then
 	stows+=('pwsh')
 fi
 
 # Setup pwsh on linux
-if [[ "1" == "$(_exists fsb)" ]]; then
+if _exists fsb; then
 	stows+=('fsb')
 fi
 
@@ -243,7 +243,7 @@ if [[ "1" != "${skip_python_venv}" ]]; then
 		DEFAULT_PYTHON_VENV="default"
 	fi
 
-	if [[ ! -e "${VENVS}/${DEFAULT_PYTHON_VENV}" && "1" != "$(_exists virtualenv)" ]]; then
+	if [[ ! -e "${VENVS}/${DEFAULT_PYTHON_VENV}" && ! _exists virtualenv ]]; then
 		mkdir -p "${VENVS}"
 		pushd .
 		cd "${VENVS}"
