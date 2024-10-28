@@ -16,3 +16,5 @@
 "502","6","allDataTypes"
 "502","80f2","intAttr"
 "502","80f3","strAttr"
+"602","a03","largePayload"
+"602","a04","secSinceStart"
