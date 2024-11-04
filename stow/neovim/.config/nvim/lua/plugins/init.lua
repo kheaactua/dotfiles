@@ -4,7 +4,11 @@ return {
   -- { "folke/neoconf.nvim", cmd = "Neoconf" },
   {
     'tpope/vim-fugitive',
-    dependencies = { "tpope/vim-rhubarb" },
+    dependencies = {
+       -- rhubarb is suppose to to help fugitive with GitHub, though gh has
+       -- consumed a lot of what rhubarb does
+      "tpope/vim-rhubarb"
+    },
     init = function()
       vim.opt.diffopt:append('vertical')
     end,
@@ -20,9 +24,6 @@ return {
     "L3MON4D3/LuaSnip",
     version = "v2.*",
     init = function()
-      -- vim.keymap.set({ "i", "s" }, "<C-i>", function() require'luasnip'.jump(1)  end, { desc = "LuaSnip forward jump"  })
-      -- vim.keymap.set({ "i", "s" }, "<M-i>", function() require'luasnip'.jump(-1) end, { desc = "LuaSnip backward jump" })
-
       dotfiles_dir=vim.api.nvim_get_var('dotfiles')
       require("luasnip.loaders.from_snipmate").lazy_load({ paths = { dotfiles_dir .. "/snippets"} })
     end,
@@ -80,29 +81,10 @@ return {
       local map = require("utils").map
       map('n', '<leader>G', ":Grepper -tool rg -buffer -cword -noprompt<CR>", { silent = true })
       map('n', '<leader>GG', ":Grepper -tool rg -cword -noprompt<CR>", { silent = true })
-
-
-      -- vim.keymap.set("n", "<leader>G",
-      --   function()
-      --     local current_word = vim.api.nvim_command_output([[ echo expand('<cword>') ]])
-      --     fzf_lua.live_grep({
-      --       cmd = grep_cmd,
-      --       query = current_word,
-      --       cwd = fzf_lua.path.git_root(),
-      --     })
-      --   end,
-      --   { silent = true }
-      -- )
-
     end,
   },
 
   'vimlab/split-term.vim',
-
-  -- {
-  --   'udalov/kotlin-vim',
-  --   ft = {'kt'},
-  -- },
 
   -- Colour coding nests
   {
@@ -114,28 +96,7 @@ return {
     cond = false,
   },
 
-  -- {
-  --   'echasnovski/mini.nvim',
-  --   branch = 'stable',
-  --   init = function()
-  --     require('mini.sessions').setup()
-  --   end,
-  -- },
-
   'mhinz/vim-startify',
-  -- {
-  --   'szw/vim-maximizer',
-  --   init = function()
-  --     local map = require("utils").map
-  --     map('n', '<leader>z', ':MaximizerToggle<CR>', { silent = true })
-  --     map('v', '<leader>z', ':MaximizerToggle<CR>gv', { silent = true })
-  --     map('i', '<leader>z', '<C-o>:MaximizerToggle<CR>', { silent = true })
-
-  --     map('n', '<C-w>z', ':MaximizerToggle<CR>', { silent = true })
-  --     map('v', '<C-w>z', ':MaximizerToggle<CR>gv', { silent = true })
-  --     map('i', '<C-w>z', '<C-o>:MaximizerToggle<CR>', { silent = true })
-  --   end,
-  -- },
 
   -- Gaze deeply into unknown regions using the power of the moon.
   'nvim-telescope/telescope.nvim',
@@ -220,6 +181,108 @@ return {
   -- optional, highly recommended
   {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'},
 
+  -- Configurations for neovim's language client
+  {
+    'neovim/nvim-lspconfig',
+    dependencies = {
+      "williamboman/mason.nvim",
+      "williamboman/mason-lspconfig.nvim",
+      "nvimtools/none-ls.nvim",
+      "mhartington/formatter.nvim",
+    },
+    init = function()
+      require("mason").setup()
+      require("mason-lspconfig").setup()
+
+      mlc = require("mason-lspconfig")
+      mlc.setup {
+        -- vim.lsp.set_log_level("debug"),
+        -- ensure_installed = { "clangd", "yamlls", "bashls", "cmake", "dockerls", "gopls", "jsonls", "marksman", "pyright", "vimls" },
+        ensure_installed = { "clangd", "yamlls", "bashls", "cmake", "dockerls", "gopls", "jsonls", "marksman", "pyright" },
+        automatic_installation = true,
+      }
+
+      mlc.setup_handlers {
+          -- The first entry (without a key) will be the default handler
+          -- and will be called for each installed server that doesn't have
+          -- a dedicated handler.
+          function (server_name) -- default handler (optional)
+              -- print("Handing " .. server_name .. " with default handler")
+              require("lspconfig")[server_name].setup {}
+          end,
+          -- Next, you can provide a dedicated handler for specific servers.
+          -- For example, a handler override for the `rust_analyzer`:
+          -- ["rust_analyzer"] = function ()
+          --     require("rust-tools").setup {}
+          -- end
+      }
+      -- Global mappings.
+      -- See `:help vim.diagnostic.*` for documentation on any of the below functions
+      vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
+      vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
+      vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+      vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
+
+      -- Use LspAttach autocommand to only map the following keys
+      -- after the language server attaches to the current buffer
+      vim.api.nvim_create_autocmd('LspAttach', {
+        group = vim.api.nvim_create_augroup('UserLspConfig', {}),
+        callback = function(ev)
+          -- Enable completion triggered by <c-x><c-o>
+          vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+
+          -- Buffer local mappings.
+          -- See `:help vim.lsp.*` for documentation on any of the below functions
+          local opts = { buffer = ev.buf }
+          vim.keymap.set('n', '<leader>rD', vim.lsp.buf.declaration, opts)
+          vim.keymap.set('n', '<leader>rd', vim.lsp.buf.definition, opts)
+          vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+          vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+          vim.keymap.set('n', '<leader>rk', vim.lsp.buf.signature_help, opts)
+          -- vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
+          -- vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
+          -- vim.keymap.set('n', '<space>wl', function()
+          --   print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+          -- end, opts)
+          vim.keymap.set('n', '<leaderty', vim.lsp.buf.type_definition, opts)
+          vim.keymap.set('n', '<leader>rw', vim.lsp.buf.rename, opts)
+          vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
+          vim.keymap.set('n', '<leader>rf', vim.lsp.buf.references, opts)
+          vim.keymap.set('n', '<leader>fu', function()
+            vim.lsp.buf.format { async = true }
+          end, opts)
+          vim.keymap.set('v', '<leader>fu', function()
+            vim.lsp.buf.format { async = true }
+          end, opts)
+        end,
+      })
+
+      formatter = require('formatter')
+      formatter.setup({
+        -- Enable or disable logging
+        logging = true,
+
+        -- Set the log level
+        log_level = vim.log.levels.WARN,
+        -- log_level = vim.log.levels.DEBUG,
+
+        filetype = {
+          -- ["py"] = {
+          --   require("formatter.filetypes.python").black
+          -- },
+          ["yaml"] = {
+            require("formatter.filetypes.yaml").yamlfmt
+          },
+          ["*"] = {
+            -- "formatter.filetypes.any" defines default configurations for any
+            -- filetype
+            require("formatter.filetypes.any").remove_trailing_whitespace
+          }
+        }
+      })
+
+    end
+  },
 
   -- Plugin to make it easy to delete a buffer and close the file:
   'mhinz/vim-sayonara',
