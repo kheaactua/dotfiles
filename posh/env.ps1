@@ -43,9 +43,9 @@ if ($IsWindows)
 }
 
 Write-Host "Loading oh-my-posh" -ForegroundColor Yellow
-Import-Module oh-my-posh
+oh-my-posh init pwsh | Invoke-Expression
 # https://github.com/JanDeDobbeleer/oh-my-posh/tree/master/Themes
-Set-Theme robbyrussell
+# Set-Theme robbyrussell
 
 # https://github.com/PowerShell/PSReadLine
 # Get CTRL-A working
