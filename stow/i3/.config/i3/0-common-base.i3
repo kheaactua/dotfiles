@@ -46,6 +46,9 @@ bindsym XF86KbdBrightnessDown exec light -s sysfs/leds/asus::kbd_backlight -U 10
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
+# starting some apps in floating mode
+for_window [title="^Event Tester$"] floating enable, border normal 0
+
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
 

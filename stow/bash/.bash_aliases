@@ -15,35 +15,35 @@ alias df="df -h"
 alias tclsh="rlwrap tclsh"
 alias ip="ip --color"
 
-if [[ "$(_exists exa)" == 1 ]]; then
+if _exists exa; then
    alias ls="exa --header --long --sort=newest --tree --all --level=1 --ignore-glob=\".git|.github|.clang-format|.gitignore\""
 else
    alias ls="ls -lAhtrFG --color=auto"
 fi
-if [[ "$(_exists htop)" == 1 ]]; then
+if _exists htop; then
    alias htop=ytop
 fi
-if [[ "$(_exists dust)" == 1 ]]; then
+if _exists dust; then
    alias du=dust
 fi
-if [[ "$(_exists fd)" == 0 && "$(_exists fdfind)" == 1 ]]; then
+if ! _exists fd && _exists fdfind; then
    alias fd=fdfind
    export FD_CMD=fdfind
 fi
 export FZF_DEFAULT_COMMAND="${FD_CMD:-fd} --type f --exclude .git --exclude out"
 declare -x BAT_PAGER="less -R -X -I --tabs=2"
 if [[ "$(_exists bat)" == 0 && $(_exists batcat) == 1 ]]; then
-   alias cat=batcat
+   alias cat=batcat --paging=never
    alias less=batcat
-elif [[ "$(_exists bat)" == 1 ]]; then
+elif _exists bat; then
    alias cat=bat
 else
    alias less="less -R -I --tabs=2"
 fi
-if [[ "$(_exists ag)" == 1 ]]; then
+if _exists ag; then
    alias ag="ag -iU --color-line-number 34 --color-path 31"
 fi
-if [[ $(_exists nvim) == 1 ]]; then
+if _exists nvim; then
    alias vi=nvim
    alias vim=nvim
    alias vimdiff="nvim -d"
@@ -193,7 +193,7 @@ function cdl() {
    # echo curl -LnOC - "$1"
 }
 
-if [[ $(_exists wslpath) == 1 ]]; then
+if _exists wslpath; then
    if [[ "${WSL_VERSION}" != 0 ]]; then
       # Will have to deal with the username if I start using the WSL in more places..
       alias win_tmp=$(wslpath -u "C:\\Users\\mruss100\\AppData\\Local\\Temp")

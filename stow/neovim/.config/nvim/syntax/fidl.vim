@@ -22,20 +22,13 @@ else
   unlet b:current_syntax
 endif
 
-" Read the Javacc syntax to start with
-if version < 600
-  so <sfile>:p:h/javacc.vim
-else
-  runtime! syntax/javacc.vim
-  unlet b:current_syntax
-endif
 
 " Keywords codelanguage-def[Franca]
 syn keyword fBoolean             true false  skipwhite
 syn keyword fType                Int8 UInt8 Int16 UInt16 Int32 UInt32 Int64 UInt64 Boolean String Float Double ByteBuffe  skipwhite
 syn keyword fStructure           struct union enumeration typedef  skipwhite
 
-syn keyword syntaxElementKeyword typeCollection interface attribute method broadcast in out error  skipempty skipwhite 
+syn keyword syntaxElementKeyword typeCollection interface attribute method broadcast in out error  skipempty skipwhite
 syn keyword syntaxElementKeyword readonly noSubscriptions fireAndForget selective manages array of  skipempty skipwhite
 syn keyword syntaxElementKeyword is map to extends polymorphic  skipempty skipwhite
 syn keyword syntaxElementKeyword contract PSM vars state transition initial call respond signal set update  skipempty skipwhite

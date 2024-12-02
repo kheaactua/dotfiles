@@ -15,6 +15,8 @@ fi
 
 if [[ -e "${DOTFILES_DIR}/agents.dot" ]]; then
 	source "${DOTFILES_DIR}/agents.dot"
+	check_agent_file
+
 	init_gpg_agent
 fi
 

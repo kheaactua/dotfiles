@@ -169,7 +169,9 @@ endif
 " colo nord
 " colo cobalt
 " colo palenight
-colo habamax
+" colo habamax
+" colo bvemu
+colo darkspectrum
 
 
 """"""""""""""""""""""" Lightline """"""""""""""""""""""""
@@ -427,6 +429,25 @@ function! HighlightRepeats() range
   endfor
 endfunction
 
+function! Hi_slog()
+   syn match log_debug2   '.*\(SLOG2_DEBUG2\).*'
+   syn match log_debug1   '.*\(SLOG2_DEBUG1\).*'
+   syn match log_info 	  '.*\(SLOG2_INFO\).*'
+   syn match log_notice   '.*\(SLOG2_NOTICE\).*'
+   syn match log_warning  '.*\(SLOG2_WARNING\).*'
+   syn match log_error 	  '.*\(SLOG2_ERROR\).*'
+
+   " Warning, Constant, String, Type, Number
+   " See highlight-groups
+
+   hi def link log_debug2 		StatusLine
+   hi def link log_debug1 		StatusLineNC
+   hi def link log_info 		Normal
+   hi def link log_notice 		Title
+   hi def link log_warning 	WarningMsg
+   hi def link log_error 		ErrorMsg
+endfunction
+
 command! -range=% HighlightRepeats <line1>,<line2>call HighlightRepeats()
 
 function! Annotate_fdepl()
@@ -434,8 +455,8 @@ function! Annotate_fdepl()
 endfunction
 
 " Run bpfmt, really gotta handle the path better
-if executable('/f/phoenix/aosp/out/soong/host/linux-x86/bin/bpfmt')
-   command! Bp :w | !/f/phoenix/aosp/out/soong/host/linux-x86/bin/bpfmt -w %
+if executable('/f/phoenix/aosp/out/host/linux-x86/bin/bpfmt')
+   command! Bp :w | !/f/phoenix/aosp/out/host/linux-x86/bin/bpfmt -w %
 endif
 
 augroup FILE_FORMATTING

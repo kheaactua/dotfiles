@@ -1,48 +1,88 @@
+#!/bin/bash
+
+function check_agent_file()
+{
+  # Verify the SSH agent file is correct.  If docker starts before the agent
+  # starts, than $SSH_AUTH_SOCK will be have the wrong ownership
+  if [[ -z "${SSH_AUTH_SOCK}" ]]; then
+    # SSH_AUTH_SOCK is not set, so it can't be pointing at the wrong file
+    return 0
+  fi
+
+  if [[ -S "${SSH_AUTH_SOCK}" ]]; then
+    local -r owner=$(stat -c %U:%G "${SSH_AUTH_SOCK}")
+    if [[ "${owner}" != "${USER}:${USER}" ]]; then
+      echo "SSH_AUTH_SOCK has the wrong ownership: ${owner}"
+      return 1
+    fi
+  else
+    echo "\e[32mSSH_AUTH_SOCK is not a socket\e[0m"
+    return 1
+  fi
+}
+
+function gen_agent_sock_file_name()
+{
+  echo "/run/user/$(id -u)/ssh-agent.$(hostname).sock"
+}
+
 function init_gpg_agent()
 {
-	_exists gpgconf || return 1
+  _exists gpgconf || return 1
 
-	# Attempting to use gpg-agent over ssh-agent.  Do this before doupdate or else
-	# it'll prompt for the SSH passphrase rather than the keyring passphrase
-	# https://eklitzke.org/using-gpg-agent-effectively
-	#
-	# Also, according to
-	# https://wiki.archlinux.org/title/SSH_keys#Start_ssh-agent_with_systemd_user
-	# , we should probably check whether SSH_CONNECTION is set, and not set
-	# SSH_AUTH_SOCK if it is.
-	if [[ "undefined" == "${SSH_AUTH_SOCK:-undefined}" ]]; then
-		export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
-	fi
-	export GPG_TTY=$(tty)
-	gpg-connect-agent updatestartuptty /bye >/dev/null
+  # Attempting to use gpg-agent over ssh-agent.  Do this before doupdate or else
+  # it'll prompt for the SSH passphrase rather than the keyring passphrase
+  # https://eklitzke.org/using-gpg-agent-effectively
+  #
+  # Also, according to
+  # https://wiki.archlinux.org/title/SSH_keys#Start_ssh-agent_with_systemd_user
+  # , we should probably check whether SSH_CONNECTION is set, and not set
+  # SSH_AUTH_SOCK if it is.
+  if [[ "undefined" == "${SSH_AUTH_SOCK:-undefined}" ]]; then
+    export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+  fi
+  export GPG_TTY="$(tty)"
+  gpg-connect-agent updatestartuptty /bye >/dev/null
 }
 
 function init_ssh_agent()
 {
-	local debug=0
-	if [[ "${1}" == "debug" ]]; then
-		debug=1
-	fi;
+  local debug=0
+  if [[ "${1}" == "debug" ]]; then
+    debug=1
+  fi;
 
-	export SSH_AUTH_SOCK=~/.ssh/ssh-agent.$(hostname).sock
-	ssh-add -l 2>/dev/null >/dev/null
-	if [ $? -ge 2 ]; then
-		if [[ "${debug}" -eq 1 ]]; then
-			ssh-agent -d -a "$SSH_AUTH_SOCK" 2>&1 | tee -a /tmp/ssh-agent.log
-		else
-			ssh-agent -a "$SSH_AUTH_SOCK" >/dev/null
-		fi
-	fi
-		export SSH_AGENT_PID=$(pidof ssh-agent)
-	if [[ $debug -eq 1 ]]; then
-		echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK"
-		echo "SSH_AGENT_PID=$SSH_AGENT_PID"
-	fi
+  # From eval `ssh-agent`
+  # eval $(ssh-agent)
 
-	# fd 'id_rsa' -E '*.pub' ~/dotfiles/dotfiles-secret -x ssh-add
-	ssh-add /home/matt/dotfiles/dotfiles-secret/ford/keys/ssh/id_rsa-github.ford.com
+  export SSH_AUTH_SOCK="$(gen_agent_sock_file_name)"
 
-	# TODO https://rabexc.org/posts/pitfalls-of-ssh-agents might have a better way to do this
+  if [[ ! check_agent_file ]]; then
+    echo "SSH_AUTH_SOCK is not correct"
+    return 1
+  fi
+
+  ssh-add -l 2>/dev/null >/dev/null
+  if [ $? -ge 2 ]; then
+    if [[ "${debug}" -eq 1 ]]; then
+      ssh-agent -d -a "${SSH_AUTH_SOCK}" 2>&1 | tee -a /tmp/ssh-agent.log
+    else
+      ssh-agent -a "${SSH_AUTH_SOCK}" >/dev/null
+    fi
+  fi
+  # if [[ -z "$SSH_AGENT_PID" ]]; then
+    export SSH_AGENT_PID="$(pidof ssh-agent)"
+  # fi
+  if [[ $debug -eq 1 ]]; then
+    echo "SSH_AUTH_SOCK=${SSH_AUTH_SOCK}"
+    echo "SSH_AGENT_PID=${SSH_AGENT_PID}"
+  fi
+
+  # fd 'id_rsa' -E '*.pub' ~/dotfiles/dotfiles-secret -x ssh-add
+  ssh-add /home/matt/dotfiles/dotfiles-secret/ford/keys/ssh/id_rsa-github.ford.com
+
+  # TODO https://rabexc.org/posts/pitfalls-of-ssh-agents might have a better way to do this
 }
 
-# vim: sw=4 sts=0 ts=4 noet ff=unix :
+
+# vim: sw=4 sts=0 ts=4 noet ff=unix ft=sh :
