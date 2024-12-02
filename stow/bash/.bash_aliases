@@ -200,4 +200,14 @@ if [[ $(_exists wslpath) == 1 ]]; then
    fi;
 fi
 
+# Sometimes on reboot, the default sinks (sound) aren't set
+function fix-sound() {
+  echo "List sinks"
+  echo "  pacmd list-sinks | grep -e 'name:' -e 'index:'"
+  echo "Set default sink"
+  echo "  pacmd set-default-sink <sink_name>"
+  echo
+  echo "Usually we're looking for <alsa_output.usb-Jieli_Technology_USB_Composite_Device-00.iec958-stereo>"
+}
+
 # vim: ts=3 sts=0 sw=3 noet ft=sh ff=unix :

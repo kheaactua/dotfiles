@@ -1,3 +1,5 @@
+-S
+
 # selinux policy files
 --type-add
 te:*.te

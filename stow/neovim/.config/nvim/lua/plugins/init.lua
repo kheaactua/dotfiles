@@ -1,3 +1,7 @@
+require "launch"
+
+spec "cmp.lua"
+
 return {
   -- "folke/neodev.nvim",
   -- "folke/which-key.nvim",
@@ -64,6 +68,9 @@ return {
     dependencies = { "github/copilot.vim", 'nvim-lua/plenary.nvim', 'nvim-treesitter/nvim-treesitter' },
     init = function()
       require("CopilotChat").setup()
+
+      local map = require("utils").map
+      map('n', '<leader>c', ":CopilotChatToggle<CR>", { silent = true })
     end,
   },
 
