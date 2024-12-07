@@ -10,8 +10,9 @@ function check_agent_file()
   fi
 
   if [[ -S "${SSH_AUTH_SOCK}" ]]; then
-    local -r owner=$(stat -c %U:%G "${SSH_AUTH_SOCK}")
-    if [[ "${owner}" != "${USER}:${USER}" ]]; then
+    # local -r owner=$(stat -c %U:%G "${SSH_AUTH_SOCK}")
+    local -r owner=$(stat -c %U "${SSH_AUTH_SOCK}")
+    if [[ "${owner}" != "${USER}" ]]; then
       echo "SSH_AUTH_SOCK has the wrong ownership: ${owner}"
       return 1
     fi

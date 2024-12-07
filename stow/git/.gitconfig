@@ -14,8 +14,6 @@
 	path = 	~/.gitconfig-ford
 [includeIf "gitdir:/f/**/"]
 	path = 	~/.gitconfig-ford
-[includeIf "gitdir:/tmp/**/"]
-	path = 	~/.gitconfig-ford
 [includeIf "gitdir:~/.conan*/**/"]
 	path = 	~/.gitconfig-ford
 [url "https://github.com"]
