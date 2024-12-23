@@ -1,23 +1,37 @@
 #!/bin/bash
 
+function clean_ssh_env()
+{
+    unset SSH_AGENT_PID
+    unset SSH_AUTH_SOCK
+    unset SSH_AUTH_AGENT
+}
+
 function check_agent_file()
 {
+  local -r ssh_auth_sock="${1:-${SSH_AUTH_SOCK}}"
+
   # Verify the SSH agent file is correct.  If docker starts before the agent
   # starts, than $SSH_AUTH_SOCK will be have the wrong ownership
-  if [[ -z "${SSH_AUTH_SOCK}" ]]; then
+  if [[ -z "${ssh_auth_sock}" ]]; then
     # SSH_AUTH_SOCK is not set, so it can't be pointing at the wrong file
     return 0
   fi
 
-  if [[ -S "${SSH_AUTH_SOCK}" ]]; then
+  if [[ ! -e "${ssh_auth_sock}" ]]; then
+    # The file doesn't exist, so it can't be pointing at the wrong file/dir
+    return 0
+  fi
+
+  if [[ -S "${ssh_auth_sock}" ]]; then
     # local -r owner=$(stat -c %U:%G "${SSH_AUTH_SOCK}")
-    local -r owner=$(stat -c %U "${SSH_AUTH_SOCK}")
+    local -r owner=$(stat -c %U "${ssh_auth_sock}")
     if [[ "${owner}" != "${USER}" ]]; then
-      echo "SSH_AUTH_SOCK has the wrong ownership: ${owner}"
+      echo "SSH_AUTH_SOCK=${ssh_auth_sock} has the wrong ownership: ${owner}"
       return 1
     fi
   else
-    echo "\e[32mSSH_AUTH_SOCK is not a socket\e[0m"
+    echo "\e[32mSSH_AUTH_SOCK=${ssh_auth_sock} is not a socket\e[0m"
     return 1
   fi
 }
@@ -46,6 +60,11 @@ function init_gpg_agent()
   gpg-connect-agent updatestartuptty /bye >/dev/null
 }
 
+function ssh_agent_running()
+{
+  pgrep -x ssh-agent > /dev/null
+}
+
 function init_ssh_agent()
 {
   local debug=0
@@ -56,34 +75,60 @@ function init_ssh_agent()
   # From eval `ssh-agent`
   # eval $(ssh-agent)
 
-  export SSH_AUTH_SOCK="$(gen_agent_sock_file_name)"
+  local ssh_auth_sock="$(gen_agent_sock_file_name)"
 
-  if [[ ! check_agent_file ]]; then
-    echo "SSH_AUTH_SOCK is not correct"
+  pkill ssh-agent
+  unset SSH_AUTH_SOCK
+  unset SSH_AGENT_PID
+  unset SSH_AUTH_AGENT
+
+  if ! $(check_agent_file "${ssh_auth_sock}"); then
+    echo "SSH_AUTH_SOCK=${ssh_auth_sock} is problematic"
     return 1
+  fi
+
+  if ! ssh_agent_running && [ -e "${ssh_auth_sock}" ]; then
+    if [[ "${debug}" -eq 1 ]]; then
+      echo "ssh-agent isn't running, but ${ssh_auth_sock} exists, removing it"
+    fi
+    rm -f "${ssh_auth_sock}"
   fi
 
   ssh-add -l 2>/dev/null >/dev/null
   if [ $? -ge 2 ]; then
     if [[ "${debug}" -eq 1 ]]; then
-      ssh-agent -d -a "${SSH_AUTH_SOCK}" 2>&1 | tee -a /tmp/ssh-agent.log
+      ssh-agent -d -a "${ssh_auth_sock}" 2>&1 | tee -a /tmp/ssh-agent.log
     else
-      ssh-agent -a "${SSH_AUTH_SOCK}" >/dev/null
+      ssh-agent -a "${ssh_auth_sock}" >/dev/null
     fi
   fi
-  # if [[ -z "$SSH_AGENT_PID" ]]; then
-    export SSH_AGENT_PID="$(pidof ssh-agent)"
-  # fi
+
+  local -r ssh_agent_pid="$(pidof ssh-agent)"
+  if [[ -z "${ssh_agent_pid}" ]]; then
+    echo "Failed to start ssh-agent"
+    clean_ssh_env
+    return 1
+  fi
+
+  export SSH_AGENT_PID="$(pidof ssh-agent)"
+  export SSH_AUTH_SOCK="${ssh_auth_sock}"
+  export SSH_AUTH_AGENT="${ssh_auth_sock}"
+
   if [[ $debug -eq 1 ]]; then
     echo "SSH_AUTH_SOCK=${SSH_AUTH_SOCK}"
+    echo "SSH_AUTH_AGENT=${SSH_AUTH_AGENT}"
     echo "SSH_AGENT_PID=${SSH_AGENT_PID}"
   fi
 
-  # fd 'id_rsa' -E '*.pub' ~/dotfiles/dotfiles-secret -x ssh-add
-  ssh-add /home/matt/dotfiles/dotfiles-secret/ford/keys/ssh/id_rsa-github.ford.com
-
-  # TODO https://rabexc.org/posts/pitfalls-of-ssh-agents might have a better way to do this
+  # See https://rabexc.org/posts/pitfalls-of-ssh-agents might have a better way to do this
 }
 
+function init_keyring() {
+  clean_ssh_env
+  eval "$(/usr/bin/gnome-keyring-daemon --start --components=ssh)"
+  export SSH_AUTH_SOCK
+  export GPG_TTY="$(tty)"
+  export SSH_AUTH_AGENT="${SSH_AUTH_SOCK}"
+}
 
 # vim: sw=4 sts=0 ts=4 noet ff=unix ft=sh :

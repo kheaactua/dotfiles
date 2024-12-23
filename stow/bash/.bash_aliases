@@ -59,12 +59,13 @@ if [[ -e "${HOME}/bin/yubioath-desktop-5.0.1-linux.AppImage" ]]; then
    alias yubiAuth="${HOME}/bin/yubioath-desktop-5.0.1-linux.AppImage"
 fi
 
+# Looks like this converts a PDF to a black and white
 function pdfwb() {
    input=$1
    output=${1/pdf/bw.pdf}
 
    gs \
-    -sOutputFile=$output \
+    -sOutputFile="${output}" \
     -sDEVICE=pdfwrite \
     -sColorConversionStrategy=Gray \
     -dProcessColorModel=/DeviceGray \
@@ -208,6 +209,18 @@ function fix-sound() {
   echo "  pacmd set-default-sink <sink_name>"
   echo
   echo "Usually we're looking for <alsa_output.usb-Jieli_Technology_USB_Composite_Device-00.iec958-stereo>"
+}
+
+function _ps-fsb-stalled-pids() {
+	pgrep -f '(git ls-remote|SendEnv=GIT_PROTOCOL).*git@github.com'
+}
+
+function ps-fsb-stalled() {
+	ps -u -p $(_ps-fsb-stalled-pids)
+}
+
+function kill-ps-fsb-stalled() {
+	kill -15 $(_ps-fsb-stalled-pids)
 }
 
 # vim: ts=3 sts=0 sw=3 noet ft=sh ff=unix :

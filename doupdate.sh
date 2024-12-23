@@ -8,7 +8,8 @@ function abort_update() {
 
 function update_dotfiles()
 {
-    cd $(dirname $(realpath $0))
+    local -r cwd="$(dirname $(realpath "$0"))"
+    cd "${cwd}" || echo "Could not change to ${cwd}"
     local check_file=${DOTFILES_DIR:-$(dirname "$(realpath "$0")")}/.last_check
 
     local -r now=$(date +%s)
