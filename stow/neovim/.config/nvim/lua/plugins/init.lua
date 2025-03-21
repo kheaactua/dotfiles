@@ -64,7 +64,7 @@ return {
 
   {
     "CopilotC-Nvim/CopilotChat.nvim",
-    branch = 'canary',
+    branch = 'main',
     dependencies = { "github/copilot.vim", 'nvim-lua/plenary.nvim', 'nvim-treesitter/nvim-treesitter' },
     init = function()
       require("CopilotChat").setup()
@@ -302,7 +302,7 @@ return {
 
   -- syntax highlighting for *.hal, *.bp, and *.rc files.
   -- 'https://github.ford.com/MRUSS100/aosp-vim-syntax.git'
-  'rubberduck203/aosp-vim',
+  -- 'rubberduck203/aosp-vim',
 
   {
     'kheaactua/vim-fzf-repo',
@@ -311,6 +311,10 @@ return {
       map('n', '<leader>k', ':GRepoFiles<CR>', { silent = true })
      end,
      cond = false -- GRepoFiles calls fzf instead of fzf-lua, this needs to be fixed
+  },
+
+  {
+    'kheaactua/aosp-vim-syntax',
   },
 
   -- Vim sugar for the UNIX shell commands that need it the most. Features include:

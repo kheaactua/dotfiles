@@ -212,15 +212,23 @@ function fix-sound() {
 }
 
 function _ps-fsb-stalled-pids() {
-	pgrep -f '(git ls-remote|SendEnv=GIT_PROTOCOL).*git@github.com'
+  pgrep -f '(git ls-remote|SendEnv=GIT_PROTOCOL).*git@github.com'
 }
 
 function ps-fsb-stalled() {
-	ps -u -p $(_ps-fsb-stalled-pids)
+  ps -u -p $(_ps-fsb-stalled-pids)
 }
 
 function kill-ps-fsb-stalled() {
-	kill -15 $(_ps-fsb-stalled-pids)
+  kill -15 $(_ps-fsb-stalled-pids)
+}
+
+function logs() {
+  if [[ ! -z "${PHX_FSB_ROOT}" ]]; then
+    tail -f $(fd -t f --changed-within=5m 'package-.*log' ${PHX_FSB_ROOT}/logs)
+  else
+    echo "PHX_FSB_ROOT not set"
+  fi
 }
 
 # vim: ts=3 sts=0 sw=3 noet ft=sh ff=unix :
