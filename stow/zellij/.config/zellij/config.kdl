@@ -148,6 +148,7 @@ keybinds clear-defaults=true {
         bind "right" { MoveFocus "right"; SwitchToMode "locked"; }
         bind "space" { NextSwapLayout; }
         bind "%" { NewPane "right"; SwitchToMode "locked"; }
+        bind "\"" { NewPane "down"; SwitchToMode "locked"; }
         bind "[" { SwitchToMode "scroll"; }
         bind "Ctrl b" { Write 2; SwitchToMode "locked"; }
         bind "n" { GoToNextTab; SwitchToMode "locked"; }
