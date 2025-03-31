@@ -1,107 +1,101 @@
 [user]
-	name = Matthew Russell
-	email = matthew.g.russell@gmail.com
-	signingkey = 9DADF75304599BD8
+  name = Matthew Russell
+  email = matthew.g.russell@gmail.com
+  signingkey = 9DADF75304599BD8
 [includeIf "gitdir:~/workspace/capi/**/"]
-	path = 	~/.gitconfig-ford
+  path = ~/.gitconfig-ford
 [includeIf "gitdir:~/workspace/phx-fsb/**/"]
-	path = 	~/.gitconfig-ford
+  path = ~/.gitconfig-ford
 [includeIf "gitdir:~/workspace/ford/**/"]
-	path = 	~/.gitconfig-ford
+  path = ~/.gitconfig-ford
 [includeIf "gitdir:/src/**/"]
-	path = 	~/.gitconfig-ford
+  path = ~/.gitconfig-ford
 [includeIf "gitdir:/f/**/*"]
-	path = 	~/.gitconfig-ford
+  path = ~/.gitconfig-ford
 [includeIf "gitdir:/f/**/"]
-	path = 	~/.gitconfig-ford
+  path = 	~/.gitconfig-ford
 ; [includeIf "gitdir:/tmp/**/"]
-; 	path = 	~/.gitconfig-ford
+;   path = 	~/.gitconfig-ford
 [includeIf "gitdir:~/.conan*/**/"]
-	path = 	~/.gitconfig-ford
+  path = 	~/.gitconfig-ford
 [url "https://github.com"]
-	insteadOf = ssh://github.com
+  insteadOf = ssh://github.com
 [commit]
-	gpgsign = true
+  gpgsign = true
 [core]
-	quotepath = false
-	commitGraph = true
-	commentchar = @
-	excludesfile = ~/dotfiles/gitignore
-	pager = delta
+  quotepath = false
+  commitGraph = true
+  commentchar = @
+  excludesfile = ~/dotfiles/gitignore
+  ; pager = delta
 [gc]
-	writeCommitGraph = true
+  writeCommitGraph = true
 [merge]
-	tool = nvimdiff
+  tool = nvimdiff
 [credential]
-	helper = cache --timeout=6048009
+  helper = cache --timeout=6048009
 [color]
-	ui = auto
+  ui = auto
 [filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
 [push]
-	default = current
+  default = current
 [pull]
-	rebase = true
+  rebase = true
 [fetch]
-	prune = true
+  prune = true
 [rebase]
-	autoStash = true
-	; autoSquash = true
+  autoStash = true
+  ; autoSquash = true
 
 [diff]
-	colorMoved = default
+  colorMoved = default
 
 [uploadpack]
-	allowFilter = true
+  allowFilter = true
 
 [init]
-	defaultBranch = main
+  defaultBranch = main
 
 [merge "tool"]
-	path = /bin/nvim
+  path = /bin/nvim
 [mergetool "nvim"]
-	path = /bin/nvim
+  path = /bin/nvim
 
 [merge]
-	  conflictstyle = diff3
+ conflictstyle = diff3
 
 [diff]
-	  colorMoved = default
+  colorMoved = default
 
-[interactive]
-	; diffFilter = delta --color-only
-	diffFilter = delta --color-only --features=interactive
+  # Set difftastic as the default difftool, so we don't need to specify
+  # `-t difftastic` every time.
+  tool = difftastic
+
+[difftool "difftastic"]
+  # See `man git-difftool` for a description of MERGED, LOCAL and REMOTE.
+  cmd = difft "$MERGED" "$LOCAL" "abcdef1" "100644" "$REMOTE" "abcdef2" "100644"
+
+[difftool]
+  # Run the difftool immediately, don't ask 'are you sure' each time.
+  prompt = false
 
 [pager]
-	diff = delta
-	log = delta
-	reflog = delta
-	show = delta
+  # Use a pager if the difftool output is larger than one screenful,
+  # consistent with the behaviour of `git diff`.
+  difftool = true
 
-[delta]
-	navigate = true    # use n and N to move between diff sections
-	light = false      # set to true if you're in a terminal w/ a light background color (e.g. the default macOS terminal)
-	; features = decorations
-	; features = collared-trogon
-	; features = tangara-chilensis
-	features = woolly-mammoth
-	; features = calochortus-lyallii
-	; side-by-side = true
-	; commit-decoration-style = ol "#1136ff"
+[alias]
+  # `git log` with patches shown with difftastic.
+  dl = -c diff.external=difft log -p --ext-diff
 
-[delta "interactive"]
-	keep-plus-minus-markers = false
+  # Show the most recent commit with difftastic.
+  ds = -c diff.external=difft show --ext-diff
 
-[delta "decorations"]
-	commit-decoration-style = blue ol
-	commit-style = raw
-	file-style = omit
-	hunk-header-decoration-style = blue box
-	hunk-header-file-style = red
-	hunk-header-line-number-style = "#067a00"
-	hunk-header-style = file line-number syntax
+  # `git diff` with difftastic.
+  dft = -c diff.external=difft diff
 
 ; vim: ts=2 sw=2 sts=0 noet ft=gitconfig :
