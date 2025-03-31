@@ -92,7 +92,7 @@ augroup filetypes
    au BufNewFile,BufRead */modulefiles/**    setlocal ft=tcl
    au BufNewFile,BufRead */.conan/profiles/* setlocal ft=sh
    au BufNewFile,BufRead *.fs                setlocal ft=sh
-   au BufNewFile,BufRead */aosp/*.rc          setlocal ft=sh
+   au BufNewFile,BufRead */aosp/*.rc         setlocal ft=sh
    au BufNewFile,BufRead *.envrc             setlocal ft=sh
    au BufNewFile,BufRead .jdbrc              setlocal ft=jdb
    au BufNewFile,BufRead .clangd             setlocal ft=yaml
@@ -345,6 +345,9 @@ ab horizonal horizontal
 ab appraoch approach
 ab yeild yield
 ab lsit list
+
+" Used for vim-rhubarb, this should be in init.lua but not sure how right now
+let g:github_enterprise_urls = ['https://github.ford.com']
 
 " Directory aliases.  TODO generalize this somehow
 " nnoremap <leader>2 :@"<CR>

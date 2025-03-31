@@ -246,13 +246,13 @@ elif [[ "UGC14VW7PZ3" == "$(hostname)" ]]; then
 			github_git-lfs.list.save
 			us-ubuntu.list.save
 			signal-xenial.list.save
-			microsoft-edge.list.save
 			mozillateam-ubuntu-ppa-${ubuntu_version_code}.list.save
 			deadsnakes-ubuntu-ppa-${ubuntu_version_code}.list.save
 			sur5r-i3.list.save
 			wireshark-dev-ubuntu-stable-${ubuntu_version_code}.list.save
 			neovim-ppa-ubuntu-unstable-${ubuntu_version_code}.list.save
 			wireshark-dev-ubuntu-stable-${ubuntu_version_code}.list.save
+			teams-for-linux-packages.list.save
 		)
 		for f in ${apt_sources[@]}; do
 			local abs_f=/etc/apt/sources.list.d/$f
