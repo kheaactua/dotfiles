@@ -8,18 +8,13 @@ keybinds clear-defaults=true {
 	bind "Ctrl f" { SwitchToMode "tmux"; }
     }
     pane {
-        bind "left" { MoveFocus "left"; }
-        bind "down" { MoveFocus "down"; }
-        bind "up" { MoveFocus "up"; }
-        bind "right" { MoveFocus "right"; }
         bind "c" { SwitchToMode "renamepane"; PaneNameInput 0; }
-        bind "d" { NewPane "down"; SwitchToMode "locked"; }
         bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "locked"; }
         bind "z" { ToggleFocusFullscreen; SwitchToMode "locked"; }
-        bind "h" { MoveFocus "left"; }
         bind "i" { TogglePanePinned; SwitchToMode "locked"; }
         bind "n" { NewPane; SwitchToMode "locked"; }
         bind "p" { SwitchToMode "normal"; }
+        bind "d" { NewPane "down"; SwitchToMode "locked"; }
         bind "l" { NewPane "left"; SwitchToMode "locked"; }
         bind "r" { NewPane "right"; SwitchToMode "locked"; }
         bind "w" { ToggleFloatingPanes; SwitchToMode "locked"; }
@@ -165,19 +160,23 @@ keybinds clear-defaults=true {
         bind "9" { GoToTab 9; SwitchToMode "locked"; }
     }
     shared_among "normal" "locked" {
-        bind "Alt left" { MoveFocusOrTab "left"; }
-        bind "Alt down" { MoveFocus "down"; }
-        bind "Alt up" { MoveFocus "up"; }
-        bind "Alt right" { MoveFocusOrTab "right"; }
+        bind "Alt left" { Resize "Increase left"; }
+        bind "Alt down" { Resize "Increase down"; }
+        bind "Alt up" { Resize "Increase up"; }
+        bind "Alt right" { Resize "Increase right"; }
+
         bind "Alt +" { Resize "Increase"; }
         bind "Alt -" { Resize "Decrease"; }
         bind "Alt =" { Resize "Increase"; }
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
         bind "Alt f" { ToggleFloatingPanes; }
-        bind "Alt n" { NewPane; }
+        bind "Alt i" { MoveTab "left"; }
         bind "Alt o" { MoveTab "right"; }
 	bind "Alt k" { Clear; }
+
+	// This screws me in vi
+        // bind "PageUp" { SwitchToMode "scroll"; PageScrollUp; }
     }
     shared_except "locked" "renametab" "renamepane" {
         bind "Ctrl g" { SwitchToMode "locked"; }
