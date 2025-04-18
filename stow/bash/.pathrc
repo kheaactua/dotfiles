@@ -58,6 +58,7 @@ declare -a pdirs;
 declare -a adirs;
 
 # Relative direcoties to HOME that we'll prepend
+# Note the npm one is here because I did: npm config set prefix "~/.npm_packages"
 declare -a rdirs;
 rdirs=( \
   bin utils .composer/vendor/bin .rvm/bin .local/bin .fzf/bin \
@@ -65,6 +66,7 @@ rdirs=( \
   go/bin \
   platform-tools \
   .local/share/bob/nvim-bin
+  /home/matt/.npm_packages/bin
 );
   # build/kotlin-language-server/server/build/install/server/bin \
   # .sdkman/candidates/gradle/current/bin \
