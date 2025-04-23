@@ -1,112 +1,60 @@
-# https://raw.githubusercontent.com/ChristianChiarulli/nvim/refs/heads/master/lua/user/cmp.lua
-
 local M = {
   "hrsh7th/nvim-cmp",
+  priority = 50,  -- High priority to load early
   dependencies = {
-    {
-      "hrsh7th/cmp-nvim-lsp",
-      event = "InsertEnter",
-    },
-    {
-      "hrsh7th/cmp-emoji",
-      event = "InsertEnter",
-    },
-    {
-      "hrsh7th/cmp-buffer",
-      event = "InsertEnter",
-    },
-    {
-      "hrsh7th/cmp-path",
-      event = "InsertEnter",
-    },
-    {
-      "hrsh7th/cmp-cmdline",
-      event = "InsertEnter",
-    },
-    {
-      "saadparwaiz1/cmp_luasnip",
-      event = "InsertEnter",
-    },
+    { "hrsh7th/cmp-nvim-lsp" },
+    { "hrsh7th/cmp-buffer" },
+    { "hrsh7th/cmp-path" },
+    { "hrsh7th/cmp-cmdline" },
+    { "saadparwaiz1/cmp_luasnip" },
+    { "hrsh7th/cmp-emoji" },
+    { "hrsh7th/cmp-nvim-lua" },
     {
       "L3MON4D3/LuaSnip",
-      event = "InsertEnter",
-      dependencies = {
-        "rafamadriz/friendly-snippets",
-      },
-    },
-    {
-      "hrsh7th/cmp-nvim-lua",
-    },
-    {
-      "roobert/tailwindcss-colorizer-cmp.nvim",
+      dependencies = { "rafamadriz/friendly-snippets" },
     },
   },
-  event = "InsertEnter",
+  lazy = false,  -- Load immediately, not just on InsertEnter
 }
 
 function M.config()
-  require("tailwindcss-colorizer-cmp").setup {
-    color_square_width = 2,
-  }
-
   vim.api.nvim_set_hl(0, "CmpItemKindCopilot", { fg = "#6CC644" })
   vim.api.nvim_set_hl(0, "CmpItemKindTabnine", { fg = "#CA42F0" })
   vim.api.nvim_set_hl(0, "CmpItemKindCrate", { fg = "#F64D00" })
   vim.api.nvim_set_hl(0, "CmpItemKindEmoji", { fg = "#FDE030" })
 
-  local cmp = require "cmp"
-  local luasnip = require "luasnip"
+  local cmp = require("cmp")
+  local luasnip = require("luasnip")
+
+  -- Load snippets
   require("luasnip/loaders/from_vscode").lazy_load()
   require("luasnip").filetype_extend("typescriptreact", { "html" })
 
   local check_backspace = function()
-    local col = vim.fn.col "." - 1
-    return col == 0 or vim.fn.getline("."):sub(col, col):match "%s"
+    local col = vim.fn.col(".") - 1
+    return col == 0 or vim.fn.getline("."):sub(col, col):match("%s")
   end
 
-  local icons = require "user.icons"
-  local types = require "cmp.types"
+  local has_words_before = function()
+    if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
+    local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+    return col ~= 0 and vim.api.nvim_buf_get_text(0, line-1, 0, line-1, col, {})[1]:match("^%s*$") == nil
+  end
 
-  cmp.setup {
+  cmp.setup({
     snippet = {
       expand = function(args)
-        luasnip.lsp_expand(args.body) -- For `luasnip` users.
+        luasnip.lsp_expand(args.body)
       end,
     },
-    mapping = cmp.mapping.preset.insert {
-      ["<C-k>"] = cmp.mapping(
-        cmp.mapping.select_prev_item { behavior = types.cmp.SelectBehavior.Select },
-        { "i", "c" }
-      ),
-      ["<C-j>"] = cmp.mapping(
-        cmp.mapping.select_next_item { behavior = types.cmp.SelectBehavior.Select },
-        { "i", "c" }
-      ),
-      ["<C-p>"] = cmp.mapping(
-        cmp.mapping.select_prev_item { behavior = types.cmp.SelectBehavior.Select },
-        { "i", "c" }
-      ),
-      ["<C-n>"] = cmp.mapping(
-        cmp.mapping.select_next_item { behavior = types.cmp.SelectBehavior.Select },
-        { "i", "c" }
-      ),
-      ["<C-h>"] = function()
-        if cmp.visible_docs() then
-          cmp.close_docs()
-        else
-          cmp.open_docs()
-        end
-      end,
-      ["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-1), { "i", "c" }),
-      ["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(1), { "i", "c" }),
-      ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
-      ["<C-e>"] = cmp.mapping {
-        i = cmp.mapping.abort(),
-        c = cmp.mapping.close(),
-      },
-      -- Accept currently selected item. If none selected, `select` first item.
-      -- Set `select` to `false` to only confirm explicitly selected items.
-      ["<CR>"] = cmp.mapping.confirm { select = true },
+    mapping = cmp.mapping.preset.insert({
+      ["<C-k>"] = cmp.mapping.select_prev_item(),
+      ["<C-j>"] = cmp.mapping.select_next_item(),
+      ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+      ["<C-f>"] = cmp.mapping.scroll_docs(4),
+      ["<C-Space>"] = cmp.mapping.complete(),
+      ["<C-e>"] = cmp.mapping.abort(),
+      ["<CR>"] = cmp.mapping.confirm({ select = true }),
       ["<Tab>"] = cmp.mapping(function(fallback)
         if cmp.visible() then
           cmp.select_next_item()
@@ -115,16 +63,11 @@ function M.config()
         elseif luasnip.expand_or_jumpable() then
           luasnip.expand_or_jump()
         elseif check_backspace() then
-          -- fallback()
-          require("neotab").tabout()
+          fallback()
         else
-          require("neotab").tabout()
-          -- fallback()
+          fallback()
         end
-      end, {
-        "i",
-        "s",
-      }),
+      end, { "i", "s" }),
       ["<S-Tab>"] = cmp.mapping(function(fallback)
         if cmp.visible() then
           cmp.select_prev_item()
@@ -133,192 +76,51 @@ function M.config()
         else
           fallback()
         end
-      end, {
-        "i",
-        "s",
-      }),
-    },
+      end, { "i", "s" }),
+    }),
     formatting = {
       fields = { "kind", "abbr", "menu" },
-      expandable_indicator = true,
       format = function(entry, vim_item)
-        vim_item.kind = icons.kind[vim_item.kind]
+        -- Kind icons
+        vim_item.kind = string.format("%s", vim_item.kind)
+
+        -- Source
         vim_item.menu = ({
-          nvim_lsp = "",
-          nvim_lua = "",
-          luasnip = "",
-          buffer = "",
-          path = "",
-          emoji = "",
+          nvim_lsp = "[LSP]",
+          luasnip = "[Snippet]",
+          buffer = "[Buffer]",
+          path = "[Path]",
+          copilot = "[Copilot]",
+          emoji = "[Emoji]",
         })[entry.source.name]
 
-        if vim.tbl_contains({ "nvim_lsp" }, entry.source.name) then
-          local duplicates = {
-            buffer = 1,
-            path = 1,
-            nvim_lsp = 0,
-            luasnip = 1,
-          }
-
-          local duplicates_default = 0
-
-          vim_item.dup = duplicates[entry.source.name] or duplicates_default
-        end
-
-        if vim.tbl_contains({ "nvim_lsp" }, entry.source.name) then
-          local words = {}
-          for word in string.gmatch(vim_item.word, "[^-]+") do
-            table.insert(words, word)
-          end
-
-          local color_name, color_number
-          if
-            words[2] == "x"
-            or words[2] == "y"
-            or words[2] == "t"
-            or words[2] == "b"
-            or words[2] == "l"
-            or words[2] == "r"
-          then
-            color_name = words[3]
-            color_number = words[4]
-          else
-            color_name = words[2]
-            color_number = words[3]
-          end
-
-          if color_name == "white" or color_name == "black" then
-            local color
-            if color_name == "white" then
-              color = "ffffff"
-            else
-              color = "000000"
-            end
-
-            local hl_group = "lsp_documentColor_mf_" .. color
-            -- vim.api.nvim_set_hl(0, hl_group, { fg = "#" .. color, bg = "#" .. color })
-            vim.api.nvim_set_hl(0, hl_group, { fg = "#" .. color, bg = "NONE" })
-            vim_item.kind_hl_group = hl_group
-
-            -- make the color square 2 chars wide
-            vim_item.kind = string.rep("▣", 1)
-
-            return vim_item
-          elseif #words < 3 or #words > 4 then
-            -- doesn't look like this is a tailwind css color
-            return vim_item
-          end
-
-          if not color_name or not color_number then
-            return vim_item
-          end
-
-          local color_index = tonumber(color_number)
-          local tailwindcss_colors = require("tailwindcss-colorizer-cmp.colors").TailwindcssColors
-
-          if not tailwindcss_colors[color_name] then
-            return vim_item
-          end
-
-          if not tailwindcss_colors[color_name][color_index] then
-            return vim_item
-          end
-
-          local color = tailwindcss_colors[color_name][color_index]
-
-          local hl_group = "lsp_documentColor_mf_" .. color
-          -- vim.api.nvim_set_hl(0, hl_group, { fg = "#" .. color, bg = "#" .. color })
-          vim.api.nvim_set_hl(0, hl_group, { fg = "#" .. color, bg = "NONE" })
-
-          vim_item.kind_hl_group = hl_group
-
-          -- make the color square 2 chars wide
-          vim_item.kind = string.rep("▣", 1)
-
-          -- return vim_item
-        end
-
+        -- Special formatting for Copilot
         if entry.source.name == "copilot" then
-          vim_item.kind = icons.git.Octoface
+          vim_item.kind = " Copilot"
           vim_item.kind_hl_group = "CmpItemKindCopilot"
-        end
-
-        if entry.source.name == "cmp_tabnine" then
-          vim_item.kind = icons.misc.Robot
-          vim_item.kind_hl_group = "CmpItemKindTabnine"
-        end
-
-        if entry.source.name == "crates" then
-          vim_item.kind = icons.misc.Package
-          vim_item.kind_hl_group = "CmpItemKindCrate"
-        end
-
-        if entry.source.name == "lab.quick_data" then
-          vim_item.kind = icons.misc.CircuitBoard
-          vim_item.kind_hl_group = "CmpItemKindConstant"
-        end
-
-        if entry.source.name == "emoji" then
-          vim_item.kind = icons.misc.Smiley
-          vim_item.kind_hl_group = "CmpItemKindEmoji"
         end
 
         return vim_item
       end,
     },
-    sources = {
-      { name = "copilot" },
-      {
-        name = "nvim_lsp",
-        entry_filter = function(entry, ctx)
-          local kind = require("cmp.types.lsp").CompletionItemKind[entry:get_kind()]
-          if kind == "Snippet" and ctx.prev_context.filetype == "java" then
-            return false
-          end
-
-          if ctx.prev_context.filetype == "markdown" then
-            return true
-          end
-
-          if kind == "Text" then
-            return false
-          end
-
-          return true
-        end,
-      },
-      { name = "luasnip" },
-      { name = "cmp_tabnine" },
-      { name = "nvim_lua" },
-      { name = "buffer" },
-      { name = "path" },
-      { name = "calc" },
-      { name = "emoji" },
-      { name = "treesitter" },
-      { name = "crates" },
-      { name = "tmux" },
-    },
+    sources = cmp.config.sources({
+      { name = "copilot", group_index = 1 },
+      { name = "nvim_lsp", group_index = 1 },
+      { name = "luasnip", group_index = 1 },
+      { name = "buffer", group_index = 2 },
+      { name = "path", group_index = 2 },
+      { name = "emoji", group_index = 3 },
+      { name = "nvim_lua", group_index = 1, ft = "lua" },
+    }),
     confirm_opts = {
       behavior = cmp.ConfirmBehavior.Replace,
       select = false,
-    },
-    view = {
-      entries = {
-        name = "custom",
-        selection_order = "top_down",
-      },
-      docs = {
-        auto_open = false,
-      },
     },
     window = {
       completion = {
         border = "rounded",
         winhighlight = "Normal:Pmenu,CursorLine:PmenuSel,FloatBorder:FloatBorder,Search:None",
-        col_offset = -3,
-        side_padding = 1,
         scrollbar = false,
-        scrolloff = 8,
       },
       documentation = {
         border = "rounded",
@@ -328,16 +130,45 @@ function M.config()
     experimental = {
       ghost_text = false,
     },
-  }
+    enabled = function()
+      -- Disable completion in comments
+      local ok, context = pcall(require, "cmp.config.context")
+      -- Keep command mode completion enabled when cursor is in a comment
+      if vim.api.nvim_get_mode().mode == "c" then
+        return true
+      else
+        return ok and not context.in_treesitter_capture("comment") and not context.in_syntax_group("Comment")
+      end
+    end,
+  })
 
-  pcall(function()
-    -- local function on_confirm_done(...)
-    --   require("nvim-autopairs.completion.cmp").on_confirm_done()(...)
-    -- end
-    -- require("cmp").event:off("confirm_done", on_confirm_done)
-    -- require("cmp").event:on("confirm_done", on_confirm_done)
-  end)
+  -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline({ "/", "?" }, {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+      { name = "buffer" },
+    },
+  })
+
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(":", {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+      { name = "path" },
+    }, {
+      { name = "cmdline" },
+    }),
+  })
+
+  -- Set up lspconfig if available
+  local has_cmp_lsp, cmp_lsp = pcall(require, "cmp_nvim_lsp")
+  local capabilities = has_cmp_lsp and cmp_lsp.default_capabilities() or nil
+
+  -- Setup for when autopairs is used
+  local has_autopairs, cmp_autopairs = pcall(require, "nvim-autopairs.completion.cmp")
+  if has_autopairs then
+    cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+  end
 end
 
 return M
-

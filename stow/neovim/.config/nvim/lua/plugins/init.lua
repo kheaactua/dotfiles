@@ -1,6 +1,8 @@
 require "launch"
 
+-- Load cmp as a plugin specification
 spec "cmp.lua"
+spec "colorscheme.lua"
 
 return {
   -- "folke/neodev.nvim",
@@ -37,7 +39,13 @@ return {
   {
     'notjedi/nvim-rooter.lua',
     init = function()
-      require'nvim-rooter'.setup { }
+      require('nvim-rooter').setup {
+        update_cwd = true,
+        update_focused_file = {
+          enable = true,
+          update_cwd = true
+        },
+      }
     end,
   },
 
@@ -65,12 +73,61 @@ return {
   {
     "CopilotC-Nvim/CopilotChat.nvim",
     branch = 'main',
-    dependencies = { "github/copilot.vim", 'nvim-lua/plenary.nvim', 'nvim-treesitter/nvim-treesitter' },
+    dependencies = {
+      "github/copilot.vim",
+      'nvim-lua/plenary.nvim',
+      'nvim-treesitter/nvim-treesitter'
+    },
     init = function()
-      require("CopilotChat").setup()
+      -- Configure CopilotChat with minimal settings to avoid conflicts
+      local chat_config = {
+        prompts = {
+          Explain = {
+            prompt = "Explain how this code works.",
+          },
+          FixCode = {
+            prompt = "Fix the bugs in this code.",
+          },
+          Optimize = {
+            prompt = "Optimize this code for better performance.",
+          },
+        },
+        window = {
+          layout = "float", -- "float" | "bottom" | "right"
+          relative = "editor", -- "editor" | "win" | "cursor" | "mouse"
+          border = "rounded", -- "none" | "single" | "double" | "rounded" | "solid" | "shadow" | string[]
+          width = 0.8,
+          height = 0.7,
+        },
+        mappings = {
+          close = {
+            normal = "q",
+          },
+          reset = {
+            normal = "<C-l>",
+          },
+          submit_prompt = {
+            normal = "<CR>",
+            insert = "<C-CR>",
+          },
+          accept_diff = {
+            normal = "<C-y>",
+          },
+          -- DO NOT map Tab - let our custom handling take care of it
+          complete = {
+            insert = false
+          },
+        },
+      }
+
+      -- Initialize the plugin
+      local chat = require("CopilotChat")
+      chat.setup(chat_config)
 
       local map = require("utils").map
       map('n', '<leader>c', ":CopilotChatToggle<CR>", { silent = true })
+
+      -- No need for additional autocommands as we're handling Tab in init.vim
     end,
   },
 
@@ -186,7 +243,7 @@ return {
     dependencies = { 'dyng/ctrlsf.vim' }
   },
   -- optional, highly recommended
-  {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'},
+  {'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
 
   -- Configurations for neovim's language client
   {
@@ -197,32 +254,78 @@ return {
       "nvimtools/none-ls.nvim",
       "mhartington/formatter.nvim",
     },
-    init = function()
+    config = function()
       require("mason").setup()
       require("mason-lspconfig").setup()
 
-      mlc = require("mason-lspconfig")
-      mlc.setup {
-        -- vim.lsp.set_log_level("debug"),
-        -- ensure_installed = { "clangd", "yamlls", "bashls", "cmake", "dockerls", "gopls", "jsonls", "marksman", "pyright", "vimls" },
-        ensure_installed = { "clangd", "yamlls", "bashls", "cmake", "dockerls", "gopls", "jsonls", "marksman", "pyright" },
-        automatic_installation = true,
+      -- Setup none-ls for linting if available
+      local ok, null_ls = pcall(require, "none-ls")
+      if ok then
+        null_ls.setup({
+        debug = false,
+        sources = {
+          -- Add null-ls sources for linting based on your needs
+          null_ls.builtins.diagnostics.eslint,
+          null_ls.builtins.diagnostics.pylint,
+          null_ls.builtins.diagnostics.shellcheck,
+          null_ls.builtins.code_actions.gitsigns,
+          null_ls.builtins.diagnostics.markdownlint,
+          null_ls.builtins.diagnostics.yamllint,
+          -- Formatting
+          null_ls.builtins.formatting.prettier,
+          null_ls.builtins.formatting.black,
+          null_ls.builtins.formatting.clang_format,
+        },
+      })
+      end
+
+      -- Install servers automatically
+      local ensure_installed = {
+        "clangd",          -- C/C++
+        "yamlls",          -- YAML
+        "bashls",          -- Bash
+        "cmake",           -- CMake
+        "dockerls",        -- Docker
+        "gopls",           -- Go
+        "jsonls",          -- JSON
+        "marksman",        -- Markdown
+        "pyright",         -- Python
+        "lua_ls",          -- Lua
       }
 
-      mlc.setup_handlers {
-          -- The first entry (without a key) will be the default handler
-          -- and will be called for each installed server that doesn't have
-          -- a dedicated handler.
-          function (server_name) -- default handler (optional)
-              -- print("Handing " .. server_name .. " with default handler")
-              require("lspconfig")[server_name].setup {}
-          end,
-          -- Next, you can provide a dedicated handler for specific servers.
-          -- For example, a handler override for the `rust_analyzer`:
-          -- ["rust_analyzer"] = function ()
-          --     require("rust-tools").setup {}
-          -- end
-      }
+      -- Load mason-lspconfig with error handling
+      local has_mlc, mlc = pcall(require, "mason-lspconfig")
+      if has_mlc then
+        mlc.setup {
+          ensure_installed = ensure_installed,
+          automatic_installation = true,
+        }
+
+        -- Setup LSP handlers
+        mlc.setup_handlers {
+        -- The first entry (without a key) will be the default handler
+        -- and will be called for each installed server that doesn't have
+        -- a dedicated handler.
+        function (server_name) -- default handler (optional)
+          local has_cmp_lsp, cmp_lsp = pcall(require, 'cmp_nvim_lsp')
+          local capabilities = has_cmp_lsp and cmp_lsp.default_capabilities() or vim.lsp.protocol.make_client_capabilities()
+
+          require("lspconfig")[server_name].setup {
+            capabilities = capabilities
+          }
+        end,
+        }
+      end
+
+      -- Configure diagnostics to show inline
+      vim.diagnostic.config({
+        virtual_text = true,  -- Enable inline diagnostics
+        signs = true,         -- Show signs in the sign column
+        underline = true,     -- Underline text with issues
+        update_in_insert = false,
+        severity_sort = true,
+      })
+
       -- Global mappings.
       -- See `:help vim.diagnostic.*` for documentation on any of the below functions
       vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
@@ -246,11 +349,6 @@ return {
           vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
           vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
           vim.keymap.set('n', '<leader>rk', vim.lsp.buf.signature_help, opts)
-          -- vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
-          -- vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
-          -- vim.keymap.set('n', '<space>wl', function()
-          --   print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-          -- end, opts)
           vim.keymap.set('n', '<leaderty', vim.lsp.buf.type_definition, opts)
           vim.keymap.set('n', '<leader>rw', vim.lsp.buf.rename, opts)
           vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
@@ -264,6 +362,7 @@ return {
         end,
       })
 
+      -- Setup formatter
       formatter = require('formatter')
       formatter.setup({
         -- Enable or disable logging
@@ -271,18 +370,12 @@ return {
 
         -- Set the log level
         log_level = vim.log.levels.WARN,
-        -- log_level = vim.log.levels.DEBUG,
 
         filetype = {
-          -- ["py"] = {
-          --   require("formatter.filetypes.python").black
-          -- },
           ["yaml"] = {
             require("formatter.filetypes.yaml").yamlfmt
           },
           ["*"] = {
-            -- "formatter.filetypes.any" defines default configurations for any
-            -- filetype
             require("formatter.filetypes.any").remove_trailing_whitespace
           }
         }
@@ -298,7 +391,6 @@ return {
   'tpope/vim-surround',
 
   'azabiong/vim-highlighter',
-
 
   -- syntax highlighting for *.hal, *.bp, and *.rc files.
   -- 'https://github.ford.com/MRUSS100/aosp-vim-syntax.git'
