@@ -171,8 +171,8 @@ endif
 " colo palenight
 " colo habamax
 " colo bvemu
-colo darkspectrum
-
+" colo darkspectrum
+colo sonofobsidian
 
 """"""""""""""""""""""" Lightline """"""""""""""""""""""""
 function! LightlineFilename()

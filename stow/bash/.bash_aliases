@@ -144,7 +144,6 @@ function gf()
    git fetch "${remote}" $@
 }
 
-
 function vigd() {
    local remote=${1:-$(git_current_remote)}; shift
    local branch=${2:-$(git_current_branch)}
@@ -177,6 +176,9 @@ alias sqlite="rlwrap -a -c -i sqlite3"
 # Follow symlinks
 alias rg="rg -L"
 
+# Unzip everything recursively
+alias unzip-all="fd \.zip -x unzip -d {//}/{/.} {}"
+
 function cdl() {
    # Used to download phx images.  Now that phx-utils works better I don't use
    # this anymore
@@ -208,6 +210,20 @@ function fix-sound() {
   echo "  pacmd set-default-sink <sink_name>"
   echo
   echo "Usually we're looking for <alsa_output.usb-Jieli_Technology_USB_Composite_Device-00.iec958-stereo>"
+}
+
+function fix-default-audio-sink() {
+	# Set the default sink to the sink with the name USB_Composite_Device
+	local -r sink_id=$(pacmd list-sinks | awk '
+/index:/ { idx = $2 }
+/name:/ {
+  if ($0 ~ /USB_Composite_Device/) {
+    print idx
+  }
+}
+')
+
+	pacmd set-default-sink "${sink_id}"
 }
 
 function _ps-fsb-stalled-pids() {

@@ -57,7 +57,7 @@ declare -a pdirs;
 # Directories to append
 declare -a adirs;
 
-# Relative direcoties to HOME that we'll prepend
+# Relative directories to HOME that we'll prepend
 # Note the npm one is here because I did: npm config set prefix "~/.npm_packages"
 declare -a rdirs;
 rdirs=( \
@@ -65,8 +65,8 @@ rdirs=( \
   .pyenv/bin utils/bin .cargo/bin \
   go/bin \
   platform-tools \
-  .local/share/bob/nvim-bin
-  /home/matt/.npm_packages/bin
+  .local/share/bob/nvim-bin \
+  .npm_packages/bin
 );
   # build/kotlin-language-server/server/build/install/server/bin \
   # .sdkman/candidates/gradle/current/bin \

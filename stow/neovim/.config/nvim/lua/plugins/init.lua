@@ -5,9 +5,6 @@ spec "cmp.lua"
 spec "colorscheme.lua"
 
 return {
-  -- "folke/neodev.nvim",
-  -- "folke/which-key.nvim",
-  -- { "folke/neoconf.nvim", cmd = "Neoconf" },
   {
     'tpope/vim-fugitive',
     dependencies = {
@@ -76,7 +73,8 @@ return {
     dependencies = {
       "github/copilot.vim",
       'nvim-lua/plenary.nvim',
-      'nvim-treesitter/nvim-treesitter'
+      'nvim-treesitter/nvim-treesitter',
+      'MeanderingProgrammer/render-markdown.nvim',
     },
     init = function()
       -- Configure CopilotChat with minimal settings to avoid conflicts
@@ -92,13 +90,6 @@ return {
             prompt = "Optimize this code for better performance.",
           },
         },
-        window = {
-          layout = "float", -- "float" | "bottom" | "right"
-          relative = "editor", -- "editor" | "win" | "cursor" | "mouse"
-          border = "rounded", -- "none" | "single" | "double" | "rounded" | "solid" | "shadow" | string[]
-          width = 0.8,
-          height = 0.7,
-        },
         mappings = {
           close = {
             normal = "q",
@@ -113,9 +104,8 @@ return {
           accept_diff = {
             normal = "<C-y>",
           },
-          -- DO NOT map Tab - let our custom handling take care of it
           complete = {
-            insert = false
+            insert = '<Tab>',
           },
         },
       }
@@ -126,8 +116,16 @@ return {
 
       local map = require("utils").map
       map('n', '<leader>c', ":CopilotChatToggle<CR>", { silent = true })
+      require('render-markdown').setup({
+        file_types = { 'markdown', 'copilot-chat' },
+      })
 
-      -- No need for additional autocommands as we're handling Tab in init.vim
+      -- Adjust chat display settings
+      require('CopilotChat').setup({
+        highlight_headers = false,
+        separator = '---',
+        error_header = '> [!ERROR] Error',
+      })
     end,
   },
 

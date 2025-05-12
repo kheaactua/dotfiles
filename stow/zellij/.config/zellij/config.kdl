@@ -5,7 +5,7 @@
 keybinds clear-defaults=true {
     locked {
         bind "Ctrl b" { SwitchToMode "normal"; }
-	bind "Ctrl f" { SwitchToMode "tmux"; }
+        bind "Ctrl f" { SwitchToMode "tmux"; }
     }
     pane {
         bind "c" { SwitchToMode "renamepane"; PaneNameInput 0; }
@@ -93,15 +93,16 @@ keybinds clear-defaults=true {
         bind "Alt h" { MoveFocusOrTab "left"; SwitchToMode "locked"; }
         bind "Alt j" { MoveFocus "down"; SwitchToMode "locked"; }
         bind "Alt k" { MoveFocus "up"; SwitchToMode "locked"; }
-        bind "Alt l" { MoveFocusOrTab "right"; SwitchToMode "locked"; }
         bind "s" { SwitchToMode "normal"; }
+        bind "Ctrl f" { SwitchToMode "tmux"; }
     }
     search {
         bind "c" { SearchToggleOption "CaseSensitivity"; }
-        bind "n" { Search "down"; }
         bind "o" { SearchToggleOption "WholeWord"; }
-        bind "p" { Search "up"; }
+        bind "?" { Search "up"; }
+        bind "/" { Search "down"; }
         bind "w" { SearchToggleOption "Wrap"; }
+        bind "Ctrl f" { SwitchToMode "tmux"; }
     }
     session {
         bind "a" {
@@ -158,6 +159,7 @@ keybinds clear-defaults=true {
         bind "7" { GoToTab 7; SwitchToMode "locked"; }
         bind "8" { GoToTab 8; SwitchToMode "locked"; }
         bind "9" { GoToTab 9; SwitchToMode "locked"; }
+        bind "d" { Detach; }
     }
     shared_among "normal" "locked" {
         bind "Alt left" { Resize "Increase left"; }
@@ -172,10 +174,11 @@ keybinds clear-defaults=true {
         bind "Alt ]" { NextSwapLayout; }
         bind "Alt f" { ToggleFloatingPanes; }
         bind "Alt i" { MoveTab "left"; }
+        bind "Alt n" { NewPane; }
         bind "Alt o" { MoveTab "right"; }
-	bind "Alt k" { Clear; }
+        bind "Alt k" { Clear; }
 
-	// This screws me in vi
+        // This screws me in vi
         // bind "PageUp" { SwitchToMode "scroll"; PageScrollUp; }
     }
     shared_except "locked" "renametab" "renamepane" {

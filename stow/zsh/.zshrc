@@ -17,7 +17,8 @@ if [[ -e "${DOTFILES_DIR}/agents.dot" ]]; then
 	source "${DOTFILES_DIR}/agents.dot"
 	check_agent_file
 
-	init_gpg_agent
+	# init_gpg_agent
+	init_keyring
 fi
 
 if [[ -e "${DOTFILES_DIR}/doupdate.sh" && ! "$(hostname)" =~ sync* ]]; then
