@@ -296,22 +296,16 @@ return {
       if has_mlc then
         mlc.setup {
           ensure_installed = ensure_installed,
-          automatic_installation = true,
-        }
-
-        -- Setup LSP handlers
-        mlc.setup_handlers {
-        -- The first entry (without a key) will be the default handler
-        -- and will be called for each installed server that doesn't have
-        -- a dedicated handler.
-        function (server_name) -- default handler (optional)
-          local has_cmp_lsp, cmp_lsp = pcall(require, 'cmp_nvim_lsp')
-          local capabilities = has_cmp_lsp and cmp_lsp.default_capabilities() or vim.lsp.protocol.make_client_capabilities()
-
-          require("lspconfig")[server_name].setup {
-            capabilities = capabilities
+          -- automatic_installation = true,
+          handlers = {
+            function (server_name)
+              local has_cmp_lsp, cmp_lsp = pcall(require, 'cmp_nvim_lsp')
+              local capabilities = has_cmp_lsp and cmp_lsp.default_capabilities() or vim.lsp.protocol.make_client_capabilities()
+              require("lspconfig")[server_name].setup {
+                capabilities = capabilities
+              }
+            end,
           }
-        end,
         }
       end
 
