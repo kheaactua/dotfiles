@@ -240,8 +240,6 @@ return {
     'kevinhwang91/nvim-bqf', ft = 'qf',
     dependencies = { 'dyng/ctrlsf.vim' }
   },
-  -- optional, highly recommended
-  {'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
 
   -- Configurations for neovim's language client
   {

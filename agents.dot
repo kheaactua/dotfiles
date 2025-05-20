@@ -141,8 +141,10 @@ function init_keyring() {
     export SSH_AUTH_SOCK
   fi
 
-  # Not sure if I need this anymore
+  # Not sure if I need GPG_TTY anymore
   # export GPG_TTY="$(tty)"
+  # Pretty sure SSH_AGENT_PID was never needed
+  # export SSH_AGENT_PID="$(pidof gnome-keyring-daemon)"
 }
 
 # vim: sw=4 sts=0 ts=4 noet ff=unix ft=sh :
