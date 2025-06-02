@@ -287,4 +287,11 @@ TOHERE
   fi
 }
 
+function dotfiles_clone_submodules() {
+	pushd "${DOTFILES_DIR}" || return 1
+	git submodule init
+	git submodule update
+  popd
+}
+
 # vim: ts=2 sw=2 sts=0 ff=unix expandtab ft=sh :

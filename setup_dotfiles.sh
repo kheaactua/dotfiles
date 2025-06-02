@@ -129,9 +129,7 @@ declare VENVS="${h}/.virtualenvs"
 # First ensure that the submodules in this repo
 # are available and up to date:
 if [[ ! "1" == "${skip_submodules}" ]]; then
-	cd "${DOTFILES_DIR}"
-	git submodule init
-	git submodule update
+	dotfiles_clone_submodules
 fi
 
 cd "${h}"
