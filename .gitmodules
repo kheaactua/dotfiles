@@ -10,9 +10,6 @@
 	path = dotfiles-secret
 	url = https://github.com/kheaactua/dotfiles-secret.git
 	branch = master
-[submodule "modulefiles/ford"]
-	path = stow/env-modules/.modulefiles/ford
-	url = git@github.ford.com:MRUSS100/modulefiles.git
 [dotfiles-secret]
 	master = master
 [modulefiles "ford"]

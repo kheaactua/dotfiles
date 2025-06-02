@@ -1,0 +1,13 @@
+#%Module1.0#####################################################################
+##
+## Docker modulefile
+##
+proc ModulesHelp { } {
+  puts stderr "Docker envs"
+}
+
+module-whatis "loads basic docker env"
+
+# Used for docker ULT build (but everything in the docker-compose file will need this)
+setenv DOCKER_BUILDKIT 1
+setenv COMPOSE_DOCKER_CLI_BUILD 1
