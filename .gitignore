@@ -17,3 +17,4 @@ stow/neovim/.config/nvim/.netrwhist
 .nvimlog
 stow/neovim/.config/nvim/nvim_lsp/jdtls/
 stow/i3/.config/config
+.aider*

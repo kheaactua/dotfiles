@@ -218,7 +218,7 @@ if [[ $? == 1 ]]; then
 	export MODULEPATH=/usr/share/modules/modulefiles
 
 	# #module() { eval `/usr/Modules/$MODULE_VERSION/bin/modulecmd $modules_shell $*`; }
-	modulecmd=/usr/bin/modulecmd
+	modulecmd=$(which modulecmd)
 	module() { eval `${modulecmd} $modules_shell $*`; }
 
 	module use ${HOME}/.modulefiles
@@ -229,14 +229,17 @@ if [[ "khea" == "$(hostname)" ]]; then
 	# export CONAN_SYSREQUIRES_MODE=disabled CONAN_SYSREQUIRES_SUDO=0
 
 	# module load modules
-	module load khea
+	module load docker khea
 	# module load bona
 
 elif [[ "UGC14VW7PZ3" == "$(hostname)" ]]; then
 	# Ford Desktop
-	# module load ford/sync
-	module load ford/quarry
+	module load docker
+	module load ford/phx
+	module load ford/copilot
+	module load ford/quarry # I don't remember what quarry is
 
+	# I couldn't get these in env.mods, and they didn't seem to help
 	function fix-apt-sources() {
 		# This is a little sketchy, but so is landscape renaming these all the
 		# time, so manage the file list manually
@@ -270,10 +273,6 @@ elif [[ "UGC14VW7PZ3" == "$(hostname)" ]]; then
 		ip route show | rg '10\.2\.0.\d*'
 	}
 
-elif [[ "sync-android" == "$(hostname)" ]]; then
-
-	# module load sync
-
 elif [[ "WGC1CV2JWQP13" == "$(hostname)" ]]; then
 	# TODO hostname is wrong
 	# Ford Laptop
@@ -287,9 +286,6 @@ elif [[ "WGC1CV2JWQP13" == "$(hostname)" ]]; then
 
 	# module load ford/ford
 
-elif [[ "$(uname -o)" = Android ]]; then
-	# Likely in Termux
-	# export DISPLAY=":1"
 fi
 
 # Load default python virtual env.
@@ -345,7 +341,5 @@ if [[ -e "${DEVEL_ENV}" ]]; then
 else
 	# echo "No development environment available, please run \`conan install\` to create ${DEVEL_ENV}"
 fi
-
-export FSB_CONFIG_FILE=/f/phoenix/phx-fsb/.fsb.yaml
 
 # vim: sw=4 sts=0 ts=4 noet ff=unix :

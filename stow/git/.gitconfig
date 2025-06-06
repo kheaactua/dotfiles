@@ -98,4 +98,7 @@
   # `git diff` with difftastic.
   dft = -c diff.external=difft diff
 
+[protocol]
+	allow = always
+
 ; vim: ts=2 sw=2 sts=0 noet ft=gitconfig :
