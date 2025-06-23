@@ -23,15 +23,6 @@ return {
   -- This should improve Git Fugitive and Git Gutter
   'tmux-plugins/vim-tmux-focus-events',
 
-  {
-    "L3MON4D3/LuaSnip",
-    version = "v2.*",
-    init = function()
-      dotfiles_dir=vim.api.nvim_get_var('dotfiles')
-      require("luasnip.loaders.from_snipmate").lazy_load({ paths = { dotfiles_dir .. "/snippets"} })
-    end,
-    build = "make install_jsregexp",
-  },
 
   {
     'notjedi/nvim-rooter.lua',
@@ -49,8 +40,6 @@ return {
   -- Adding this so I can search/replace and preserve letter case
   'tpope/vim-abolish',
 
-  -- Highlighting for tmux
-  'tmux-plugins/vim-tmux',
 
   -- Plug to assist with commenting out blocks of text:
   'tpope/vim-commentary',
@@ -145,6 +134,7 @@ return {
       local map = require("utils").map
       map('n', '<leader>G', ":Grepper -tool rg -buffer -cword -noprompt<CR>", { silent = true })
       map('n', '<leader>GG', ":Grepper -tool rg -cword -noprompt<CR>", { silent = true })
+      map('v', '<leader>GG', ":Grepper -tool rg -noprompt<CR>", { silent = true })
     end,
   },
 
@@ -180,8 +170,6 @@ return {
             ["ctrl-x"]      = actions.file_split,
             ["ctrl-v"]      = actions.file_vsplit,
             ["ctrl-t"]      = actions.file_tabedit,
-            ["alt-q"]       = actions.file_sel_to_qf, -- dunno what this does
-            ["alt-l"]       = actions.file_sel_to_ll, -- dunno what this does
             ["ctrl-l"]      = require'fzf-lua.actions'.arg_add, -- dunno what this does
           },
           buffers = {
@@ -202,6 +190,10 @@ return {
             ["ctrl-x"] = actions.buf_split,
             ["ctrl-d"] = actions.buf_del,
           }
+        },
+        -- See https://github.com/ibhagwan/fzf-lua/wiki#can-i-use-ripgreps---globiglob-option-with-live_grep
+        grep = {
+          rg_glob = true
         }
       })
 
@@ -210,12 +202,11 @@ return {
       map('n', '<c-k>', '<cmd>lua require("fzf-lua").git_files()<CR>', { silent = true })
       map('n', '<leader>h', '<cmd>lua require("fzf-lua").oldfiles()<CR>', { silent = true })
       map('n', '<leader>t', '<cmd>lua require("fzf-lua").tabs()<CR>', { silent = true })
-      map('n', '<leader><Tab>', '<cmd>lua require("fzf-lua").buffers()<CR>', { silent = true })
 
       -- Unmap center/<CR> from launching fzf which appears to be mapped by default.
       -- unmap <CR>
 
-      -- map('n', '<leader>g', '<cmd>lua require("fzf-lua").grep_project()<CR>', { silent = true })
+      -- map('n', '<leader>g', '<cmd>lua require("fzf-lua").grep_project()<CR>', { silent = true, debug = true })
       map('n', '<leader>g', '<cmd>lua require("fzf-lua").live_grep()<CR>', { silent = true })
 
       vim.keymap.set("n", "gsiw",
@@ -225,14 +216,12 @@ return {
           fzf_lua.live_grep({
             cmd = grep_cmd,
             query = current_word,
-            cwd = fzf_lua.path.git_root(),
           })
         end,
         { silent = true }
       )
 
       map('n', '<leader>l', '<cmd>lua require("fzf-lua").lines()<CR>', { silent = true })
-      map('n', '<leader>w', '<cmd>lua require("fzf-lua").Windows()<CR>', { silent = true })
 
    end,
   },
