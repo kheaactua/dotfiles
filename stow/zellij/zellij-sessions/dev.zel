@@ -5,10 +5,13 @@ layout {
             plugin location="zellij:tab-bar"
         }
         pane split_direction="vertical" {
-            pane cwd="tmp" size="50%"
+            pane command="/home/matt/.virtualenvs/tat/bin/python" cwd="home/matt" size="50%" {
+                args "/home/matt/.virtualenvs/tat/bin/tat" "pdc" "ignition" "boot-mode" "normal" "wait"
+                start_suspended true
+            }
             pane size="50%" {
-                pane cwd="tmp/downloads/images/nightly/milestone-252/VIP (deleted)" size="70%"
-                pane cwd="tmp/downloads/images/pr-6986-FORD_PHOENIX_topic_V1_2_X_camera_launcher_test/1351 (deleted)" size="30%"
+                pane cwd="/tmp/downloads/images/nightly/milestone-252/VIP" size="50%"
+                pane cwd="/tmp/downloads/images/pr-7116-FORD_PHOENIX_topic_cluster_at_p10/518" size="50%"
             }
         }
         pane size=1 borderless=true {
@@ -20,58 +23,14 @@ layout {
             plugin location="zellij:tab-bar"
         }
         pane split_direction="vertical" {
-            pane cwd="f/phoenix/phx-fsb/source/phoenix_hi/package/phx-launcher-source/src (deleted)" size="50%"
-            pane size="50%" stacked=true {
-                pane command="nvim" cwd="f/phoenix/phx-fsb" {
-                    args "package/phoenix/device_identity/device_identity.fsb"
-                    start_suspended true
-                }
-                pane cwd="f/phoenix/phx-fsb/.fsb/001eb6e48ae1e9cb1092d8009c47e8f3-DELETE/src (deleted)"
-                pane cwd="f/phoenix/phx-fsb" expanded=true
-            }
-        }
-        pane size=1 borderless=true {
-            plugin location="zellij:status-bar"
-        }
-    }
-    tab name="aosp-14" hide_floating_panes=true {
-        pane size=1 borderless=true {
-            plugin location="zellij:tab-bar"
-        }
-        pane split_direction="vertical" {
-            pane command="nvim" cwd="f/phoenix/aosp/external/vsomeip" size="50%" {
-                args "implementation/configuration/src/configuration_impl.cpp"
+            pane command="nvim" cwd="f/phoenix/phx-fsb" size="50%" {
+                args "/f/phoenix/phx-fsb/source/phoenix_hi/package/fifofs-source/src/fifofs/c_mknod.cc"
                 start_suspended true
             }
             pane size="50%" {
-                pane cwd="f/phoenix/aosp/external/vsomeip" size="37%"
-                pane cwd="f/phoenix/aosp/vendor/ford/system/fnv/amf_ping" size="16%"
-                pane cwd="f/phoenix/aosp/.repo/manifests" size="21%"
-                pane cwd="f/phoenix/aosp/external/vsomeip" size="12%"
-                pane command="docker" cwd="f/phoenix/aosp" size="12%" {
-                    args "compose" "run" "-e" "COLUMNS=175" "-e" "LINES=6" "--rm" "phx-aosp"
-                    start_suspended true
-                }
-            }
-        }
-        pane size=1 borderless=true {
-            plugin location="zellij:status-bar"
-        }
-    }
-    tab name="capi-docker" hide_floating_panes=true {
-        pane size=1 borderless=true {
-            plugin location="zellij:tab-bar"
-        }
-        pane split_direction="vertical" {
-            pane command="nvim" cwd="f/phoenix/phx-fsb" size="55%" {
-                args "/f/phoenix/phx-fsb/source/phoenix_hi/package/vsomeip-source/src/CMakeLists.txt"
-                start_suspended true
-            }
-            pane size="45%" {
-                pane cwd="f/phoenix/phx-fsb/source/phoenix_hi/package/vsomeip-source/src (deleted)" size="10%"
-                pane cwd="f/phoenix/phx-fsb/local/capicxx-docker" size="30%"
-                pane cwd="f/phoenix/phx-fsb/local/capicxx-docker" size="25%"
-                pane cwd="f/phoenix/phx-fsb/local/capicxx-docker" size="35%"
+                pane cwd="f/phoenix/phx-fsb/source/phoenix_hi/package/phx-launcher-source/src" size="37%"
+                pane cwd="f/phoenix/phx-fsb" size="35%"
+                pane cwd="f/phoenix/phx-fsb" size="27%"
             }
         }
         pane size=1 borderless=true {
@@ -79,10 +38,75 @@ layout {
         }
         floating_panes {
             pane {
-                height 20
-                width 95
-                x 48
-                y 11
+                height 27
+                width 159
+                x 51
+                y 7
+            }
+        }
+    }
+    tab name="aosp-14" hide_floating_panes=true {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane split_direction="vertical" {
+            pane command="nvim" cwd="f/phoenix/aosp" size="50%" {
+                args ".repo/local_manifests/wip.xml"
+                start_suspended true
+            }
+            pane size="50%" {
+                pane command="docker" cwd="f/phoenix/aosp" size="10%" {
+                    args "compose" "run" "-e" "COLUMNS=318" "-e" "LINES=55" "--rm" "phx-aosp"
+                    start_suspended true
+                }
+                pane cwd="f/phoenix/aosp/vendor/ford/common/sepolicy" size="52%"
+                pane cwd="f/phoenix/aosp/vendor/ford/hardware/powermanager/ivi" size="22%"
+                pane command="rg" cwd="/f/phoenix/aosp/vendor/ford/hardware/cluster" size="15%" {
+                    args "-L" "application_impl::offer_service"
+                    start_suspended true
+                }
+            }
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+        floating_panes {
+            pane cwd="/" {
+                height 27
+                width 159
+                x 80
+                y 15
+            }
+        }
+    }
+    tab name="capi-docker" hide_floating_panes=true {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane split_direction="vertical" {
+            pane command="nvim" cwd="f/phoenix/phx-fsb/local/capicxx-docker/assets/conan/recipes/capicxx-example" size="50%" {
+                args "capicxx-example-source/CMakeLists.txt"
+                start_suspended true
+            }
+            pane size="50%" {
+                pane cwd="/f/phoenix/phx-fsb/local/capicxx-docker" size="37%"
+                pane command="docker" cwd="/f/phoenix/phx-fsb/local/capicxx-docker" size="62%" {
+                    args "compose" "up" "b_amf_ping_client"
+                    start_suspended true
+                }
+            }
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+        floating_panes {
+            pane command="bat" cwd="/" {
+                start_suspended true
+                height 23
+                width 159
+                x 80
+                y 13
+                args "/home/matt/.gitconfig"
             }
         }
     }
@@ -91,42 +115,26 @@ layout {
             plugin location="zellij:tab-bar"
         }
         pane split_direction="vertical" {
-            pane cwd="f/phoenix/phx-fsb/local/capicxx-docker/assets/conan/recipes/amf" size="50%"
+            pane command="/home/matt/.local/share/bob/v0.11.0/bin/nvim" cwd="f/phoenix/phx-fsb/local/capicxx-docker/assets/conan/recipes/amf" size="50%" {
+                args "conanfile.py"
+                start_suspended true
+            }
             pane size="50%" {
-                pane cwd="f/phoenix/phx-fsb/local/capicxx-docker/assets/conan/recipes/amf" size="25%"
-                pane cwd="f/phoenix/phx-fsb/local/capicxx-docker/assets/conan/recipes/vsomeip" size="52%"
-                pane cwd="home/matt/workspace/vsomeip" size="22%"
+                pane cwd="/f/phoenix/phx-fsb/local/capicxx-docker/assets/conan/recipes/amf-ping/amf-ping-source" size="40%"
+                pane cwd="/f/phoenix/phx-fsb/local/capicxx-docker/assets/conan/recipes/amf-ping" size="40%"
+                pane cwd="/f/phoenix/phx-fsb/local/capicxx-docker/assets/conan/recipes/amf" size="20%"
             }
         }
         pane size=1 borderless=true {
             plugin location="zellij:status-bar"
         }
-    }
-    tab name="UCL Logs" hide_floating_panes=true {
-        pane size=1 borderless=true {
-            plugin location="zellij:tab-bar"
-        }
-        pane split_direction="vertical" {
-            pane command="nvim" cwd="tmp/downloads/events/0xF941_log_capture/0xF941_log_capture/fnv_manual_logcapture/fnv_phoenixhost_logcapture-20250118_00_09_09/fifofs (deleted)" size="42%" {
-                args "/f/phoenix/phx-fsb/source/phoenix_hi/package/diagnostic-source/src/CMakeLists.txt"
-                start_suspended true
+        floating_panes {
+            pane cwd="/" {
+                height 27
+                width 159
+                x 80
+                y 15
             }
-            pane command="nvim" cwd="tmp/downloads/events/QUIP_84CAD6F0FC81B107F51BE566FFE8A0E1/PHOENIXHOST/D71F33F97598BBB969A80E0BCF6D6F7C/logworthy/system (deleted)" size="57%" {
-                args "phoenixhost_slogger.decoded.slog"
-                start_suspended true
-            }
-        }
-        pane size=1 borderless=true {
-            plugin location="zellij:status-bar"
-        }
-    }
-    tab name="Events" hide_floating_panes=true {
-        pane size=1 borderless=true {
-            plugin location="zellij:tab-bar"
-        }
-        pane cwd="tmp/0BACBEC011AABB225313FC98165ABAF3 (deleted)"
-        pane size=1 borderless=true {
-            plugin location="zellij:status-bar"
         }
     }
     tab name="covesa" hide_floating_panes=true {
@@ -134,11 +142,14 @@ layout {
             plugin location="zellij:tab-bar"
         }
         pane split_direction="vertical" {
-            pane command="nvim" cwd="home/matt/workspace/vsomeip" size="50%" {
-                args "implementation/endpoints/src/local_uds_server_endpoint_impl.cpp"
+            pane command="nvim" cwd="home/matt/workspace/vsomeip" size="45%" {
+                args "implementation/runtime/src/application_impl.cpp"
                 start_suspended true
             }
-            pane cwd="home/matt/workspace/vsomeip" size="50%"
+            pane size="55%" {
+                pane cwd="/f/phoenix/phx-fsb/local/capicxx-docker/assets/conan/recipes/vsomeip" size="65%"
+                pane cwd="/home/matt/workspace/vsomeip" size="35%"
+            }
         }
         pane size=1 borderless=true {
             plugin location="zellij:status-bar"
@@ -149,29 +160,29 @@ layout {
             plugin location="zellij:tab-bar"
         }
         pane split_direction="vertical" {
-            pane command="nvim" cwd="home/matt/workspace/phx-utils" size="50%" {
-                args "phx_utils/download_image.py"
+            pane command="nvim" cwd="home/matt/workspace/phx-utils" size="60%" {
+                args "/home/matt/workspace/phx-utils/phx_utils/collect_stats.py"
                 start_suspended true
             }
-            pane size="50%" {
-                pane cwd="tmp" size="70%"
-                pane cwd="home/matt/workspace/phx-utils" size="30%"
+            pane size="40%" {
+                pane command="/home/matt/.local/share/uv/tools/aider-chat/bin/python" cwd="home/matt/workspace/phx-utils" size="45%" {
+                    args "/home/matt/.local/bin/aider"
+                    start_suspended true
+                }
+                pane cwd="home/matt/workspace/phx-utils" size="12%"
+                pane cwd="home/matt/workspace/phx-utils" size="42%"
             }
         }
         pane size=1 borderless=true {
             plugin location="zellij:status-bar"
         }
-    }
-    tab name="claude" hide_floating_panes=true {
-        pane size=1 borderless=true {
-            plugin location="zellij:tab-bar"
-        }
-        pane command="node" cwd="home/matt/workspace/vsomeip" {
-            args "--no-warnings" "--enable-source-maps" "/home/matt/.npm_packages/bin/claude"
-            start_suspended true
-        }
-        pane size=1 borderless=true {
-            plugin location="zellij:status-bar"
+        floating_panes {
+            pane {
+                height 27
+                width 159
+                x 80
+                y 15
+            }
         }
     }
     tab name="py-vsomeip" hide_floating_panes=true {
@@ -179,45 +190,70 @@ layout {
             plugin location="zellij:tab-bar"
         }
         pane split_direction="vertical" {
-            pane command="nvim" cwd="home/matt/workspace/py-vsomeip-tools/pyvsomeip" size="50%" {
-                args "analyze.py"
-                start_suspended true
-            }
+            pane cwd="home/matt/workspace/py-vsomeip-tools/pyvsomeip" size="50%"
             pane size="50%" {
-                pane cwd="home/matt/workspace/py-vsomeip-tools" size="50%"
-                pane cwd="tmp/connections_map (deleted)" size="50%"
+                pane cwd="/home/matt/workspace/py-vsomeip-tools" size="25%"
+                pane cwd="/tmp/connections_map" size="75%"
             }
         }
         pane size=1 borderless=true {
             plugin location="zellij:status-bar"
         }
         floating_panes {
-            pane command="nvim" cwd="f/phoenix/phx-fsb/source/phoenix_hi/package" {
+            pane command="nvim" cwd="/f/phoenix/phx-fsb/source/phoenix_hi/package" {
                 start_suspended true
-                height 20
-                width 95
-                x 48
-                y 11
+                height 23
+                width 159
+                x 80
+                y 13
                 args "phoenix-pdc/vsomeip/applications.json"
             }
         }
     }
-    tab name="pr-logs" hide_floating_panes=true {
+    tab name="phx-tester" hide_floating_panes=true {
         pane size=1 borderless=true {
             plugin location="zellij:tab-bar"
         }
-        pane cwd="tmp/shane_logs/fifofs/boot-43891 (deleted)"
+        pane split_direction="vertical" {
+            pane size="45%" {
+                pane command="nvim" cwd="home/matt/workspace/watch_for_remote_error" size="75%" {
+                    args "README.md"
+                    start_suspended true
+                }
+                pane command="rg" cwd="tmp/phx-tester-sessions" size="25%" {
+                    args "-L" "Entering"
+                    start_suspended true
+                }
+            }
+            pane size="55%" {
+                pane cwd="/home/matt/workspace/watch_for_remote_error/phx-watcher" size="72%"
+                pane command="/home/matt/.local/share/uv/tools/aider-chat/bin/python" cwd="home/matt/workspace/watch_for_remote_error/phx-tester" size="27%" {
+                    args "/home/matt/.local/bin/aider"
+                    start_suspended true
+                }
+            }
+        }
         pane size=1 borderless=true {
             plugin location="zellij:status-bar"
         }
     }
-    tab name="Tab #19" focus=true hide_floating_panes=true {
+    tab name="Tab #10" hide_floating_panes=true {
         pane size=1 borderless=true {
             plugin location="zellij:tab-bar"
         }
-        pane command="zellij" cwd="tmp" focus=true {
-            args "action" "dump-layout"
-            start_suspended true
+        pane cwd="/" size="50%"
+        pane cwd="f/phoenix/phx-fsb" size="50%"
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+    tab name="Tab #11" hide_floating_panes=true {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane split_direction="vertical" {
+            pane cwd="/" size="50%"
+            pane cwd="f/backup/home/matt" size="50%"
         }
         pane size=1 borderless=true {
             plugin location="zellij:status-bar"
@@ -227,7 +263,7 @@ layout {
         pane size=1 borderless=true {
             plugin location="zellij:tab-bar"
         }
-        pane
+        pane cwd="/"
         pane size=1 borderless=true {
             plugin location="zellij:status-bar"
         }
@@ -384,61 +420,61 @@ layout {
     }
     swap_floating_layout name="enlarged" {
         floating_panes max_panes=10 {
-            pane {
+            pane cwd="/" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 1
             }
-            pane {
+            pane cwd="/" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 2
             }
-            pane {
+            pane cwd="/" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 3
             }
-            pane {
+            pane cwd="/" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 4
             }
-            pane {
+            pane cwd="/" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 5
             }
-            pane {
+            pane cwd="/" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 6
             }
-            pane {
+            pane cwd="/" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 7
             }
-            pane {
+            pane cwd="/" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 8
             }
-            pane {
+            pane cwd="/" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 9
             }
-            pane {
+            pane cwd="/" {
                 height "90%"
                 width "90%"
                 x 10
@@ -448,60 +484,60 @@ layout {
     }
     swap_floating_layout name="spread" {
         floating_panes max_panes=1 {
-            pane {
+            pane cwd="/" {
                 x "50%"
                 y "50%"
             }
         }
         floating_panes max_panes=2 {
-            pane {
+            pane cwd="/" {
                 width "45%"
                 x "1%"
                 y "25%"
             }
-            pane {
+            pane cwd="/" {
                 width "45%"
                 x "50%"
                 y "25%"
             }
         }
         floating_panes max_panes=3 {
-            pane {
+            pane cwd="/" {
                 height "45%"
                 width "45%"
                 y "55%"
             }
-            pane {
+            pane cwd="/" {
                 width "45%"
                 x "1%"
                 y "1%"
             }
-            pane {
+            pane cwd="/" {
                 width "45%"
                 x "50%"
                 y "1%"
             }
         }
         floating_panes max_panes=4 {
-            pane {
+            pane cwd="/" {
                 height "45%"
                 width "45%"
                 x "1%"
                 y "55%"
             }
-            pane {
+            pane cwd="/" {
                 height "45%"
                 width "45%"
                 x "50%"
                 y "55%"
             }
-            pane {
+            pane cwd="/" {
                 height "45%"
                 width "45%"
                 x "1%"
                 y "1%"
             }
-            pane {
+            pane cwd="/" {
                 height "45%"
                 width "45%"
                 x "50%"
