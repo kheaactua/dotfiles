@@ -276,7 +276,7 @@ endif
 
 " Faster vertical expansion
 nmap <C-v> :vertical resize +5<cr>
-nmap <C-b> :above resize +5<cr>
+nmap <C-h> :above resize +5<cr>
 
 " Swap splits to vertical
 noremap <C-w>th <C-W>t<c-w>H

@@ -25,7 +25,7 @@ exec --no-startup-id dex --autostart --environment i3
 # and nm-applet is a desktop environment-independent system tray GUI for it.
 exec --no-startup-id nm-applet
 
-# Use amixer to adjust volume in PulseAudio.
+# Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status pkill -RTMIN+1 i3blocks
 bindsym XF86AudioRaiseVolume exec amixer -q -D pulse sset Master 5%+ && $refresh_i3status
 bindsym XF86AudioLowerVolume exec amixer -q -D pulse sset Master 5%- && $refresh_i3statusp

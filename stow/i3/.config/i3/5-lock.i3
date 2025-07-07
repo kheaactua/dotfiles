@@ -10,3 +10,5 @@ exec "xset dpms 900"
 
 # Lock screen
 bindsym Ctrl+mod1+L exec ${HOME}/bin/do_lock.sh
+
+# TODO maybe refactor this, review https://gist.github.com/rometsch/6b35524bcc123deb7cd30b293f2088d8

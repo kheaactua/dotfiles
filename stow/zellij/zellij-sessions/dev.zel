@@ -1,0 +1,513 @@
+layout {
+    cwd "/"
+    tab name="tat" hide_floating_panes=true {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane split_direction="vertical" {
+            pane cwd="tmp" size="50%"
+            pane size="50%" {
+                pane cwd="tmp/downloads/images/nightly/milestone-252/VIP (deleted)" size="70%"
+                pane cwd="tmp/downloads/images/pr-6986-FORD_PHOENIX_topic_V1_2_X_camera_launcher_test/1351 (deleted)" size="30%"
+            }
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+    tab name="fsb" hide_floating_panes=true {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane split_direction="vertical" {
+            pane cwd="f/phoenix/phx-fsb/source/phoenix_hi/package/phx-launcher-source/src (deleted)" size="50%"
+            pane size="50%" stacked=true {
+                pane command="nvim" cwd="f/phoenix/phx-fsb" {
+                    args "package/phoenix/device_identity/device_identity.fsb"
+                    start_suspended true
+                }
+                pane cwd="f/phoenix/phx-fsb/.fsb/001eb6e48ae1e9cb1092d8009c47e8f3-DELETE/src (deleted)"
+                pane cwd="f/phoenix/phx-fsb" expanded=true
+            }
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+    tab name="aosp-14" hide_floating_panes=true {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane split_direction="vertical" {
+            pane command="nvim" cwd="f/phoenix/aosp/external/vsomeip" size="50%" {
+                args "implementation/configuration/src/configuration_impl.cpp"
+                start_suspended true
+            }
+            pane size="50%" {
+                pane cwd="f/phoenix/aosp/external/vsomeip" size="37%"
+                pane cwd="f/phoenix/aosp/vendor/ford/system/fnv/amf_ping" size="16%"
+                pane cwd="f/phoenix/aosp/.repo/manifests" size="21%"
+                pane cwd="f/phoenix/aosp/external/vsomeip" size="12%"
+                pane command="docker" cwd="f/phoenix/aosp" size="12%" {
+                    args "compose" "run" "-e" "COLUMNS=175" "-e" "LINES=6" "--rm" "phx-aosp"
+                    start_suspended true
+                }
+            }
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+    tab name="capi-docker" hide_floating_panes=true {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane split_direction="vertical" {
+            pane command="nvim" cwd="f/phoenix/phx-fsb" size="55%" {
+                args "/f/phoenix/phx-fsb/source/phoenix_hi/package/vsomeip-source/src/CMakeLists.txt"
+                start_suspended true
+            }
+            pane size="45%" {
+                pane cwd="f/phoenix/phx-fsb/source/phoenix_hi/package/vsomeip-source/src (deleted)" size="10%"
+                pane cwd="f/phoenix/phx-fsb/local/capicxx-docker" size="30%"
+                pane cwd="f/phoenix/phx-fsb/local/capicxx-docker" size="25%"
+                pane cwd="f/phoenix/phx-fsb/local/capicxx-docker" size="35%"
+            }
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+        floating_panes {
+            pane {
+                height 20
+                width 95
+                x 48
+                y 11
+            }
+        }
+    }
+    tab name="amf-linux" hide_floating_panes=true {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane split_direction="vertical" {
+            pane cwd="f/phoenix/phx-fsb/local/capicxx-docker/assets/conan/recipes/amf" size="50%"
+            pane size="50%" {
+                pane cwd="f/phoenix/phx-fsb/local/capicxx-docker/assets/conan/recipes/amf" size="25%"
+                pane cwd="f/phoenix/phx-fsb/local/capicxx-docker/assets/conan/recipes/vsomeip" size="52%"
+                pane cwd="home/matt/workspace/vsomeip" size="22%"
+            }
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+    tab name="UCL Logs" hide_floating_panes=true {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane split_direction="vertical" {
+            pane command="nvim" cwd="tmp/downloads/events/0xF941_log_capture/0xF941_log_capture/fnv_manual_logcapture/fnv_phoenixhost_logcapture-20250118_00_09_09/fifofs (deleted)" size="42%" {
+                args "/f/phoenix/phx-fsb/source/phoenix_hi/package/diagnostic-source/src/CMakeLists.txt"
+                start_suspended true
+            }
+            pane command="nvim" cwd="tmp/downloads/events/QUIP_84CAD6F0FC81B107F51BE566FFE8A0E1/PHOENIXHOST/D71F33F97598BBB969A80E0BCF6D6F7C/logworthy/system (deleted)" size="57%" {
+                args "phoenixhost_slogger.decoded.slog"
+                start_suspended true
+            }
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+    tab name="Events" hide_floating_panes=true {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane cwd="tmp/0BACBEC011AABB225313FC98165ABAF3 (deleted)"
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+    tab name="covesa" hide_floating_panes=true {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane split_direction="vertical" {
+            pane command="nvim" cwd="home/matt/workspace/vsomeip" size="50%" {
+                args "implementation/endpoints/src/local_uds_server_endpoint_impl.cpp"
+                start_suspended true
+            }
+            pane cwd="home/matt/workspace/vsomeip" size="50%"
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+    tab name="phx-utils" hide_floating_panes=true {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane split_direction="vertical" {
+            pane command="nvim" cwd="home/matt/workspace/phx-utils" size="50%" {
+                args "phx_utils/download_image.py"
+                start_suspended true
+            }
+            pane size="50%" {
+                pane cwd="tmp" size="70%"
+                pane cwd="home/matt/workspace/phx-utils" size="30%"
+            }
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+    tab name="claude" hide_floating_panes=true {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane command="node" cwd="home/matt/workspace/vsomeip" {
+            args "--no-warnings" "--enable-source-maps" "/home/matt/.npm_packages/bin/claude"
+            start_suspended true
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+    tab name="py-vsomeip" hide_floating_panes=true {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane split_direction="vertical" {
+            pane command="nvim" cwd="home/matt/workspace/py-vsomeip-tools/pyvsomeip" size="50%" {
+                args "analyze.py"
+                start_suspended true
+            }
+            pane size="50%" {
+                pane cwd="home/matt/workspace/py-vsomeip-tools" size="50%"
+                pane cwd="tmp/connections_map (deleted)" size="50%"
+            }
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+        floating_panes {
+            pane command="nvim" cwd="f/phoenix/phx-fsb/source/phoenix_hi/package" {
+                start_suspended true
+                height 20
+                width 95
+                x 48
+                y 11
+                args "phoenix-pdc/vsomeip/applications.json"
+            }
+        }
+    }
+    tab name="pr-logs" hide_floating_panes=true {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane cwd="tmp/shane_logs/fifofs/boot-43891 (deleted)"
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+    tab name="Tab #19" focus=true hide_floating_panes=true {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane command="zellij" cwd="tmp" focus=true {
+            args "action" "dump-layout"
+            start_suspended true
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+    new_tab_template {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+    swap_tiled_layout name="vertical" {
+        tab max_panes=5 {
+            pane size=1 borderless=true {
+                plugin location="tab-bar"
+            }
+            pane {
+                pane split_direction="vertical" {
+                    pane
+                    pane {
+                        children
+                    }
+                }
+            }
+            pane size=1 borderless=true {
+                plugin location="status-bar"
+            }
+        }
+        tab max_panes=8 {
+            pane size=1 borderless=true {
+                plugin location="tab-bar"
+            }
+            pane {
+                pane split_direction="vertical" {
+                    pane {
+                        children
+                    }
+                    pane {
+                        pane
+                        pane
+                        pane
+                        pane
+                    }
+                }
+            }
+            pane size=1 borderless=true {
+                plugin location="status-bar"
+            }
+        }
+        tab max_panes=12 {
+            pane size=1 borderless=true {
+                plugin location="tab-bar"
+            }
+            pane {
+                pane split_direction="vertical" {
+                    pane {
+                        children
+                    }
+                    pane {
+                        pane
+                        pane
+                        pane
+                        pane
+                    }
+                    pane {
+                        pane
+                        pane
+                        pane
+                        pane
+                    }
+                }
+            }
+            pane size=1 borderless=true {
+                plugin location="status-bar"
+            }
+        }
+    }
+    swap_tiled_layout name="horizontal" {
+        tab max_panes=4 {
+            pane size=1 borderless=true {
+                plugin location="tab-bar"
+            }
+            pane {
+                pane
+                pane
+            }
+            pane size=1 borderless=true {
+                plugin location="status-bar"
+            }
+        }
+        tab max_panes=8 {
+            pane size=1 borderless=true {
+                plugin location="tab-bar"
+            }
+            pane {
+                pane {
+                    pane split_direction="vertical" {
+                        children
+                    }
+                    pane split_direction="vertical" {
+                        pane
+                        pane
+                        pane
+                        pane
+                    }
+                }
+            }
+            pane size=1 borderless=true {
+                plugin location="status-bar"
+            }
+        }
+        tab max_panes=12 {
+            pane size=1 borderless=true {
+                plugin location="tab-bar"
+            }
+            pane {
+                pane {
+                    pane split_direction="vertical" {
+                        children
+                    }
+                    pane split_direction="vertical" {
+                        pane
+                        pane
+                        pane
+                        pane
+                    }
+                    pane split_direction="vertical" {
+                        pane
+                        pane
+                        pane
+                        pane
+                    }
+                }
+            }
+            pane size=1 borderless=true {
+                plugin location="status-bar"
+            }
+        }
+    }
+    swap_tiled_layout name="stacked" {
+        tab min_panes=5 {
+            pane size=1 borderless=true {
+                plugin location="tab-bar"
+            }
+            pane {
+                pane split_direction="vertical" {
+                    pane
+                    pane stacked=true {
+                        children
+                    }
+                }
+            }
+            pane size=1 borderless=true {
+                plugin location="status-bar"
+            }
+        }
+    }
+    swap_floating_layout name="staggered" {
+        floating_panes {
+        }
+    }
+    swap_floating_layout name="enlarged" {
+        floating_panes max_panes=10 {
+            pane {
+                height "90%"
+                width "90%"
+                x "5%"
+                y 1
+            }
+            pane {
+                height "90%"
+                width "90%"
+                x "5%"
+                y 2
+            }
+            pane {
+                height "90%"
+                width "90%"
+                x "5%"
+                y 3
+            }
+            pane {
+                height "90%"
+                width "90%"
+                x "5%"
+                y 4
+            }
+            pane {
+                height "90%"
+                width "90%"
+                x "5%"
+                y 5
+            }
+            pane {
+                height "90%"
+                width "90%"
+                x "5%"
+                y 6
+            }
+            pane {
+                height "90%"
+                width "90%"
+                x "5%"
+                y 7
+            }
+            pane {
+                height "90%"
+                width "90%"
+                x "5%"
+                y 8
+            }
+            pane {
+                height "90%"
+                width "90%"
+                x "5%"
+                y 9
+            }
+            pane {
+                height "90%"
+                width "90%"
+                x 10
+                y 10
+            }
+        }
+    }
+    swap_floating_layout name="spread" {
+        floating_panes max_panes=1 {
+            pane {
+                x "50%"
+                y "50%"
+            }
+        }
+        floating_panes max_panes=2 {
+            pane {
+                width "45%"
+                x "1%"
+                y "25%"
+            }
+            pane {
+                width "45%"
+                x "50%"
+                y "25%"
+            }
+        }
+        floating_panes max_panes=3 {
+            pane {
+                height "45%"
+                width "45%"
+                y "55%"
+            }
+            pane {
+                width "45%"
+                x "1%"
+                y "1%"
+            }
+            pane {
+                width "45%"
+                x "50%"
+                y "1%"
+            }
+        }
+        floating_panes max_panes=4 {
+            pane {
+                height "45%"
+                width "45%"
+                x "1%"
+                y "55%"
+            }
+            pane {
+                height "45%"
+                width "45%"
+                x "50%"
+                y "55%"
+            }
+            pane {
+                height "45%"
+                width "45%"
+                x "1%"
+                y "1%"
+            }
+            pane {
+                height "45%"
+                width "45%"
+                x "50%"
+                y "1%"
+            }
+        }
+    }
+}
+

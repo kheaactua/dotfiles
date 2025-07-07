@@ -6,6 +6,14 @@
   path = ~/.gitconfig-ford
 [includeIf "gitdir:~/workspace/phx-fsb/**/"]
   path = ~/.gitconfig-ford
+[includeIf "gitdir:/tmp/phx-launcher*/**/"]
+  path = ~/.gitconfig-ford
+[includeIf "gitdir:/tmp/phx-fsb/**/"]
+  path = ~/.gitconfig-ford
+[includeIf "gitdir:/tmp/manifest/**/"]
+  path = ~/.gitconfig-ford
+[includeIf "gitdir:/tmp/vsomeip-source/**/"]
+  path = ~/.gitconfig-ford
 [includeIf "gitdir:~/workspace/ford/**/"]
   path = ~/.gitconfig-ford
 [includeIf "gitdir:/src/**/"]
