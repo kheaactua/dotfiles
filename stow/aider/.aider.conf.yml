@@ -30,7 +30,7 @@ model: openai/gemini-2.5-pro
 #anthropic-api-key: xxx
 
 ## Specify the api base url
-#openai-api-base: xxx
+openai-api-base: "https://api.githubcopilot.com"
 
 ## (deprecated, use --set-env OPENAI_API_TYPE=<value>)
 #openai-api-type: xxx

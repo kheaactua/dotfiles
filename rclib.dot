@@ -1,15 +1,20 @@
 function _exists() {
     local bin=${1}
 
+    if [[ -z "${bin}" ]]; then
+        echo "Usage: _exists <binary_name>"
+        return 1
+    fi
+
     if [ -n "${ZSH_VERSION}" ]; then
         local -r _not_found_pattern="not found$"
-        if [[ "$(which "${1}" 2> /dev/null)" =~ ${_not_found_pattern} ]]; then
+        if [[ "$(which "${bin}" 2> /dev/null)" =~ ${_not_found_pattern} ]]; then
             return 1
         else
             return 0
         fi
     else
-        which "${1}" 2>&1 > /dev/null
+        which "${bin}" > /dev/null 2>&1
         if [[ 0 != "$?" ]]; then
             return 1
         else

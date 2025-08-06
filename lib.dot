@@ -60,7 +60,7 @@ function dotfiles_install_cargo()
   symlink "${DOTFILES_DIR:-${HOME}/dotfiles}/cargo" "${home}/.cargo"
 
   source "${DOTFILES_DIR:-${HOME}/dotfiles}/cargo/env"
-  if [[ "$(which rustup)" == "" ]]; then
+  if _exists rustup; then
     echo "Cargo configuration files are setup, but rustup is not installed.  To install it, run:"
     echo "  curl https://sh.rustup.rs -sSf | sh"
     echo
@@ -114,11 +114,10 @@ function dotfiles_install_tpm()
 {
   local home=${1:-${HOME}}
 
-  if [[ ! -e "${home}/.tmux/plugins/tpm" ]]; then
-    if [[ "$(which tmux)" != "" ]]; then
-      mkdir -p "${home}/.tmux/plugins"
-      git clone https://github.com/tmux-plugins/tpm "${home}/.tmux/plugins/tpm"
-    fi
+  if [[ ! -e "${home}/.tmux/plugins/tpm" && $(_exists tmux) ]]; then
+    echo "installing tmux"
+    mkdir -p "${home}/.tmux/plugins"
+    git clone https://github.com/tmux-plugins/tpm "${home}/.tmux/plugins/tpm"
   fi
 }
 
@@ -293,5 +292,24 @@ function dotfiles_clone_submodules() {
 	git submodule update
   popd
 }
+
+function get_distro() {
+  if grep -q "ID=ubuntu" /etc/os-release; then
+    echo ubuntu
+  elif grep -q "ID=arch" /etc/os-release; then
+    echo arch
+  else
+    echo "Neither Ubuntu nor Arch Linux detected."
+  fi
+}
+
+function is_ubuntu() {
+  [[ "ubuntu" == "$(get_distro)" ]] && return 0;
+}
+
+function is_arch() {
+  [[ "arch" == "$(get_distro)" ]] && return 0;
+}
+
 
 # vim: ts=2 sw=2 sts=0 ff=unix expandtab ft=sh :

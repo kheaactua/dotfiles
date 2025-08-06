@@ -18,3 +18,5 @@ stow/neovim/.config/nvim/.netrwhist
 stow/neovim/.config/nvim/nvim_lsp/jdtls/
 stow/i3/.config/config
 .aider*
+stow/env-modules/.modulefiles/fo*
+stow/gnupg/.gnupg/*

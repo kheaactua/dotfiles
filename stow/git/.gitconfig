@@ -69,9 +69,9 @@
   defaultBranch = main
 
 [merge "tool"]
-  path = /bin/nvim
+  path = /usr/bin/nvim
 [mergetool "nvim"]
-  path = /bin/nvim
+  path = /usr/bin/nvim
 
 [merge]
  conflictstyle = diff3

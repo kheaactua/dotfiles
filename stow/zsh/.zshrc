@@ -9,6 +9,20 @@ if [[ "undefined" == "${DOTFILES_DIR:-undefined}" ]]; then
 	export DOTFILES_DIR="${HOME}/dotfiles"
 fi
 
+declare WSL_VERSION=0
+declare IN_DOCKER=0
+declare PLATFORM=linux_x86_64
+
+if [[ -e "${DOTFILES_DIR}/detect_platform.dot" ]]; then
+	source "${DOTFILES_DIR}/detect_platform.dot"
+
+	WSL_VERSION="$(detect_wsl)"
+	IN_DOCKER="$(detect_docker)"
+	PLATFORM="$(detect_platform)"
+else
+	echo "Warning: Cannot detect platform"
+fi
+
 if [[ -e "${DOTFILES_DIR}/rclib.dot" ]]; then
 	source "${DOTFILES_DIR}/rclib.dot"
 fi
@@ -17,8 +31,11 @@ if [[ -e "${DOTFILES_DIR}/agents.dot" ]]; then
 	source "${DOTFILES_DIR}/agents.dot"
 	check_agent_file
 
-	# init_gpg_agent
-	init_keyring
+	if [[ 0 != "${WSL_VERSION}" ]]; then
+		init_gpg_agent
+	else
+		init_keyring
+	fi
 fi
 
 if [[ -e "${DOTFILES_DIR}/doupdate.sh" && ! "$(hostname)" =~ sync* ]]; then
@@ -45,24 +62,8 @@ if [[ -O ${WSL_TEMP_GUESS} && -d ${WSL_TEMP_GUESS} ]]; then
 	TMPDIR="${WSL_TEMP_GUESS}"
 fi
 
-# Adjust the path
-if [[ -e "${HOME}/.pathrc" ]]; then
-	source "${HOME}/.pathrc"
-fi
-
-declare WSL_VERSION=0
-declare IN_DOCKER=0
-declare PLATFORM=linux_x86_64
-
-if [[ -e "${DOTFILES_DIR}/detect_platform.dot" ]]; then
-	source "${DOTFILES_DIR}/detect_platform.dot"
-
-	WSL_VERSION="$(detect_wsl)"
-	IN_DOCKER="$(detect_docker)"
-	PLATFORM="$(detect_platform)"
-else
-	echo "Warning: Cannot detect platform"
-fi
+# Adjust PATH
+[[ -e "${HOME}/.pathrc" ]] && source "${HOME}/.pathrc"
 
 if [[ -e "${HOME}/.zplug" ]]; then
 	source "${HOME}/.zplug/init.zsh"
@@ -198,6 +199,16 @@ function _fix_zsh_init() {
 }
 zvm_after_init_commands+=(_fix_zsh_init)
 
+# Proxy functions
+#
+# Check if 'proxy-on' (function/alias/command) is not defined,
+# AND if /etc/profile.d/proxy.sh exists (installed by toggle-proxy)
+# This is explicit here because "non-login interactive shells" (shells that
+# don't have an "l" in $-) do not source /etc/profile.d/* like login shells do.
+if ! type -w proxy-on &>/dev/null && [ -f /etc/profile.d/proxy.sh ]; then
+    source /etc/profile.d/proxy.sh
+fi
+
 # Aliases
 [ -e "${HOME}/.bash_aliases" ] && source "${HOME}/.bash_aliases"
 
@@ -273,12 +284,9 @@ elif [[ "UGC14VW7PZ3" == "$(hostname)" ]]; then
 		ip route show | rg '10\.2\.0.\d*'
 	}
 
-elif [[ "WGC1CV2JWQP13" == "$(hostname)" ]]; then
-	# TODO hostname is wrong
-	# Ford Laptop
-	export WINHOME=/c/users/mruss100
-
-	export DISPLAY=:0
+elif [[ "WGC30047YVDS3" == "$(hostname)" ]]; then
+	# Set DISPLAY
+	source /etc/profile.d/display.sh
 
 	# Use Window's Docker
 	# https://nickjanetakis.com/blog/setting-up-docker-for-windows-and-wsl-to-work-flawlessly
@@ -286,6 +294,9 @@ elif [[ "WGC1CV2JWQP13" == "$(hostname)" ]]; then
 
 	# module load ford/ford
 
+	# I map ~/tmp, and this might be the cause of some problems.  In any case,
+	# ensure this is running on /tmp (not a Windows path)
+	export GITSTATUS_DIR="/tmp/gitstatus.${UID}"
 fi
 
 # Load default python virtual env.

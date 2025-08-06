@@ -1,13 +1,9 @@
 #!/bin/bash
 
-# This script sets up symlinks to all the dotfiles
-# in the user's home directory.
-
-if [[ "${WINHOME:-undefined}" == "undefined" ]]; then
-	h="${HOME}"
-else
-	h="${WINHOME}"
-fi
+# This script used to attempt to use dotfiles from the windows partition if
+# this was running on the WSL (if WINHOME was defined), however this just
+# causes more headaches than it solves
+declare h="${HOME}"
 
 declare -r DOTFILES_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 source "${DOTFILES_DIR}/detect_platform.dot"
@@ -26,7 +22,6 @@ ARGUMENT_FLAG_LIST=(
 	"skip-python-venv"
 	"skip-tmux"
 	"skip-submodules"
-	"skip-packer"
 	"skip-zplug"
 	"skip-rofi"
 	"skip-i3"
@@ -45,12 +40,11 @@ opts=$(getopt \
 eval set --$opts
 
 declare skip_apt=0
-declare skip_powerline=0
+declare skip_powerline=1
 declare skip_python_venv=0
 declare skip_fzf=0
 declare skip_tmux=0
 declare skip_submodules=0
-declare skip_packer=0
 declare skip_zplug=0
 declare skip_rofi=0
 declare skip_i3=0
@@ -81,9 +75,6 @@ while [[ "" != $1 ]]; do
 	"--skip-submodules")
 		skip_submodules=1
 		;;
-	"--skip-packer")
-		skip_packer=1
-		;;
 	"--skip-zplug")
 		skip_zplug=1
 		;;
@@ -106,7 +97,6 @@ while [[ "" != $1 ]]; do
 		skip_python_venv=1
 		skip_powerline=1
 		skip_submodules=1
-		skip_packer=1
 		skip_rofi=1
 		skip_i3=1
 		skip_gnupg=1
@@ -140,7 +130,9 @@ cd "${h}"
 #
 
 if [[ "1" != "${skip_apt}" ]]; then
-	sudo apt-get install -qy curl stow git environment-modules rlwrap
+	pkgs=(curl stow git rlwrap)
+	is_ubuntu && sudo apt-get install -qy ${pkgs[@]} environment-modules
+	is_arch   && sudo pacman -S --noconfirm ${pkgs[@]} which inetutils
 fi
 
 #
@@ -157,7 +149,7 @@ fi
 if [[ "khea" == "$(hostname)" ]]; then
 	stows+=('xinit')
 fi
-if [[ "1" != "${skip_tmux}" ]]; then
+if [[ $(_exists tmux) && "1" != "${skip_tmux}" ]]; then
 	dotfiles_install_tpm "${h}"
 fi
 
@@ -200,17 +192,13 @@ else
 	echo "Skipped installing rofi"
 fi
 
-if [[ "1" != "${skip_packer}" ]]; then
-	dotfiles_install_packer "${h}" "${DFTMP}"
-else
-	echo "Skipped installing packer"
+# Make sure config directory exists
+if [[ ! -e "${h}/.config" ]]; then
+	mkdir -p "${h}/.config"
 fi
 
-# Make sure config directory exists
-mkdir -p "${h}/.config"
-
 # Setup i3
-if [[ "1" != "${skip_i3}" ]]; then
+if [[ $(_exists i3) && "1" != "${skip_i3}" ]]; then
 	dotfiles_install_i3 "${h}"
 	stows+=('i3')
 fi
@@ -278,9 +266,7 @@ done
 
 # Run stow on the dotfiles-secret stows
 if [[ -e "${DOTFILES_SECRET_DIR}" ]]; then
-	for s in gh git; do
-		stow -d "${DOTFILES_SECRET_DIR}/stow" -t "${h}" "${s}"
-	done
+	${DOTFILES_SECRET_DIR}/run_stow.sh
 else
 	echo "Couldn't find ${DOTFILES_SECRET_DIR}/stow, skipping stow"
 fi
