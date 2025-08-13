@@ -1,13 +1,4 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
-if [[ "undefined" == "${DOTFILES_DIR:-undefined}" ]]; then
-	export DOTFILES_DIR="${HOME}/dotfiles"
-fi
+[[ "undefined" == "${DOTFILES_DIR:-undefined}" ]] && export DOTFILES_DIR="${HOME}/dotfiles"
 
 declare WSL_VERSION=0
 declare IN_DOCKER=0
@@ -23,9 +14,7 @@ else
 	echo "Warning: Cannot detect platform"
 fi
 
-if [[ -e "${DOTFILES_DIR}/rclib.dot" ]]; then
-	source "${DOTFILES_DIR}/rclib.dot"
-fi
+[[ -e "${DOTFILES_DIR}/rclib.dot" ]] && source "${DOTFILES_DIR}/rclib.dot"
 
 if [[ -e "${DOTFILES_DIR}/agents.dot" ]]; then
 	source "${DOTFILES_DIR}/agents.dot"
@@ -38,10 +27,8 @@ if [[ -e "${DOTFILES_DIR}/agents.dot" ]]; then
 	fi
 fi
 
-if [[ -e "${DOTFILES_DIR}/doupdate.sh" && ! "$(hostname)" =~ sync* ]]; then
-	# Update the dotfiles repo to make sure we have all changes:
-	"${DOTFILES_DIR}/doupdate.sh" > /dev/null
-fi
+# Update the dotfiles repo to make sure we have all changes:
+[[ -e "${DOTFILES_DIR}/doupdate.sh" ]] && "${DOTFILES_DIR}/doupdate.sh" > /dev/null
 
 # Keep 1000 lines of history within the shell and save it to ${HOME}/.zsh_history:
 HISTSIZE=1000
@@ -55,15 +42,26 @@ export LC_TIME=en_GB.UTF-8
 COMPLETION_WAITING_DOTS="true"
 
 # On the WSL, it's handy to use Windows $env:temp space
-WSL_TEMP_GUESS=${HOME}/tmp
-if [[ -O ${WSL_TEMP_GUESS} && -d ${WSL_TEMP_GUESS} ]]; then
-	# # Shouldn't this be this?:
-	# alias win_tmp=$(wslpath -u "C:\Users\$(whoami)\AppData\Local\Temp")
-	TMPDIR="${WSL_TEMP_GUESS}"
+if [[ 0 != "${WSL_VERSION}" ]]; then
+	function win_tmp() {
+	}
+
+	declare WSL_TEMP_GUESS=${HOME}/tmp
+	if [[ -O ${WSL_TEMP_GUESS} && -d ${WSL_TEMP_GUESS} ]]; then
+		TMPDIR="${WSL_TEMP_GUESS}"
+	fi
+	unset WSL_TEMP_GUESS
 fi
 
 # Adjust PATH
 [[ -e "${HOME}/.pathrc" ]] && source "${HOME}/.pathrc"
+
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
 if [[ -e "${HOME}/.zplug" ]]; then
 	source "${HOME}/.zplug/init.zsh"
@@ -80,24 +78,15 @@ if [[ -e "${HOME}/.zplug" ]]; then
 		fpath+=("${LINUXBREWHOME}/.linuxbrew/share/zsh/site-functions")
 	fi
 
-	if [[ "${PLATFORM}" == android_aarch64 ]]; then
-		# Haven't used zsh on android in uears...
-		zplug "lib/completion", from:oh-my-zsh           # Provides completion of dot directories
+	zplug "lib/completion", from:oh-my-zsh           # Provides completion of dot directories
+	zplug "jeffreytse/zsh-vi-mode"
+	zplug "kheaactua/zsh-docker-aliases", from:github
 
-		ZSH_THEME=""
-		zplug "mafredri/zsh-async", from:github
-		zplug "sindresorhus/pure," use:pure.zsh, from:github, as:theme
-	else
-		zplug "lib/completion", from:oh-my-zsh           # Provides completion of dot directories
-		zplug "jeffreytse/zsh-vi-mode"
-		zplug "kheaactua/zsh-docker-aliases", from:github
+	# Really fast theme, configured at the head and tail of zshrc
+	zplug "romkatv/powerlevel10k", as:theme, depth:1
 
-		# Really fast theme, configured at the head and tail of zshrc
-		zplug romkatv/powerlevel10k, as:theme, depth:1
-
-		# Syntax highlighting bundle (syntax highlights commands as typing).
-		zplug "zsh-users/zsh-syntax-highlighting", defer:3
-	fi
+	# Syntax highlighting bundle (syntax highlights commands as typing).
+	zplug "zsh-users/zsh-syntax-highlighting", defer:3
 
 	# Bookmarks in fzf
 	_exists fzf && zplug "urbainvaes/fzf-marks"
@@ -296,7 +285,8 @@ elif [[ "WGC30047YVDS3" == "$(hostname)" ]]; then
 
 	# I map ~/tmp, and this might be the cause of some problems.  In any case,
 	# ensure this is running on /tmp (not a Windows path)
-	export GITSTATUS_DIR="/tmp/gitstatus.${UID}"
+	export GITSTATUS_DIR="/tmp/gitstatus_files/gitstatus.${UID}"
+	[[ -e "$(dirname "${GITSTATUS_DIR}")" ]] || mkdir -p "$(dirname "${GITSTATUS_DIR}")"
 fi
 
 # Load default python virtual env.
