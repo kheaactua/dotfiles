@@ -13,21 +13,21 @@ source "${DOTFILES_DIR}/lib.dot"
 declare -r DOTFILES_SECRET_DIR="${DOTFILES_DIR}/dotfiles-secret"
 
 ARGUMENT_STR_LIST=(
-	"home"
+  "home"
 )
 ARGUMENT_FLAG_LIST=(
-	"skip-apt"
-	"skip-powerline"
-	"skip-fzf"
-	"skip-python-venv"
-	"skip-tmux"
-	"skip-submodules"
-	"skip-zplug"
-	"skip-rofi"
-	"skip-i3"
-	"skip-gnupg"
-	"skip-cargo"
-	"small"
+  "skip-apt"
+  "install-powerline"
+  "skip-fzf"
+  "skip-python-venv"
+  "skip-tmux"
+  "skip-submodules"
+  "skip-zplug"
+  "skip-rofi"
+  "skip-i3"
+  "skip-gnupg"
+  "skip-cargo"
+  "small"
 )
 
 # read arguments
@@ -50,64 +50,63 @@ declare skip_rofi=0
 declare skip_i3=0
 declare skip_gnupg=0
 declare skip_cargo=0
-declare copy=0 # This hasn't been used in years, it's only for cygwin/issues with symlinks with Windos
 while [[ "" != $1 ]]; do
-	case "$1" in
-	"--home")
-		shift
-		h=$1
-		;;
-	"--skip-apt")
-		skip_apt=1
-		;;
-	"--skip-powerline")
-		skip_powerline=1
-		;;
-	"--skip-python-venv")
-		skip_python_venv=1
-		;;
-	"--skip-fzf")
-		skip_fzf=1
-		;;
-	"--skip-tmux")
-		skip_tmux=1
-		;;
-	"--skip-submodules")
-		skip_submodules=1
-		;;
-	"--skip-zplug")
-		skip_zplug=1
-		;;
-	"--skip-rofi")
-		skip_rofi=1
-		;;
-	"--skip-i3")
-		skip_i3=1
-		;;
-	"--skip-gnupg")
-		skip_gnupg=1
-		;;
-	"--skip-cargo")
-		skip_cargo=1
-		;;
-	"--small")
-		skip_apt=1
-		skip_tmux=1
-		skip_fzf=1
-		skip_python_venv=1
-		skip_powerline=1
-		skip_submodules=1
-		skip_rofi=1
-		skip_i3=1
-		skip_gnupg=1
-		skip_cargo=1
-		;;
-	"--")
-		shift
-		break
-		;;
-	esac
-	shift
+  case "$1" in
+  "--home")
+    shift
+    h=$1
+    ;;
+  "--skip-apt")
+    skip_apt=1
+    ;;
+  "--install-powerline")
+    skip_powerline=0
+    ;;
+  "--skip-python-venv")
+    skip_python_venv=1
+    ;;
+  "--skip-fzf")
+    skip_fzf=1
+    ;;
+  "--skip-tmux")
+    skip_tmux=1
+    ;;
+  "--skip-submodules")
+    skip_submodules=1
+    ;;
+  "--skip-zplug")
+    skip_zplug=1
+    ;;
+  "--skip-rofi")
+    skip_rofi=1
+    ;;
+  "--skip-i3")
+    skip_i3=1
+    ;;
+  "--skip-gnupg")
+    skip_gnupg=1
+    ;;
+  "--skip-cargo")
+    skip_cargo=1
+    ;;
+  "--small")
+    skip_apt=1
+    skip_tmux=1
+    skip_fzf=1
+    skip_python_venv=1
+    skip_powerline=1
+    skip_submodules=1
+    skip_rofi=1
+    skip_i3=1
+    skip_gnupg=1
+    skip_cargo=1
+    ;;
+  "--")
+    shift
+    break
+    ;;
+  esac
+  shift
 done
 
 echo "Using home: ${h}"
@@ -119,7 +118,7 @@ declare VENVS="${h}/.virtualenvs"
 # First ensure that the submodules in this repo
 # are available and up to date:
 if [[ ! "1" == "${skip_submodules}" ]]; then
-	dotfiles_clone_submodules
+  dotfiles_clone_submodules
 fi
 
 cd "${h}"
@@ -130,40 +129,50 @@ cd "${h}"
 #
 
 if [[ "1" != "${skip_apt}" ]]; then
-	pkgs=(curl stow git rlwrap)
-	is_ubuntu && sudo apt-get install -qy ${pkgs[@]} environment-modules
-	is_arch   && sudo pacman -S --noconfirm ${pkgs[@]} which inetutils
+  pkgs=(curl stow git rlwrap pinentry-gnome3 pinentry-curses pinentry-tty)
+  is_ubuntu && sudo apt-get install -qy ${pkgs[@]} environment-modules
+  is_arch   && sudo pacman -S --noconfirm ${pkgs[@]} which inetutils
 fi
 
+# TODO
+# Other things to setup that aren't handled
+# bash won't stow on a new system because .bashrc exists by default
+# https://github.com/spwhitton/git-remote-gcrypt , which needs python3-docutils
+# Installing rustup: curl https://sh.rustup.rs -sSf | sh
+# cargo install bob-nvim
+# curl -LsSf https://astral.sh/uv/install.sh | sh
+# npm node:
+#  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
 #
-# Declare the files that we always want to copy over.
+# Declare the stows we want to install
 declare -a stows;
 stows+=(zsh bash bat vnc gdb dircolors neovim vim tmux git p10k env-modules procs rlwrap zellij aider)
 
 if [[ "1" != "${skip_powerline}" ]]; then
-	install_powerline_fonts
+  install_powerline_fonts
 else
-	echo "Skipped installing powerline fonts"
+  echo "Skipped installing powerline fonts"
 fi
 
 if [[ "khea" == "$(hostname)" ]]; then
-	stows+=('xinit')
+  stows+=('xinit')
 fi
 if [[ $(_exists tmux) && "1" != "${skip_tmux}" ]]; then
-	dotfiles_install_tpm "${h}"
+  dotfiles_install_tpm "${h}"
 fi
 
 if _exists screen; then
-	stows+=('screen')
+  stows+=('screen')
 fi
 if _exists sqlite3; then
-	stows+=('sqlite')
+  stows+=('sqlite')
 fi
 if _exists vncserver || _exists tightvncserver; then
-	stows+=('vnc')
+  stows+=('vnc')
 fi
 if _exists wireshark; then
-	stows+=('wireshark')
+  stows+=('wireshark')
 fi
 
 # Create a backup directory:
@@ -179,96 +188,103 @@ dotfiles_install_netrc "${h}" "${DOTFILES_DIR}/dotfiles-secret"
 dotfiles_setup_ssh_config "${h}"
 
 if [[ "1" != "${skip_zplug}" ]]; then
-	dotfiles_install_zplug "${h}" "${DFTMP}"
+  dotfiles_install_zplug "${h}" "${DFTMP}"
 else
-	echo "Skipped installing zplug"
+  echo "Skipped installing zplug"
 fi
 
 if [[ "1" != "${skip_rofi}" ]]; then
-	stows+=('rofi')
-	# dotfiles_install_rofi "${h}"
-	# dotfiles_install_rofipass "${h}"
+  stows+=('rofi')
+  # dotfiles_install_rofi "${h}"
+  # dotfiles_install_rofipass "${h}"
 else
-	echo "Skipped installing rofi"
+  echo "Skipped installing rofi"
 fi
 
 # Make sure config directory exists
 if [[ ! -e "${h}/.config" ]]; then
-	mkdir -p "${h}/.config"
+  mkdir -p "${h}/.config"
 fi
 
 # Setup i3
 if [[ $(_exists i3) && "1" != "${skip_i3}" ]]; then
-	dotfiles_install_i3 "${h}"
-	stows+=('i3')
+  dotfiles_install_i3 "${h}"
+  stows+=('i3')
 fi
 
 # Setup pwsh on linux
 if _exists pwsh; then
-	stows+=('pwsh')
+  stows+=('pwsh')
 fi
 
 # Setup pwsh on linux
 if _exists fsb; then
-	stows+=('fsb')
+  stows+=('fsb')
 fi
 
 # Install fzf
 if [[ "1" != "${skip_fzf}" ]]; then
-	if [[ ! -e "${h}/.fzf" ]]; then
-		git clone --depth 1 https://github.com/junegunn/fzf.git "${h}/.fzf"
-		yes | "${h}/.fzf/install"
-	fi
+  if [[ ! -e "${h}/.fzf" ]]; then
+    git clone --depth 1 https://github.com/junegunn/fzf.git "${h}/.fzf"
+    yes | "${h}/.fzf/install"
+  fi
 else
-	echo "Skipped installing fzf"
+  echo "Skipped installing fzf"
 fi
 
 # Setup default virtualenv
 if [[ "1" != "${skip_python_venv}" ]]; then
-	if [[ "${DEFAULT_PYTHON_VENV:-undefined}" == "undefined" ]]; then
-		DEFAULT_PYTHON_VENV="default"
-	fi
+  if [[ "${DEFAULT_PYTHON_VENV:-undefined}" == "undefined" ]]; then
+    DEFAULT_PYTHON_VENV="default"
+  fi
 
-	if [[ ! -e "${VENVS}/${DEFAULT_PYTHON_VENV}" && ! _exists virtualenv ]]; then
-		mkdir -p "${VENVS}"
-		pushd .
-		cd "${VENVS}"
-		echo "Creating virtual python environment ${DEFAULT_PYTHON_VENV}"
-		virtualenv -p python3 "${DEFAULT_PYTHON_VENV}"
-		popd
-	fi
+  if ! _exists uv; then
+    echo "Please install uv: https://docs.astral.sh/uv/getting-started/installation/"
+  else
+
+    if [[ ! -e "${VENVS}/${DEFAULT_PYTHON_VENV}" ]]; then
+      mkdir -p "${VENVS}"
+      pushd .
+      cd "${VENVS}"
+      echo "Creating virtual python environment ${DEFAULT_PYTHON_VENV}"
+      # python3 -m env "${DEFAULT_PYTHON_VENV}"
+      uv venv "${DEFAULT_PYTHON_VENV}"
+      popd
+    fi
+  fi
 else
-	echo "Skipped setting up python virtual environments"
+  echo "Skipped setting up python virtual environments"
 fi
 
 # Cargo
 if [[ "1" != "${skip_cargo}" ]]; then
-	dotfiles_install_cargo "${h}"
+  dotfiles_install_cargo "${h}"
+  cargo install ripgrep du-dust fd-find
 else
-	echo "Skipped installing cargo config"
+  echo "Skipped installing cargo config"
 fi
 
 # GPG-Agent
 if [[ "1" != "${skip_gnupg}" ]]; then
-	dotfiles_install_gnupg "${h}" "${DOTFILES_SECRET_DIR}"
+  dotfiles_install_gnupg "${h}" "${DOTFILES_SECRET_DIR}"
 else
-	echo "Skipped installing gnupg"
+  echo "Skipped installing gnupg"
 fi
 
 if [[ ! -e "${h}/.ssh/tmp" ]]; then
-	mkdir -p "${h}/.ssh/tmp"
-	chmod 700 "${h}/.ssh"
+  mkdir -p "${h}/.ssh/tmp"
+  chmod 700 "${h}/.ssh"
 fi
 
 for s in ${stows[@]}; do
-	stow -d "${DOTFILES_DIR}/stow" -t "${h}" "${s}"
+  stow -d "${DOTFILES_DIR}/stow" -t "${h}" "${s}"
 done
 
 # Run stow on the dotfiles-secret stows
 if [[ -e "${DOTFILES_SECRET_DIR}" ]]; then
-	${DOTFILES_SECRET_DIR}/run_stow.sh
+  ${DOTFILES_SECRET_DIR}/run_stow.sh
 else
-	echo "Couldn't find ${DOTFILES_SECRET_DIR}/stow, skipping stow"
+  echo "Couldn't find ${DOTFILES_SECRET_DIR}/stow, skipping stow"
 fi
 
-# vim: ts=3 sw=3 sts=0 ff=unix noet :
+# vim: ts=3 sw=3 sts=0 ff=unix et :
