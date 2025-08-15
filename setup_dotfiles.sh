@@ -130,7 +130,7 @@ cd "${h}"
 
 if [[ "1" != "${skip_apt}" ]]; then
   pkgs=(curl stow git rlwrap pinentry-gnome3 pinentry-curses pinentry-tty)
-  is_ubuntu && sudo apt-get install -qy ${pkgs[@]} environment-modules
+  is_ubuntu && sudo apt-get install -qy ${pkgs[@]} environment-modules pass
   is_arch   && sudo pacman -S --noconfirm ${pkgs[@]} which inetutils
 fi
 
@@ -143,11 +143,14 @@ fi
 # curl -LsSf https://astral.sh/uv/install.sh | sh
 # npm node:
 #  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+#  nvm install latest
+# docker-credential-helper: https://github.com/docker/docker-credential-helpers/releases
+#   Manually install this (with a symlink) to /usr/local/bin
 
 #
 # Declare the stows we want to install
 declare -a stows;
-stows+=(zsh bash bat vnc gdb dircolors neovim vim tmux git p10k env-modules procs rlwrap zellij aider)
+stows+=(zsh bash bat vnc gdb dircolors neovim vim tmux git p10k env-modules procs rlwrap zellij aider dircolors screenlayout)
 
 if [[ "1" != "${skip_powerline}" ]]; then
   install_powerline_fonts
@@ -162,21 +165,15 @@ if [[ $(_exists tmux) && "1" != "${skip_tmux}" ]]; then
   dotfiles_install_tpm "${h}"
 fi
 
-if _exists screen; then
-  stows+=('screen')
-fi
-if _exists sqlite3; then
-  stows+=('sqlite')
-fi
+_exists screen && stows+=('screen')
+_exists sqlite3 && stows+=('sqlite')
+
 if _exists vncserver || _exists tightvncserver; then
   stows+=('vnc')
 fi
-if _exists wireshark; then
-  stows+=('wireshark')
-fi
 
 # Create a backup directory:
-mkdir -p "${h}/.dotfiles_backup"
+[[ -e "${h}/.dotfiles_backup" ]] || mkdir -p "${h}/.dotfiles_backup"
 
 cd $h
 
@@ -202,25 +199,19 @@ else
 fi
 
 # Make sure config directory exists
-if [[ ! -e "${h}/.config" ]]; then
-  mkdir -p "${h}/.config"
-fi
+[[ -e "${h}/.config" ]] || mkdir -p "${h}/.config"
 
 # Setup i3
-if [[ $(_exists i3) && "1" != "${skip_i3}" ]]; then
+if _exists i3 && [[ "1" != "${skip_i3}" ]]; then
   dotfiles_install_i3 "${h}"
   stows+=('i3')
 fi
 
 # Setup pwsh on linux
-if _exists pwsh; then
-  stows+=('pwsh')
-fi
+_exists pwsh && stows+=('pwsh')
 
 # Setup pwsh on linux
-if _exists fsb; then
-  stows+=('fsb')
-fi
+_exists fsb && stows+=('fsb')
 
 # Install fzf
 if [[ "1" != "${skip_fzf}" ]]; then
@@ -287,4 +278,4 @@ else
   echo "Couldn't find ${DOTFILES_SECRET_DIR}/stow, skipping stow"
 fi
 
-# vim: ts=3 sw=3 sts=0 ff=unix et :
+# vim: ts=2 sw=2 sts=0 ff=unix et :

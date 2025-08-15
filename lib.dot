@@ -153,7 +153,6 @@ function dotfiles_install_i3_config()
 {
   local -r lower_hostname=$(dotfiles_hostname)
   local i3_dir=${1:-${DOTFILES_DIR:-${HOME}/dotfiles}/stow/i3/.config/i3}
-  ln -s ${i3_dir}/${lower_hostname}.i3 ${i3_dir}/config
   symlink "${i3_dir}/${lower_hostname}.i3" "${i3_dir}/config" 1
 }
 
@@ -180,15 +179,17 @@ function dotfiles_install_i3()
 {
   local home=${1:-${HOME}}
   if _exists i3; then
-    mkdir -p "${home}/.config/i3"
-    dotfiles_install_i3_config "${DOTFILES_DIR:-${HOME}/dotfiles}/stow/i3/.config/i3"
-    mkdir -p "${home}/.screenlayout"
-    symlink "${DOTFILES_DIR:-${HOME}/dotfiles}/stow/screenlayout/.screenlayout/host.sh" "${home}/.screenlayout/$(dotfiles_hostname).sh" 1
+    local -r i3_config_dir="${DOTFILES_DIR:-${HOME}/dotfiles}/stow/i3/.config/i3"
+    if [[ ! -e "${i3_config_dir}" ]]; then
+      echo "Error: i3 config dir ${i3_config_dir} doesn't exist" >&2
+      return 1
+    fi
+
+    dotfiles_install_i3_config "${i3_config_dir}"
+    symlink "${DOTFILES_DIR:-${HOME}/dotfiles}/stow/screenlayout/.screenlayout/$(dotfiles_hostname).sh" "${home}/.screenlayout/host.sh" 1
   fi
 
-  if [[ ! -e "${home}/bin" ]]; then
-    mkdir -p "${home}/bin"
-  fi
+  [[ -e "${home}/bin" ]] || mkdir -p "${home}/bin"
 
   cat <<TOHERE > "${home}/bin/do_lock.sh"
 #!/bin/bash
@@ -198,7 +199,7 @@ function dotfiles_install_i3()
 
 # Shuts the screen off the first time, but after a period of inactivity
 # Assumes i3lock-fancy-rapid is installed
-# TODO use `which` and get this from the path
+# TODO use \`which\` and get this from the path
 if [[ -e /usr/local/bin/i3lock-fancy-rapid || -e /bin/i3lock-fancy-rapid ]]; then
   /usr/local/bin/i3lock-fancy-rapid 5 3 \\
       -t "Enter Password" --clock --indicator --ignore-empty-password \\
