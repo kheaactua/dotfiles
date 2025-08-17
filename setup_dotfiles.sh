@@ -129,7 +129,7 @@ cd "${h}"
 #
 
 if [[ "1" != "${skip_apt}" ]]; then
-  pkgs=(curl stow git rlwrap pinentry-gnome3 pinentry-curses pinentry-tty)
+  pkgs=(curl stow git rlwrap pinentry-gnome3 pinentry-curses pinentry-tty autorandr)
   is_ubuntu && sudo apt-get install -qy ${pkgs[@]} environment-modules pass
   is_arch   && sudo pacman -S --noconfirm ${pkgs[@]} which inetutils
 fi
@@ -150,7 +150,7 @@ fi
 #
 # Declare the stows we want to install
 declare -a stows;
-stows+=(zsh bash bat vnc gdb dircolors neovim vim tmux git p10k env-modules procs rlwrap zellij aider dircolors screenlayout)
+stows+=(zsh bash bat vnc gdb dircolors neovim vim tmux git p10k env-modules procs rlwrap zellij aider dircolors screenlayout autorandr)
 
 if [[ "1" != "${skip_powerline}" ]]; then
   install_powerline_fonts

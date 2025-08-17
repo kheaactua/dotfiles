@@ -365,6 +365,200 @@ return {
     end
   },
 
+
+  -- {
+  --   "williamboman/mason.nvim",
+  --   config = function ()
+  --     require("mason").setup()
+  --   end,
+  -- },
+
+  -- {
+  --   "williamboman/mason-lspconfig.nvim",
+  --   after = { "mason.nvim", "nvim-lspconfig" },
+  --   dependencies = {
+  --     -- "williamboman/mason.nvim",
+  --     -- "williamboman/mason-lspconfig.nvim",
+  --     -- -- "mason-org/mason.nvim",
+  --     -- -- "mason-org/mason-lspconfig.nvim",
+  --     -- "nvimtools/none-ls.nvim",
+  --     "mhartington/formatter.nvim",
+  --   },
+  --   config = function()
+  --     require('mason').setup({})
+  --     require('mason-lspconfig').setup({
+  --       ensure_installed = {
+  --         "clangd",          -- C/C++
+  --         "yamlls",          -- YAML
+  --         "bashls",          -- Bash
+  --         "cmake",           -- CMake
+  --         "dockerls",        -- Docker
+  --         "gopls",           -- Go
+  --         "jsonls",          -- JSON
+  --         "marksman",        -- Markdown
+  --         "pyright",         -- Python
+  --         "lua_ls",          -- Lua
+  --       }
+  --     })
+  --     -- require('lspconfig').lua_ls.setup({})
+  --     -- require('lspconfig').pyright.setup({})
+  --     -- require('lspconfig').ts_ls.setup({})
+  --   end
+  -- },
+
+  -- -- Configurations for neovim's language client
+  -- {
+  --   'neovim/nvim-lspconfig',
+  --   dependencies = {
+  --     "williamboman/mason.nvim",
+  --     "williamboman/mason-lspconfig.nvim",
+  --     -- "mason-org/mason.nvim",
+  --     -- "mason-org/mason-lspconfig.nvim",
+  --     "nvimtools/none-ls.nvim",
+  --     "mhartington/formatter.nvim",
+  --   },
+  --   config = function()
+  --     require("mason").setup()
+  --     -- require("mason-lspconfig").setup()
+
+  --     -- Setup none-ls for linting if available
+  --     local ok, null_ls = pcall(require, "none-ls")
+  --     if ok then
+  --       null_ls.setup({
+  --       debug = false,
+  --       sources = {
+  --         -- Add null-ls sources for linting based on your needs
+  --         null_ls.builtins.diagnostics.eslint,
+  --         null_ls.builtins.diagnostics.pylint,
+  --         null_ls.builtins.diagnostics.shellcheck,
+  --         null_ls.builtins.code_actions.gitsigns,
+  --         null_ls.builtins.diagnostics.markdownlint,
+  --         null_ls.builtins.diagnostics.yamllint,
+  --         -- Formatting
+  --         null_ls.builtins.formatting.prettier,
+  --         null_ls.builtins.formatting.black,
+  --         null_ls.builtins.formatting.clang_format,
+  --       },
+  --     })
+  --     end
+
+  --     -- require("mason").setup()
+
+  --     -- Install servers automatically
+  --     local ensure_installed = {
+  --       -- "clangd",          -- C/C++
+  --       -- "yamlls",          -- YAML
+  --       -- "bashls",          -- Bash
+  --       -- "cmake",           -- CMake
+  --       -- "dockerls",        -- Docker
+  --       -- "gopls",           -- Go
+  --       -- "jsonls",          -- JSON
+  --       -- "marksman",        -- Markdown
+  --       -- "pyright",         -- Python
+  --       "lua_ls",          -- Lua
+  --     }
+
+  --     -- Load mason-lspconfig with error handling
+  --     local has_mlc, mlc = pcall(require, "mason-lspconfig")
+  --     if has_mlc then
+  --       -- print("mason-lspconfig loaded successfully")
+  --       -- print(vim.inspect(mlc))
+  --       mlc.setup {
+  --         ensure_installed = ensure_installed,
+  --         -- handlers = {
+  --         --   function (server_name)
+  --         --     local has_cmp_lsp, cmp_lsp = pcall(require, 'cmp_nvim_lsp')
+  --         --     local capabilities = has_cmp_lsp and cmp_lsp.default_capabilities() or vim.lsp.protocol.make_client_capabilities()
+  --         --     require("lspconfig")[server_name].setup {
+  --         --       capabilities = capabilities
+  --         --     }
+  --         --   end,
+  --         -- }
+  --       }
+
+  --       -- -- Setup LSP handlers
+  --       -- mlc.setup_handlers {
+  --       -- -- The first entry (without a key) will be the default handler
+  --       -- -- and will be called for each installed server that doesn't have
+  --       -- -- a dedicated handler.
+  --       -- function (server_name) -- default handler (optional)
+  --       --   local has_cmp_lsp, cmp_lsp = pcall(require, 'cmp_nvim_lsp')
+  --       --   local capabilities = has_cmp_lsp and cmp_lsp.default_capabilities() or vim.lsp.protocol.make_client_capabilities()
+
+  --       --   require("lspconfig")[server_name].setup {
+  --       --     capabilities = capabilities
+  --       --   }
+  --       -- end,
+  --       -- }
+  --     end
+
+  --     -- Configure diagnostics to show inline
+  --     vim.diagnostic.config({
+  --       virtual_text = true,  -- Enable inline diagnostics
+  --       signs = true,         -- Show signs in the sign column
+  --       underline = true,     -- Underline text with issues
+  --       update_in_insert = false,
+  --       severity_sort = true,
+  --     })
+
+  --     -- Global mappings.
+  --     -- See `:help vim.diagnostic.*` for documentation on any of the below functions
+  --     vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
+  --     vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
+  --     vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+  --     vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
+
+  --     -- Use LspAttach autocommand to only map the following keys
+  --     -- after the language server attaches to the current buffer
+  --     vim.api.nvim_create_autocmd('LspAttach', {
+  --       group = vim.api.nvim_create_augroup('UserLspConfig', {}),
+  --       callback = function(ev)
+  --         -- Enable completion triggered by <c-x><c-o>
+  --         vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+
+  --         -- Buffer local mappings.
+  --         -- See `:help vim.lsp.*` for documentation on any of the below functions
+  --         local opts = { buffer = ev.buf }
+  --         vim.keymap.set('n', '<leader>rD', vim.lsp.buf.declaration, opts)
+  --         vim.keymap.set('n', '<leader>rd', vim.lsp.buf.definition, opts)
+  --         vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+  --         vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+  --         vim.keymap.set('n', '<leader>rk', vim.lsp.buf.signature_help, opts)
+  --         vim.keymap.set('n', '<leaderty', vim.lsp.buf.type_definition, opts)
+  --         vim.keymap.set('n', '<leader>rw', vim.lsp.buf.rename, opts)
+  --         vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
+  --         vim.keymap.set('n', '<leader>rf', vim.lsp.buf.references, opts)
+  --         vim.keymap.set('n', '<leader>fu', function()
+  --           vim.lsp.buf.format { async = true }
+  --         end, opts)
+  --         vim.keymap.set('v', '<leader>fu', function()
+  --           vim.lsp.buf.format { async = true }
+  --         end, opts)
+  --       end,
+  --     })
+
+  --     -- Setup formatter
+  --     formatter = require('formatter')
+  --     formatter.setup({
+  --       -- Enable or disable logging
+  --       logging = true,
+
+  --       -- Set the log level
+  --       log_level = vim.log.levels.WARN,
+
+  --       filetype = {
+  --         ["yaml"] = {
+  --           require("formatter.filetypes.yaml").yamlfmt
+  --         },
+  --         ["*"] = {
+  --           require("formatter.filetypes.any").remove_trailing_whitespace
+  --         }
+  --       }
+  --     })
+
+  --   end
+  -- },
+
   -- Plugin to make it easy to delete a buffer and close the file:
   'mhinz/vim-sayonara',
 

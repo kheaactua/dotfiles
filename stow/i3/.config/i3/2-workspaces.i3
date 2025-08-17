@@ -1,18 +1,3 @@
-# Specify the displays
-set $monitor_left "DisplayPort-0"
-set $monitor_center "DisplayPort-1"
-set $monitor_right "DisplayPort-2"
-
-workspace $ws1 output $monitor_left
-workspace $ws2 output $monitor_center
-workspace $ws3 output $monitor_right
-workspace $ws4 output $monitor_center
-workspace $ws5 output $monitor_center
-workspace $ws7 output $monitor_center
-workspace $ws9 output $monitor_center
-workspace $ws10 output $monitor_center
-workspace $ws12 output $monitor_right
-
 # switch to workspace
 bindsym $mod+1 workspace $ws1
 bindsym $mod+2 workspace $ws2
