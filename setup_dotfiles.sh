@@ -129,9 +129,9 @@ cd "${h}"
 #
 
 if [[ "1" != "${skip_apt}" ]]; then
-  pkgs=(curl stow git rlwrap pinentry-gnome3 pinentry-curses pinentry-tty autorandr)
+  pkgs=(curl stow git rlwrap pinentry-gnome3 pinentry-curses pinentry-tty rofi autorandr)
   is_ubuntu && sudo apt-get install -qy ${pkgs[@]} environment-modules pass
-  is_arch   && sudo pacman -S --noconfirm ${pkgs[@]} which inetutils
+  is_arch   && sudo pacman -S --noconfirm ${pkgs[@]} which inetutils rofi-pass
 fi
 
 # TODO
@@ -146,6 +146,7 @@ fi
 #  nvm install latest
 # docker-credential-helper: https://github.com/docker/docker-credential-helpers/releases
 #   Manually install this (with a symlink) to /usr/local/bin
+# rofi-pass on ubuntu.  https://github.com/carnager/rofi-pass and `sudo make`
 
 #
 # Declare the stows we want to install

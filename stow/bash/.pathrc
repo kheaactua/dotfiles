@@ -77,12 +77,15 @@ for d in ${rdirs[@]}; do
   fi
 done
 
+# paths to PREpend
 pdirs+=( \
-  ${LINUXBREWHOME}/bin \
+  "${LINUXBREWHOME}/bin" \
 )
 
+# paths to APpend
 adirs+=( \
   /var/lib/snapd/bin \
+  /snap/bin \
   /usr/local/go/bin \
 )
 
