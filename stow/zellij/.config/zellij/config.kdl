@@ -384,7 +384,7 @@ default_mode "locked"
 // that will be used by default if this option is not set.
 // Examples:
 //
-// copy_command "xclip -selection clipboard" // x11
+copy_command "xclip -selection clipboard" // x11
 // copy_command "wl-copy"                    // wayland
 // copy_command "pbcopy"                     // osx
 // WSL: I should instead call a script which detects the platform
@@ -397,7 +397,6 @@ default_mode "locked"
 //   - system (default)
 //   - primary
 //
-copy_clipboard "primary"
 
 // Enable or disable automatic copy (and clear) of selection when releasing mouse
 // Default: true

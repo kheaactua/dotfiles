@@ -25,15 +25,16 @@ exec --no-startup-id dex --autostart --environment i3
 # and nm-applet is a desktop environment-independent system tray GUI for it.
 exec --no-startup-id nm-applet
 
-# Use pactl to adjust volume in PulseAudio.
-set $refresh_i3status pkill -RTMIN+1 i3blocks
-bindsym XF86AudioRaiseVolume exec amixer -q -D pulse sset Master 5%+ && $refresh_i3status
-bindsym XF86AudioLowerVolume exec amixer -q -D pulse sset Master 5%- && $refresh_i3statusp
-bindsym XF86AudioMute exec amixer -q -D pulse sset Master toggle && $refresh_i3status
-# If these don't work, chek the default sink
-# pacmd list-sinks
-# pacmd set-default-sink 1
-
+# Use wpctl to adjust volume in WirePlumber (Ubuntu 24.04+ default).
+set $refresh_i3status pkill -RTMIN+1 i3blocks # This should still work if i3blocks uses pactl compatibility
+bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ && $refresh_i3status
+bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && $refresh_i3status
+bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && $refresh_i3status
+# If these don't work or you need to switch devices, check the default sink:
+# wpctl status
+# To set a specific sink as default (replace <ID> with the actual sink ID):
+# wpctl set-default <ID>
+# The shell function fix-default-audio-sink sets this to USB Composite Device
 
 # Sreen brightness controls
 bindsym XF86MonBrightnessUp exec xbacklight -inc 20 # increase screen brightness

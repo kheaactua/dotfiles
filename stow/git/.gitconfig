@@ -74,7 +74,7 @@
   path = /usr/bin/nvim
 
 [merge]
- conflictstyle = diff3
+	conflictStyle = diff3
 
 [diff]
   colorMoved = default
@@ -108,5 +108,9 @@
 
 [protocol]
 	allow = always
+
+[merge "mergiraf"]
+	name = mergiraf
+	driver = mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P -l %L
 
 ; vim: ts=2 sw=2 sts=0 noet ft=gitconfig :

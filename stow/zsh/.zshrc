@@ -257,6 +257,10 @@ elif [[ "UGC14VW7PZ3" == "$(hostname)" ]]; then
 			neovim-ppa-ubuntu-unstable-${ubuntu_version_code}.list.save
 			wireshark-dev-ubuntu-stable-${ubuntu_version_code}.list.save
 			teams-for-linux-packages.list.save
+			opera-stable.list.save
+			docker.list.save
+			landscape-${ubuntu_version_code}-2404-profile.list
+			jfrog.list
 		)
 		for f in ${apt_sources[@]}; do
 			local abs_f=/etc/apt/sources.list.d/$f

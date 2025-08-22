@@ -150,6 +150,10 @@ function vigd() {
    vi -p $(git diff --name-only "${branch}" "$(git merge-base "${branch}" "${remote}")")
 }
 
+function post_st() {
+	curl -F 'file=@-' 0x0.st
+}
+
 # alias glog="git log --follow --name-status"
 
 [[ -e ~/.bash_aliases.local ]] && source ~/.bash_aliases.local
@@ -213,17 +217,33 @@ function fix-sound() {
 }
 
 function fix-default-audio-sink() {
-	# Set the default sink to the sink with the name USB_Composite_Device
-	local -r sink_id=$(pacmd list-sinks | awk '
-/index:/ { idx = $2 }
-/name:/ {
-  if ($0 ~ /USB_Composite_Device/) {
-    print idx
-  }
-}
-')
+  # This function originally used pacmd, but that is deprecated in favor of wpctl (WirePlumber)
 
-	pacmd set-default-sink "${sink_id}"
+  # I may have to have this read the name of the device I want from some file
+  # on the host, as the one specified here only exists at home
+
+  # mawk sucks!  Use gawk:
+  #   sudo apt install gawk
+  # Otherwise you'll get syntax errors
+
+  # Set the default sink to the sink with the name "USB Composite Device Analog Stereo"
+  local -r sink_id=$(wpctl status | awk '
+/.*Sinks:/ { in_sinks = 1; next }
+/.*Sources:/ { in_sinks = 0 }
+in_sinks && /USB Composite/ {
+  match($0, ".*[ ]([0-9]+)\\. USB Composite Device", arr)
+  if (arr[1]) {
+    print arr[1]
+    exit
+  }
+}')
+
+  if [ -n "${sink_id}" ]; then
+      wpctl set-default "${sink_id}"
+      echo "Default audio sink set to USB Composite Device Analog Stereo (ID: ${sink_id})"
+  else
+      echo "Error: USB Composite Device Analog Stereo sink not found."
+  fi
 }
 
 function _ps-fsb-stalled-pids() {
