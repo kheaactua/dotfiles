@@ -118,6 +118,11 @@ if [ -n "${RIGHT_DISPLAY_OUTPUT}" ]; then
   done
 fi
 
+# Change Wallpaper ---
+if command -v feh >/dev/null 2>&1; then
+  feh --randomize --bg-fill ~/Desktop/Backgrounds/*
+fi
+
 # Optional: Focus on a specific workspace after the move
 # i3-msg "workspace 1"
 
