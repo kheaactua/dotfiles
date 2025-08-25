@@ -14,21 +14,21 @@ output DP-7
 off
 output DP-0.1
 crtc 2
-mode 1920x1200
+mode 1920x1080
 pos 4480x0
-rate 59.95
+rate 120.00
 rotate left
 x-prop-non_desktop 0
 output DP-0.8
 crtc 0
 mode 1920x1200
-pos 0x720
+pos 0x653
 primary
 rate 59.95
 x-prop-non_desktop 0
 output DP-2
 crtc 1
 mode 2560x1080
-pos 1920x840
+pos 1920x773
 rate 60.00
 x-prop-non_desktop 0
