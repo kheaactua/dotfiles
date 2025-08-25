@@ -1,0 +1,42 @@
+output DP-0.8
+off
+output DP-0.1
+off
+output DP-0.1.8
+off
+output DP-0.1.1
+off
+output DP-1
+off
+output DP-2
+off
+output DP-3
+off
+output DP-4
+off
+output DP-5
+off
+output DP-6
+off
+output DP-7
+off
+output DP-2.1
+crtc 0
+mode 1920x1200
+pos 3840x0
+primary
+rate 59.95
+rotate right
+x-prop-non_desktop 0
+output DP-0
+crtc 1
+mode 1920x1200
+pos 0x720
+rate 59.95
+x-prop-non_desktop 0
+output DP-2.8
+crtc 2
+mode 1920x1200
+pos 1920x720
+rate 59.95
+x-prop-non_desktop 0
