@@ -92,7 +92,7 @@ if [ -n "${LEFT_DISPLAY_OUTPUT}" ]; then
 fi
 
 if [ -n "${CENTER_DISPLAY_OUTPUT}" ]; then
-  for i in 2 4 5 6 7 9; do
+  for i in 2 4 5 6 7 9 10; do
     move_workspace_to_output "${i}" "${CENTER_DISPLAY_OUTPUT}"
   done
 fi
