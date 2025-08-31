@@ -10,14 +10,18 @@ declare -r MAX_LOG_LINES=10 # Keep only the last 50 lines in the log file
 # --- Define Monitor Identification Criteria ---
 # These values MUST match your xrandr --verbose output exactly.
 
-# Left display (First in Daisy Chain)
-declare -r LEFT_DISPLAY_RES="1920x1200"
-
-# Central Non-Daisy-Chained Monitor
-declare -r CENTER_DISPLAY_RES="2560x1080"
-
-# Right display (Second in Daisy Chain)
-declare -r RIGHT_DISPLAY_RES="1200x1920"
+# TODO
+# Build a map with names, i.e. home_left, home_center, home_right
+# And then use that to query the resolutions to see which is which
+# TODO should probably break this to [home][left]
+declare -A MONITOR_RESOLUTIONS=(
+  ["home_left"]="1920x1200"
+  ["home_center"]="2560x1080"
+  ["home_right"]="1080x1920" # Portrait mode, daisy chained
+  ["work_left"]="1920x1080"
+  ["work_center"]="2560x1080"
+  ["work_right"]="1920x1080"
+)
 
 # Function to get all xrandr output names (e.g., DisplayPort-5)
 # for monitors matching specific resolution.
@@ -44,16 +48,27 @@ get_all_outputs_by_resolution() {
 
 
 # --- Identify Current Outputs ---
-declare -r LEFT_DISPLAY_OUTPUT="$(get_all_outputs_by_resolution "${LEFT_DISPLAY_RES}" | head -n 1)"
-declare -r CENTER_DISPLAY_OUTPUT=$(get_all_outputs_by_resolution "${CENTER_DISPLAY_RES}" | head -n 1)
-declare -r RIGHT_DISPLAY_OUTPUT="$(get_all_outputs_by_resolution "${RIGHT_DISPLAY_RES}" | head -n 1)"
+
+declare left_key="home_left"
+declare center_key="home_center"
+declare right_key="home_right"
+if [[ "khea" != "$(hostname)" ]]; then
+  left_key="work_left"
+  center_key="work_center"
+  right_key="work_right"
+fi
+
+set -x
+declare -r LEFT_DISPLAY_OUTPUT="$(get_all_outputs_by_resolution "${MONITOR_RESOLUTIONS[${left_key}]}" | head -n 1)"
+declare -r CENTER_DISPLAY_OUTPUT=$(get_all_outputs_by_resolution "${MONITOR_RESOLUTIONS[${center_key}]}" | head -n 1)
+declare -r RIGHT_DISPLAY_OUTPUT="$(get_all_outputs_by_resolution "${MONITOR_RESOLUTIONS[${right_key}]}" | head -n 1)"
 
 # --- Debugging: Writes detected outputs to a log file ---
 # Check the log file if things don't work as expected.
-echo "--- $(date) ---" >> ${LOG_FILE}
-echo "Left (Daisy):  ${LEFT_DISPLAY_OUTPUT}"   >> ${LOG_FILE}
-echo "Central:       ${CENTER_DISPLAY_OUTPUT}" >> ${LOG_FILE}
-echo "Right (Daisy): ${RIGHT_DISPLAY_OUTPUT}"  >> ${LOG_FILE}
+echo "--- $(date) ---" >> "${LOG_FILE}"
+echo "Left:    ${LEFT_DISPLAY_OUTPUT}"   >> "${LOG_FILE}"
+echo "Central: ${CENTER_DISPLAY_OUTPUT}" >> "${LOG_FILE}"
+echo "Right:   ${RIGHT_DISPLAY_OUTPUT}"  >> "${LOG_FILE}"
 
 # Now, trim the log file to MAX_LOG_LINES
 tail -n "${MAX_LOG_LINES}" "${LOG_FILE}" > "${LOG_FILE}.tmp" && mv "${LOG_FILE}.tmp" "${LOG_FILE}"
