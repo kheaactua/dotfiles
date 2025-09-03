@@ -1,51 +1,21 @@
-[user]
-  name = Matthew Russell
-  email = matthew.g.russell@gmail.com
-  signingkey = 9DADF75304599BD8
+[include]
+	path = ~/.gitconfig-home
 
 [include]
+	path = ~/.gitconfig-work
+
+[include]
+	# This file will exist if a proxy exists
 	path = ~/.gitconfig-proxy
 
-[includeIf "gitdir:~/workspace/capi/**/"]
-  path = ~/.gitconfig-work
-[includeIf "gitdir:~/workspace/phx-fsb/**/"]
-  path = ~/.gitconfig-work
-[includeIf "gitdir:/tmp/phx-launcher*/**/"]
-  path = ~/.gitconfig-work
-[includeIf "gitdir:/tmp/phx-fsb/**/"]
-  path = ~/.gitconfig-work
-[includeIf "gitdir:/tmp/manifest/**/"]
-  path = ~/.gitconfig-work
-[includeIf "gitdir:/tmp/vsomeip-source/**/"]
-  path = ~/.gitconfig-work
-[includeIf "gitdir:/src/**/"]
-  path = ~/.gitconfig-work
-[includeIf "gitdir:/f/**/*"]
-  path = ~/.gitconfig-work
-[includeIf "gitdir:/f/**/"]
-  path = 	~/.gitconfig-work
-; [includeIf "gitdir:/tmp/**/"]
-;   path = 	~/.gitconfig-work
-[includeIf "gitdir:~/.conan*/**/"]
-  path = 	~/.gitconfig-work
-[url "https://github.com"]
-  insteadOf = ssh://github.com
+[include]
+	# Config that includes development tools
+	path = ~/.gitconfig-dev
+
 [commit]
   gpgsign = true
-[core]
-  quotepath = false
-  commitGraph = true
-  commentchar = @
-  excludesfile = ~/dotfiles/gitignore
-  ; pager = delta
 [gc]
   writeCommitGraph = true
-[merge]
-  tool = nvimdiff
-[credential]
-  helper = cache --timeout=6048009
-[color]
-  ui = auto
 [filter "lfs"]
   clean = git-lfs clean -- %f
   smudge = git-lfs smudge -- %f
@@ -59,60 +29,11 @@
   prune = true
 [rebase]
   autoStash = true
-  ; autoSquash = true
-
-[diff]
-  colorMoved = default
 
 [uploadpack]
   allowFilter = true
 
 [init]
   defaultBranch = main
-
-[merge "tool"]
-  path = /usr/bin/nvim
-[mergetool "nvim"]
-  path = /usr/bin/nvim
-
-[merge]
-	conflictStyle = diff3
-
-[diff]
-  colorMoved = default
-
-  # Set difftastic as the default difftool, so we don't need to specify
-  # `-t difftastic` every time.
-  tool = difftastic
-
-[difftool "difftastic"]
-  # See `man git-difftool` for a description of MERGED, LOCAL and REMOTE.
-  cmd = difft "$MERGED" "$LOCAL" "abcdef1" "100644" "$REMOTE" "abcdef2" "100644"
-
-[difftool]
-  # Run the difftool immediately, don't ask 'are you sure' each time.
-  prompt = false
-
-[pager]
-  # Use a pager if the difftool output is larger than one screenful,
-  # consistent with the behaviour of `git diff`.
-  difftool = true
-
-[alias]
-  # `git log` with patches shown with difftastic.
-  dl = -c diff.external=difft log -p --ext-diff
-
-  # Show the most recent commit with difftastic.
-  ds = -c diff.external=difft show --ext-diff
-
-  # `git diff` with difftastic.
-  dft = -c diff.external=difft diff
-
-[protocol]
-	allow = always
-
-[merge "mergiraf"]
-	name = mergiraf
-	driver = mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P -l %L
 
 ; vim: ts=2 sw=2 sts=0 noet ft=gitconfig :
