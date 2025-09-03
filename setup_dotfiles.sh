@@ -151,7 +151,7 @@ fi
 #
 # Declare the stows we want to install
 declare -a stows;
-stows+=(zsh bash bat vnc gdb dircolors neovim vim tmux git p10k env-modules procs rlwrap zellij aider dircolors screenlayout autorandr)
+stows+=(zsh bash bat vnc gdb neovim vim tmux git p10k env-modules procs rlwrap zellij aider screenlayout autorandr)
 
 if [[ "1" != "${skip_powerline}" ]]; then
   install_powerline_fonts
@@ -180,8 +180,6 @@ cd $h
 
 # Symlink docker config from dotfiles-secret
 dotfiles_install_docker_config "${h}" "${DOTFILES_DIR}/dotfiles-secret"
-
-dotfiles_install_netrc "${h}" "${DOTFILES_DIR}/dotfiles-secret"
 
 dotfiles_setup_ssh_config "${h}"
 
