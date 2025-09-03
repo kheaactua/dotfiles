@@ -202,24 +202,14 @@ fi
 [ -e "${HOME}/.bash_aliases" ] && source "${HOME}/.bash_aliases"
 
 # TODO It'd be nice if I could move this into a subfile or something
-declare modules_enabled=0
-declare -f module > /dev/null;
+declare -f module > /dev/null || . /etc/profile.d/modules.sh
 if [[ $? == 1 ]]; then
-	modules_enabled=1;
+	# modules_enabled=1;
 
 	# Environmental Modules
-	case "$0" in
-	-sh|sh|*/sh)        modules_shell=sh   ;;
-	-ksh|ksh|*/ksh)     modules_shell=ksh  ;;
-	-zsh|zsh|*/zsh)     modules_shell=zsh  ;;
-	-bash|bash|*/bash)  modules_shell=bash ;;
-	esac
+	# The module command is now installed in /etc/profile.d/modules.sh
 
-	export MODULEPATH=/usr/share/modules/modulefiles
 
-	# #module() { eval `/usr/Modules/$MODULE_VERSION/bin/modulecmd $modules_shell $*`; }
-	modulecmd=$(which modulecmd)
-	module() { eval `${modulecmd} $modules_shell $*`; }
 
 	module use ${HOME}/.modulefiles
 fi;
@@ -232,71 +222,12 @@ if [[ "khea" == "$(hostname)" ]]; then
 	module load docker khea
 	# module load bona
 
-elif [[ "UGC14VW7PZ3" == "$(hostname)" ]]; then
-	# Ford Desktop
-	module load docker
-	module load ford/phx
-	module load ford/copilot
-	module load ford/quarry # I don't remember what quarry is
-
-	# I couldn't get these in env.mods, and they didn't seem to help
-	function fix-apt-sources() {
-		# This is a little sketchy, but so is landscape renaming these all the
-		# time, so manage the file list manually
-		local -r ubuntu_version_code=$(detect_version_code)
-		apt_sources=( \
-			archive_uri-http_apt_llvm_org_${ubuntu_version_code}_-${ubuntu_version_code}.list.save \
-			git-core-ubuntu-ppa-${ubuntu_version_code}.list.save
-			github_git-lfs.list.save
-			us-ubuntu.list.save
-			signal-xenial.list.save
-			mozillateam-ubuntu-ppa-${ubuntu_version_code}.list.save
-			deadsnakes-ubuntu-ppa-${ubuntu_version_code}.list.save
-			sur5r-i3.list.save
-			wireshark-dev-ubuntu-stable-${ubuntu_version_code}.list.save
-			neovim-ppa-ubuntu-unstable-${ubuntu_version_code}.list.save
-			wireshark-dev-ubuntu-stable-${ubuntu_version_code}.list.save
-			teams-for-linux-packages.list.save
-			opera-stable.list.save
-			docker.list.save
-			landscape-${ubuntu_version_code}-2404-profile.list
-			jfrog.list
-		)
-		for f in ${apt_sources[@]}; do
-			local abs_f=/etc/apt/sources.list.d/$f
-			if [[ -e "${abs_f}" ]]; then
-			  sudo mv "${abs_f}" ${abs_f/.save/};
-			fi
-		done
-	}
-
-	function check-eth() {
-		for d in wls5 enp2s0 enp0s31f6; ip -4 a show dev $d
-
-		echo "route:"
-		ip route show | rg '10\.2\.0.\d*'
-	}
-
-elif [[ "WGC30047YVDS3" == "$(hostname)" ]]; then
-	# Set DISPLAY
-	source /etc/profile.d/display.sh
-
-	# Use Window's Docker
-	# https://nickjanetakis.com/blog/setting-up-docker-for-windows-and-wsl-to-work-flawlessly
-	export DOCKER_HOST=tcp://localhost:2375
-
-	# module load ford/ford
-
-	# I map ~/tmp, and this might be the cause of some problems.  In any case,
-	# ensure this is running on /tmp (not a Windows path)
-	export GITSTATUS_DIR="/tmp/gitstatus_files/gitstatus.${UID}"
-	[[ -e "$(dirname "${GITSTATUS_DIR}")" ]] || mkdir -p "$(dirname "${GITSTATUS_DIR}")"
+elif [[ -e "${DOTFILES_SDIR}/work/profiles/$(hostname)" ]]; then
+	 source "${DOTFILES_DIR}/work/profiles/$(hostname)"
 fi
 
 # Load default python virtual env.
-if [[ "undefined" == "${DEFAULT_PYTHON_VENV:-undefined}" ]]; then
-	DEFAULT_PYTHON_VENV="default"
-fi
+[[ "undefined" == "${DEFAULT_PYTHON_VENV:-undefined}" ]] && DEFAULT_PYTHON_VENV="default"
 
 # The issue is that tmux copies my path, which includes the python venv, so
 # this test always passes once in tmux even when I'm not in a proper venv

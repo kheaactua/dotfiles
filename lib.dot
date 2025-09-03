@@ -77,16 +77,6 @@ function dotfiles_install_cargo_crates()
   cargo install ${crates[@]}
 }
 
-function dotfiles_install_netrc()
-{
-  local home=${1:-${HOME}}
-  local dotfiles_secret_dir=${2:-${DOTFILES_DIR:-${HOME}/dotfiles}/dotfiles-secret}
-
-  if [[ -e "${dotfiles_secret_dir}" ]]; then
-    chmod 600 "${dotfiles_secret_dir}/global/netrc"
-    symlink "${dotfiles_secret_dir}/global/netrc" "${home}/.netrc"
-  fi
-}
 
 function dotfiles_install_gnupg()
 {
@@ -257,6 +247,5 @@ function is_ubuntu() {
 function is_arch() {
   [[ "arch" == "$(get_distro)" ]] && return 0;
 }
-
 
 # vim: ts=2 sw=2 sts=0 ff=unix expandtab ft=sh :

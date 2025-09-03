@@ -268,13 +268,15 @@ if [[ ! -e "${h}/.ssh/tmp" ]]; then
   chmod 700 "${h}/.ssh"
 fi
 
-for s in ${stows[@]}; do
+for s in "${stows[@]}"; do
+  # set -x
   stow -d "${DOTFILES_DIR}/stow" -t "${h}" "${s}"
+  # set +x
 done
 
 # Run stow on the dotfiles-secret stows
 if [[ -e "${DOTFILES_SECRET_DIR}" ]]; then
-  ${DOTFILES_SECRET_DIR}/run_stow.sh
+  "${DOTFILES_SECRET_DIR}/install.sh"
 else
   echo "Couldn't find ${DOTFILES_SECRET_DIR}/stow, skipping stow"
 fi

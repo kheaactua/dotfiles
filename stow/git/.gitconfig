@@ -2,30 +2,32 @@
   name = Matthew Russell
   email = matthew.g.russell@gmail.com
   signingkey = 9DADF75304599BD8
+
+[include]
+	path = ~/.gitconfig-proxy
+
 [includeIf "gitdir:~/workspace/capi/**/"]
-  path = ~/.gitconfig-ford
+  path = ~/.gitconfig-work
 [includeIf "gitdir:~/workspace/phx-fsb/**/"]
-  path = ~/.gitconfig-ford
+  path = ~/.gitconfig-work
 [includeIf "gitdir:/tmp/phx-launcher*/**/"]
-  path = ~/.gitconfig-ford
+  path = ~/.gitconfig-work
 [includeIf "gitdir:/tmp/phx-fsb/**/"]
-  path = ~/.gitconfig-ford
+  path = ~/.gitconfig-work
 [includeIf "gitdir:/tmp/manifest/**/"]
-  path = ~/.gitconfig-ford
+  path = ~/.gitconfig-work
 [includeIf "gitdir:/tmp/vsomeip-source/**/"]
-  path = ~/.gitconfig-ford
-[includeIf "gitdir:~/workspace/ford/**/"]
-  path = ~/.gitconfig-ford
+  path = ~/.gitconfig-work
 [includeIf "gitdir:/src/**/"]
-  path = ~/.gitconfig-ford
+  path = ~/.gitconfig-work
 [includeIf "gitdir:/f/**/*"]
-  path = ~/.gitconfig-ford
+  path = ~/.gitconfig-work
 [includeIf "gitdir:/f/**/"]
-  path = 	~/.gitconfig-ford
+  path = 	~/.gitconfig-work
 ; [includeIf "gitdir:/tmp/**/"]
-;   path = 	~/.gitconfig-ford
+;   path = 	~/.gitconfig-work
 [includeIf "gitdir:~/.conan*/**/"]
-  path = 	~/.gitconfig-ford
+  path = 	~/.gitconfig-work
 [url "https://github.com"]
   insteadOf = ssh://github.com
 [commit]

@@ -329,6 +329,7 @@ set mouse=a
 " Abbreviations.  Check https://github.com/tpope/vim-abolish for how to make
 " these case insensitive (if I need it)
 ab flaot float
+ab galse false
 ab typoename typename
 ab typoname typename
 ab boid void
