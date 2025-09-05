@@ -202,14 +202,12 @@ fi
 [ -e "${HOME}/.bash_aliases" ] && source "${HOME}/.bash_aliases"
 
 # TODO It'd be nice if I could move this into a subfile or something
-declare -f module > /dev/null || . /etc/profile.d/modules.sh
+declare -f module > /dev/null || . /etc/profile.d/env-modules.sh
 if [[ $? == 1 ]]; then
 	# modules_enabled=1;
 
 	# Environmental Modules
-	# The module command is now installed in /etc/profile.d/modules.sh
-
-
+	# The module command is now installed in /etc/profile.d/env-modules.sh
 
 	module use ${HOME}/.modulefiles
 fi;
