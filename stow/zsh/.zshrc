@@ -1,4 +1,5 @@
 [[ "undefined" == "${DOTFILES_DIR:-undefined}" ]] && export DOTFILES_DIR="${HOME}/dotfiles"
+[[ "undefined" == "${DOTFILES_SECRET_DIR:-undefined}" ]] && export DOTFILES_SECRET_DIR="${DOTFILES_DIR}/dotfiles-secret"
 
 declare WSL_VERSION=0
 declare IN_DOCKER=0
@@ -40,18 +41,6 @@ export LC_TIME=en_GB.UTF-8
 
 # Uncomment following line if you want red dots to be displayed while waiting for completion
 COMPLETION_WAITING_DOTS="true"
-
-# On the WSL, it's handy to use Windows $env:temp space
-if [[ 0 != "${WSL_VERSION}" ]]; then
-	function win_tmp() {
-	}
-
-	declare WSL_TEMP_GUESS=${HOME}/tmp
-	if [[ -O ${WSL_TEMP_GUESS} && -d ${WSL_TEMP_GUESS} ]]; then
-		TMPDIR="${WSL_TEMP_GUESS}"
-	fi
-	unset WSL_TEMP_GUESS
-fi
 
 # Adjust PATH
 [[ -e "${HOME}/.pathrc" ]] && source "${HOME}/.pathrc"
@@ -201,7 +190,6 @@ fi
 # Aliases
 [ -e "${HOME}/.bash_aliases" ] && source "${HOME}/.bash_aliases"
 
-# TODO It'd be nice if I could move this into a subfile or something
 declare -f module > /dev/null || . /etc/profile.d/env-modules.sh
 if [[ $? == 1 ]]; then
 	# modules_enabled=1;
@@ -220,8 +208,8 @@ if [[ "khea" == "$(hostname)" ]]; then
 	module load docker khea
 	# module load bona
 
-elif [[ -e "${DOTFILES_SDIR}/work/profiles/$(hostname)" ]]; then
-	 source "${DOTFILES_DIR}/work/profiles/$(hostname)"
+elif [[ -e "${DOTFILES_SECRET_DIR}/work/profiles/$(hostname)" ]]; then
+	 source "${DOTFILES_SECRET_DIR}/work/profiles/$(hostname)"
 fi
 
 # Load default python virtual env.
@@ -238,7 +226,7 @@ fi
 # Cargo
 [ -e "${HOME}/.cargo/env" ] && source "${HOME}/.cargo/env"
 
-# nvm (node)
+# nvm (node.js)
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"

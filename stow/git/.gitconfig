@@ -6,7 +6,7 @@
 
 [include]
 	# This file will exist if a proxy exists
-	path = ~/.gitconfig-proxy
+	path = /home/matt/.gitconfig-proxy
 
 [include]
 	# Config that includes development tools

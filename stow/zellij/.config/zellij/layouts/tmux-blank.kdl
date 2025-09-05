@@ -4,13 +4,12 @@ layout {
     }
 
     pane size=1 borderless=true {
-        // plugin location="file:zjstatus.wasm" {
         plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
             format_left  "#[fg=0,bg=10][{session}]  {tabs}"
             format_right "#[fg=0,bg=10]{datetime}"
             format_space "#[bg=10]"
 
-            hide_frame_for_single_pane "true"
+            hide_frame_for_single_pane "false"
 
             tab_normal   "{index}:{name}  "
             tab_active   "{index}:{name}* "
