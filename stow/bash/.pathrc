@@ -45,7 +45,7 @@ export PATH=$(echo -n "${PATH}" | awk -v RS=: -v ORS=: '/virtualenv/ {next} {pri
 # Build Run PATH
 # TODO See if I can replace this and the MANPATH with Environmental Modules.
 #      They're finally being updated again.
-if [[ -e ${HOME}/.linuxbrew ]]; then
+if [[ -e "${HOME}/.linuxbrew" ]]; then
   export LINUXBREWHOME=${HOME}/.linuxbrew
 elif [[ -e /home/linuxbrew/.linuxbrew ]]; then
   export LINUXBREWHOME=/home/linuxbrew/.linuxbrew
@@ -58,7 +58,7 @@ declare -a pdirs;
 declare -a adirs;
 
 # Relative directories to HOME that we'll prepend
-# Note the npm one is here because I did: npm config set prefix "~/.npm_packages"
+# Note the npm one is here because I did: npm config set prefix "~/.npm_packages", this should also be installed by ~/.npmrc
 declare -a rdirs;
 rdirs=( \
   bin utils .composer/vendor/bin .rvm/bin .local/bin .fzf/bin \
@@ -98,9 +98,9 @@ if [[ "undefined" != "${ANDROID_SDK_ROOT:-undefined}" ]]; then
   )
 fi
 
-for d in ${dirs[@]};  do path_prepend "${d}"; done
-for d in ${pdirs[@]}; do path_prepend "${d}"; done
-for d in ${adirs[@]}; do path_append "${d}"; done
+for d in "${dirs[@]}";  do path_prepend "${d}"; done
+for d in "${pdirs[@]}"; do path_prepend "${d}"; done
+for d in "${adirs[@]}"; do path_append "${d}"; done
 
 # If pyenv exists, initialise it.
 # Disabled now because I haven't used pyenv in years.
@@ -110,8 +110,8 @@ for d in ${adirs[@]}; do path_append "${d}"; done
 # fi
 
 # Build MAN path
-dirs=(${LINUXBREWHOME}/man ${HOME}/.rvm/man ${HOME}/.local/man);
-for d in $dirs; do
+dirs=("${LINUXBREWHOME}/man" "${HOME}/.rvm/man" "${HOME}/.local/man");
+for d in "${dirs[@]}"; do
   path_append "${d}" MANPATH
 done
 path_prepend "${LINUXBREWHOME:-bad_path}/share/man" MANPATH

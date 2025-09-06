@@ -112,8 +112,8 @@ done
 echo "Using home: ${h}"
 
 declare -r backup_dir="${h}/.dotfiles_backup"
-declare DFTMP="$(mktemp -d)"
-declare VENVS="${h}/.virtualenvs"
+declare -r DFTMP="$(mktemp -d)"
+declare -r VENVS="${h}/.virtualenvs"
 
 # First ensure that the submodules in this repo
 # are available and up to date:
@@ -121,7 +121,7 @@ if [[ ! "1" == "${skip_submodules}" ]]; then
   dotfiles_clone_submodules
 fi
 
-cd "${h}"
+cd "${h}" || exit 1
 
 #
 # TODO deal with Windows Terminal, PS, etc, files
@@ -151,7 +151,7 @@ fi
 #
 # Declare the stows we want to install
 declare -a stows;
-stows+=(zsh bash bat vnc gdb neovim vim tmux git p10k env-modules procs rlwrap zellij aider screenlayout autorandr)
+stows+=(zsh bash bat vnc gdb neovim vim tmux git p10k env-modules procs rlwrap zellij aider screenlayout autorandr npm)
 
 if [[ "1" != "${skip_powerline}" ]]; then
   install_powerline_fonts
@@ -174,9 +174,9 @@ if _exists vncserver || _exists tightvncserver; then
 fi
 
 # Create a backup directory:
-[[ -e "${h}/.dotfiles_backup" ]] || mkdir -p "${h}/.dotfiles_backup"
+[[ -e "${backup_dir}" ]] || mkdir -p "${backup_dir}"
 
-cd $h
+cd "$h" || exit 1
 
 # Symlink docker config from dotfiles-secret
 dotfiles_install_docker_config "${h}" "${DOTFILES_DIR}/dotfiles-secret"
@@ -265,6 +265,8 @@ if [[ ! -e "${h}/.ssh/tmp" ]]; then
   mkdir -p "${h}/.ssh/tmp"
   chmod 700 "${h}/.ssh"
 fi
+
+dotfiles_install_npm "${h}"
 
 for s in "${stows[@]}"; do
   # set -x

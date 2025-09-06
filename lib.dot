@@ -230,6 +230,31 @@ function dotfiles_clone_submodules() {
   popd
 }
 
+function dotfiles_install_npm() {
+  local home=${1:-${HOME}}
+
+  if ! _exists nvm; then
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+    export NVM_DIR="${home}/.nvm"
+    if [[ ! -s "$NVM_DIR/nvm.sh" ]]; then
+      echo "Error: nvm installation failed" >&2
+      return 1
+    fi
+    \. "$NVM_DIR/nvm.sh"
+  fi
+
+  nvm install latest
+
+  [[ -e "${HOME}/.npm_packages" ]] || mkdir -p "${HOME}/.npm_packages"
+
+  # If this is the first npm install command, it'll complain that ~/.npm_packageslib/ is missing, lets just ignore those
+  npm config set prefix "~/.npm_packages" 2>&1 > /dev/null
+
+  # This can take some time
+  npm install -g npm
+}
+
 function get_distro() {
   if grep -q "ID=ubuntu" /etc/os-release; then
     echo ubuntu
