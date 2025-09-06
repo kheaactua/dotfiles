@@ -130,8 +130,8 @@ cd "${h}" || exit 1
 
 if [[ "1" != "${skip_apt}" ]]; then
   pkgs=(curl stow git rlwrap pinentry-gnome3 pinentry-curses pinentry-tty rofi autorandr)
-  is_ubuntu && sudo apt-get install -qy ${pkgs[@]} environment-modules pass
-  is_arch   && sudo pacman -S --noconfirm ${pkgs[@]} which inetutils rofi-pass
+  is_ubuntu && sudo apt-get install -qy "${pkgs[@]}" environment-modules pass
+  is_arch   && sudo pacman -S --noconfirm "${pkgs[@]}" which inetutils rofi-pass
 fi
 
 # TODO
@@ -139,6 +139,7 @@ fi
 # bash won't stow on a new system because .bashrc exists by default
 # https://github.com/spwhitton/git-remote-gcrypt , which needs python3-docutils
 # Installing rustup: curl https://sh.rustup.rs -sSf | sh
+#   Add this to dotfiles_install_cargo
 # cargo install bob-nvim
 # curl -LsSf https://astral.sh/uv/install.sh | sh
 # npm node:
@@ -243,13 +244,7 @@ else
   echo "Skipped setting up python virtual environments"
 fi
 
-# Cargo
-if [[ "1" != "${skip_cargo}" ]]; then
-  dotfiles_install_cargo "${h}"
-  cargo install ripgrep du-dust fd-find
-else
-  echo "Skipped installing cargo config"
-fi
+
 
 # GPG-Agent
 if [[ "1" != "${skip_gnupg}" ]]; then
@@ -263,13 +258,25 @@ if [[ ! -e "${h}/.ssh/tmp" ]]; then
   chmod 700 "${h}/.ssh"
 fi
 
-dotfiles_install_npm "${h}"
-
 for s in "${stows[@]}"; do
   # set -x
   stow -d "${DOTFILES_DIR}/stow" -t "${h}" "${s}"
   # set +x
 done
+
+#
+# Setup's that can or should occur after stow
+#
+
+dotfiles_install_npm "${h}"
+
+# Cargo
+if [[ "1" != "${skip_cargo}" ]]; then
+  dotfiles_install_cargo "${h}"
+  cargo install ripgrep du-dust fd-find
+else
+  echo "Skipped installing cargo config"
+fi
 
 # Run stow on the dotfiles-secret stows
 if [[ -e "${DOTFILES_SECRET_DIR}/install.sh" ]]; then

@@ -59,6 +59,7 @@ function dotfiles_install_cargo()
 {
   local home=${1:-${HOME}}
 
+  # Not using stow here because there's no point.  There are no config files in here.
   symlink "${DOTFILES_DIR:-${HOME}/dotfiles}/cargo" "${home}/.cargo"
 
   source "${DOTFILES_DIR:-${HOME}/dotfiles}/cargo/env"
