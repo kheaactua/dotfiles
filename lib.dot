@@ -1,9 +1,11 @@
+# shellcheck shell=bash
+
 # Requires ${DOTFILES_DIR:-${HOME}/dotfiles}
 # Source after "${DOTFILES_DIR:-${HOME}/dotfiles}/detect_platform.dot"
 # One day I'll convert this to pwsh so it can run on Windows as well.
 
 function dotfiles_hostname() {
-  echo "$(hostname)" | tr '[:upper:]' '[:lower:]'
+  hostname | tr '[:upper:]' '[:lower:]'
 }
 
 function symlink()
@@ -87,16 +89,6 @@ function dotfiles_install_gnupg()
 
   if [[ -e "${dotfiles_secret_dir}" ]]; then
     symlink "${dotfiles_secret_dir}/global/gnupg/sshcontrol" "${home}/.gnupg/sshcontrol"
-  fi
-}
-
-function dotfiles_install_docker_config()
-{
-  local home=${1:-${HOME}}
-  local dotfiles_secret_dir=${2:-${DOTFILES_DIR:-${HOME}/dotfiles}/dotfiles-secret}
-
-  if [[ -e "${dotfiles_secret_dir}" && -e "${home}/.docker" && ! -e "${home}/.docker/config.json" ]]; then
-    symlink "${dotfiles_secret_dir}/docker" "${home}/.docker"
   fi
 }
 
@@ -203,7 +195,8 @@ function dotfiles_install_sdkman()
 
 function dotfiles_setup_ssh_config()
 {
-  local home=${1:-${HOME}};
+  local -r home=${1:-${HOME}};
+  local -r dotfiles_secret_dir="${2:-${DOTFILES_DIR:${home}/dotfiles}/dotfiles-secret}"
   local -r ssh_dir="${home}/.ssh"
   local -r ssh_config="${ssh_dir}/config"
 
@@ -214,9 +207,6 @@ function dotfiles_setup_ssh_config()
   if [[ ! -e "${ssh_config}" ]]; then
     cat <<TOHERE > "${ssh_config}"
 Include ~/dotfiles/dotfiles-secret/*/ssh/config
-# Include ~/dotfiles/dotfiles-secret/global/ssh/config
-# Include ~/dotfiles/dotfiles-secret/home/ssh/config
-# Include ~/dotfiles/dotfiles-secret/ford/ssh/config
 
 # vim: ts=4 sw=4 sts=0 expandtab ft=sshconfig
 TOHERE

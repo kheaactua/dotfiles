@@ -178,10 +178,7 @@ fi
 
 cd "$h" || exit 1
 
-# Symlink docker config from dotfiles-secret
-dotfiles_install_docker_config "${h}" "${DOTFILES_DIR}/dotfiles-secret"
-
-dotfiles_setup_ssh_config "${h}"
+dotfiles_setup_ssh_config "${h}" "${DOTFILES_SECRET_DIR}"
 
 if [[ "1" != "${skip_zplug}" ]]; then
   dotfiles_install_zplug "${h}" "${DFTMP}"
@@ -275,10 +272,10 @@ for s in "${stows[@]}"; do
 done
 
 # Run stow on the dotfiles-secret stows
-if [[ -e "${DOTFILES_SECRET_DIR}" ]]; then
+if [[ -e "${DOTFILES_SECRET_DIR}/install.sh" ]]; then
   "${DOTFILES_SECRET_DIR}/install.sh"
 else
-  echo "Couldn't find ${DOTFILES_SECRET_DIR}/stow, skipping stow"
+  echo "Couldn't find ${DOTFILES_SECRET_DIR}/install.sh, skipping stow"
 fi
 
 # vim: ts=2 sw=2 sts=0 ff=unix et :
