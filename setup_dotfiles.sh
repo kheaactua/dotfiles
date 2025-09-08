@@ -142,9 +142,6 @@ fi
 #   Add this to dotfiles_install_cargo
 # cargo install bob-nvim
 # curl -LsSf https://astral.sh/uv/install.sh | sh
-# npm node:
-#  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-#  nvm install latest
 # docker-credential-helper: https://github.com/docker/docker-credential-helpers/releases
 #   Manually install this (with a symlink) to /usr/local/bin
 # rofi-pass on ubuntu.  https://github.com/carnager/rofi-pass and `sudo make`
@@ -152,7 +149,7 @@ fi
 #
 # Declare the stows we want to install
 declare -a stows;
-stows+=(zsh bash bat vnc gdb neovim vim tmux git p10k env-modules procs rlwrap zellij aider screenlayout autorandr npm)
+stows+=(zsh bash bat vnc gdb neovim vim tmux git p10k env-modules procs rlwrap zellij aider screenlayout autorandr npm zoxide ripgrep)
 
 if [[ "1" != "${skip_powerline}" ]]; then
   install_powerline_fonts
@@ -160,12 +157,9 @@ else
   echo "Skipped installing powerline fonts"
 fi
 
-if [[ "khea" == "$(hostname)" ]]; then
-  stows+=('xinit')
-fi
-if [[ $(_exists tmux) && "1" != "${skip_tmux}" ]]; then
-  dotfiles_install_tpm "${h}"
-fi
+[[ "khea" == "$(hostname)" ]] && stows+=('xinit')
+
+[[ $(_exists tmux) && "1" != "${skip_tmux}" ]] && dotfiles_install_tpm "${h}"
 
 _exists screen && stows+=('screen')
 _exists sqlite3 && stows+=('sqlite')

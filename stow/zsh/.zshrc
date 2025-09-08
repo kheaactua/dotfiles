@@ -244,29 +244,24 @@ if [[ "undefined" == "${fzfcmd:-undefined}" ]]; then
 fi
 unset fzfcmd
 
-export RIPGREP_CONFIG_PATH="${DOTFILES_DIR}/ripgreprc"
+export RIPGREP_CONFIG_PATH="${HOME}/.config/ripgrep/ripgreprc"
 
 export SDKMAN_DIR="${HOME}/.sdkman"
 [[ -s "${HOME}/.sdkman/bin/sdkman-init.sh" ]] && source "${HOME}/.sdkman/bin/sdkman-init.sh"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+[ -e "${HOME}/.dir_colors/dircolors" ] && eval "$(dircolors ${HOME}/.dir_colors/dircolors)"
+
+[ -e "${HOME}/.copilot.dot" ] && source "${HOME}/.copilot.dot"
+
+if _exists zoxide; then
+	eval "$(zoxide init zsh)"
+	[[ -e "${HOME}/.config/zoxide/zoxide.zsh" ]] && source "${HOME}/.config/zoxide/zoxide.zsh"
+fi
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
-
-# Dir colours
-[ -e "${HOME}/.dir_colors/dircolors" ] && eval "$(dircolors ${HOME}/.dir_colors/dircolors)"
-
-# copilot
-[ -e "${HOME}/.copilot.dot" ] && source "${HOME}/.copilot.dot"
-
-# Note: I use this less and less..
-declare DEVEL_ENV="${HOME}/workspace/system-setup-scripts/devel/conanbuildenv.sh"
-if [[ -e "${DEVEL_ENV}" ]]; then
-	source "${DEVEL_ENV}"
-else
-	# echo "No development environment available, please run \`conan install\` to create ${DEVEL_ENV}"
-fi
 
 # vim: sw=4 sts=0 ts=4 noet ff=unix :

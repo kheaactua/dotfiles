@@ -240,7 +240,7 @@ function dotfiles_install_npm() {
   [[ -e "${HOME}/.npm_packages" ]] || mkdir -p "${HOME}/.npm_packages"
 
   # If this is the first npm install command, it'll complain that ~/.npm_packageslib/ is missing, lets just ignore those
-  npm config set prefix "~/.npm_packages" 2>&1 > /dev/null
+  npm config set prefix "${HOME}/.npm_packages" 2>&1 > /dev/null
 
   # This can take some time
   npm install -g npm
