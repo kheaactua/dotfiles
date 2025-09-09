@@ -22,13 +22,13 @@ x-prop-non_desktop 0
 output DP-0
 crtc 1
 mode 1920x1200
-pos 0x629
+pos 0x720
 rate 59.95
 x-prop-non_desktop 0
 output DP-2.8
 crtc 0
 mode 1920x1200
-pos 1920x629
+pos 1920x720
 primary
 rate 59.95
 x-prop-non_desktop 0

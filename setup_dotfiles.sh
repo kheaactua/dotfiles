@@ -149,7 +149,7 @@ fi
 #
 # Declare the stows we want to install
 declare -a stows;
-stows+=(zsh bash bat vnc gdb neovim vim tmux git p10k env-modules procs rlwrap zellij aider screenlayout autorandr npm zoxide ripgrep)
+stows+=(zsh bash bat vnc gdb neovim vim tmux git p10k env-modules procs rlwrap zellij aider screenlayout autorandr npm zoxide ripgrep goose)
 
 if [[ "1" != "${skip_powerline}" ]]; then
   install_powerline_fonts
