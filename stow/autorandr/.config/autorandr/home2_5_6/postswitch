@@ -1,32 +1,15 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Give xrandr and i3wm a moment to settle after the display change
 sleep 0.5
 
-# --- Log file settings ---
 declare -r LOG_FILE="/tmp/i3_autorandr_debug.log"
-declare -r MAX_LOG_LINES=10 # Keep only the last 50 lines in the log file
 
-# --- Define Monitor Identification Criteria ---
-# These values MUST match your xrandr --verbose output exactly.
-
-# TODO
-# Build a map with names, i.e. home_left, home_center, home_right
-# And then use that to query the resolutions to see which is which
-# TODO should probably break this to [home][left]
-declare -A MONITOR_RESOLUTIONS=(
-  ["home_left"]="1920x1200"
-  ["home_center"]="2560x1080"
-  ["home_right"]="1080x1920" # Portrait mode, daisy chained
-  ["work_left"]="1920x1080"
-  ["work_center"]="2560x1080"
-  ["work_right"]="1920x1080"
-)
-
-# Function to get all xrandr output names (e.g., DisplayPort-5)
-# for monitors matching specific resolution.
-# Returns a newline-separated list of matching outputs.
 get_all_outputs_by_resolution() {
+  # Function to get all xrandr output names (e.g., DisplayPort-5)
+  # for monitors matching specific resolution.
+  # Returns a newline-separated list of matching outputs.
+
   local target_res_awk="$1"
   xrandr --verbose | awk -v target_res="$target_res_awk" '
     # Look for lines like "DisplayPort-1 connected primary 2560x1080+0+0 ..."
@@ -46,84 +29,134 @@ get_all_outputs_by_resolution() {
   '
 }
 
+detect_displays() {
+  # The display IDs only seem to change on khea.  I blame the KVM.  I can't
+  # detect the difference by resolution alone on the worksetup, so just
+  # hardcode for today
 
-# --- Identify Current Outputs ---
+  if [[ "khea" != "$(hostname)" ]]; then
+    echo "DP-0 DP-2.8 DP-2.1"
+    return
+  fi
 
-declare left_key="home_left"
-declare center_key="home_center"
-declare right_key="home_right"
-if [[ "khea" != "$(hostname)" ]]; then
-  left_key="work_left"
-  center_key="work_center"
-  right_key="work_right"
-fi
+  # --- Define Monitor Identification Criteria ---
+  # These values MUST match your xrandr --verbose output exactly.
 
-set -x
-declare -r LEFT_DISPLAY_OUTPUT="$(get_all_outputs_by_resolution "${MONITOR_RESOLUTIONS[${left_key}]}" | head -n 1)"
-declare -r CENTER_DISPLAY_OUTPUT=$(get_all_outputs_by_resolution "${MONITOR_RESOLUTIONS[${center_key}]}" | head -n 1)
-declare -r RIGHT_DISPLAY_OUTPUT="$(get_all_outputs_by_resolution "${MONITOR_RESOLUTIONS[${right_key}]}" | head -n 1)"
+  local -a MONITOR_RESOLUTIONS=(
+    ["home_left"]="1920x1200"
+    ["home_center"]="2560x1080"
+    ["home_right"]="1080x1920" # Portrait mode, daisy chained
 
-# --- Debugging: Writes detected outputs to a log file ---
-# Check the log file if things don't work as expected.
-echo "--- $(date) ---" >> "${LOG_FILE}"
-echo "Left:    ${LEFT_DISPLAY_OUTPUT}"   >> "${LOG_FILE}"
-echo "Central: ${CENTER_DISPLAY_OUTPUT}" >> "${LOG_FILE}"
-echo "Right:   ${RIGHT_DISPLAY_OUTPUT}"  >> "${LOG_FILE}"
+    # I'll have to figure out a way to differentiate left and center
+    ["work_left"]="1920x1200"
+    ["work_center"]="1920x1200"
+    ["work_right"]="1200x1920"
+  )
 
-# Now, trim the log file to MAX_LOG_LINES
-tail -n "${MAX_LOG_LINES}" "${LOG_FILE}" > "${LOG_FILE}.tmp" && mv "${LOG_FILE}.tmp" "${LOG_FILE}"
+  # --- Identify Current Outputs ---
+  local left_key="home_left"
+  local center_key="home_center"
+  local right_key="home_right"
+  if [[ "khea" != "$(hostname)" ]]; then
+    left_key="work_left"
+    center_key="work_center"
+    right_key="work_right"
+  fi
 
-# --- Move your workspaces to their correct outputs ---
-# Adjust workspace numbers and target outputs as per your preference.
-# Only try to move if the output was actually detected.
+  local -r LEFT_DISPLAY_OUTPUT="$(get_all_outputs_by_resolution "${MONITOR_RESOLUTIONS[${left_key}]}" | head -n 1)"
+  local -r CENTER_DISPLAY_OUTPUT=$(get_all_outputs_by_resolution "${MONITOR_RESOLUTIONS[${center_key}]}" | head -n 1)
+  local -r RIGHT_DISPLAY_OUTPUT="$(get_all_outputs_by_resolution "${MONITOR_RESOLUTIONS[${right_key}]}" | head -n 1)"
 
-declare -a i3_workspaces=($(i3-msg -t get_workspaces | jq '.[].num'))
+  local outputs=("${LEFT_DISPLAY_OUTPUT}" "${CENTER_DISPLAY_OUTPUT}" "${RIGHT_DISPLAY_OUTPUT}")
+  echo "${outputs[*]}"
+}
 
 move_workspace_to_output() {
-  local workspace_number="$1"
-  local output_name="$2"
+  local -r log_file="${LOG_FILE:-"/tmp/i3_autorandr_debug.log"}"
+  local -r workspace_number="$1"
+  local -r output_name="$2"
 
   local output
 
   if [[ ! " ${i3_workspaces[@]} " =~ " ${workspace_number} " ]]; then
-    echo "Workspace ${workspace_number} does not exist, skipping move." >> "${LOG_FILE}"
+    echo "Workspace ${workspace_number} does not exist, skipping move." >> "${log_file}"
     return
   fi
 
   # TODO I think this actually uses the name, not the number
   if [ -n "${output_name}" ]; then
     output=$(i3-msg [workspace=${workspace_number}] move workspace to output ${output_name} 2>/dev/null)
-    echo "i3-msg '[workspace=${workspace_number}]' move workspace to output ${output_name} → ${output}" >> "${LOG_FILE}"
+    echo "i3-msg '[workspace=${workspace_number}]' move workspace to output ${output_name} → ${output}" >> "${log_file}"
   else
-    echo "No output detected for workspace ${workspace_number}, skipping move." >> "${LOG_FILE}"
+    echo "No output detected for workspace ${workspace_number}, skipping move." >> "${log_file}"
   fi
 }
 
-# Assign workspaces to displays
-if [ -n "${LEFT_DISPLAY_OUTPUT}" ]; then
-  for i in 1 8; do
-    move_workspace_to_output "${i}" "${LEFT_DISPLAY_OUTPUT}"
-  done
-fi
+arrange_displays() {
+  # --- Log file settings ---
+  local -r log_file="${LOG_FILE:-"/tmp/i3_autorandr_debug.log"}"
+  local -r MAX_LOG_LINES=10 # Keep only the last 50 lines in the log file
 
-if [ -n "${CENTER_DISPLAY_OUTPUT}" ]; then
-  for i in 2 4 5 6 7 9 10; do
-    move_workspace_to_output "${i}" "${CENTER_DISPLAY_OUTPUT}"
-  done
-fi
+  local LEFT_DISPLAY_OUTPUT
+  local CENTER_DISPLAY_OUTPUT
+  local  RIGHT_DISPLAY_OUTPUT
 
-if [ -n "${RIGHT_DISPLAY_OUTPUT}" ]; then
-  for i in 3 11 12; do
-    move_workspace_to_output "${i}" "${RIGHT_DISPLAY_OUTPUT}"
-  done
-fi
+  local -a outputs;
+  outputs=(${(z)$(detect_displays)})
+  # read -a outputs <<< "$(detect_displays)"
+  LEFT_DISPLAY_OUTPUT="${outputs[1]}"
+  CENTER_DISPLAY_OUTPUT="${outputs[2]}"
+  RIGHT_DISPLAY_OUTPUT="${outputs[3]}"
 
-# Change Wallpaper ---
-if command -v feh >/dev/null 2>&1; then
-  feh --randomize --bg-fill ~/Desktop/Backgrounds/*
-fi
+  # --- Debugging: Writes detected outputs to a log file ---
+  # Check the log file if things don't work as expected.
+  echo "--- $(date) ---" >> "${log_file}"
+  echo "Left:    ${LEFT_DISPLAY_OUTPUT}"   >> "${log_file}"
+  echo "Central: ${CENTER_DISPLAY_OUTPUT}" >> "${log_file}"
+  echo "Right:   ${RIGHT_DISPLAY_OUTPUT}"  >> "${log_file}"
+
+  # Now, trim the log file to MAX_LOG_LINES
+  tail -n "${MAX_LOG_LINES}" "${log_file}" > "${log_file}.tmp" && mv "${log_file}.tmp" "${log_file}"
+
+  # --- Move your workspaces to their correct outputs ---
+  # Adjust workspace numbers and target outputs as per your preference.
+  # Only try to move if the output was actually detected.
+
+  local -a i3_workspaces=($(i3-msg -t get_workspaces | jq '.[].num'))
+
+  # Assign workspaces to displays
+  if [ -n "${LEFT_DISPLAY_OUTPUT}" ]; then
+    for i in 1 8; do
+      move_workspace_to_output "${i}" "${LEFT_DISPLAY_OUTPUT}"
+    done
+  fi
+
+  if [ -n "${CENTER_DISPLAY_OUTPUT}" ]; then
+    for i in 2 4 5 6 7 9 10; do
+      move_workspace_to_output "${i}" "${CENTER_DISPLAY_OUTPUT}"
+    done
+  fi
+
+  if [ -n "${RIGHT_DISPLAY_OUTPUT}" ]; then
+    for i in 3 11 12; do
+      move_workspace_to_output "${i}" "${RIGHT_DISPLAY_OUTPUT}"
+    done
+  fi
+}
+
+fix_backgrounds() {
+  # Change Wallpaper ---
+  if command -v feh >/dev/null 2>&1; then
+    feh --randomize --bg-fill ~/Desktop/Backgrounds/*
+  fi
+}
 
 # Optional: Focus on a specific workspace after the move
 # i3-msg "workspace 1"
+
+postfix_main() {
+  arrange_displays
+  fix_backgrounds
+}
 
 # vim: ft=sh
