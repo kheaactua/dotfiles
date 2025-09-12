@@ -3,3 +3,5 @@ __pycache__/
 *.orig
 debug-logs/
 !stow/**/.config
+.bak*
+stow/goose/.config/goose/history.txt
