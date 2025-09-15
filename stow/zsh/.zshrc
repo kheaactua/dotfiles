@@ -260,6 +260,9 @@ if _exists zoxide; then
 	[[ -e "${HOME}/.config/zoxide/zoxide.zsh" ]] && source "${HOME}/.config/zoxide/zoxide.zsh"
 fi
 
+# Set terminal to kitty if it exists, this should be respected by i3-sensible-terminal
+_exists kitty && export TERMINAL=kitty
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
