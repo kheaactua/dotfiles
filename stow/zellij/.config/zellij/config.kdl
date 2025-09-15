@@ -1,6 +1,6 @@
 keybinds clear-defaults=true {
     locked {
-        bind "Ctrl b" { SwitchToMode "normal"; }
+        bind "Ctrl space" { SwitchToMode "normal"; }
         bind "Ctrl f" { SwitchToMode "tmux"; }
     }
     pane {
