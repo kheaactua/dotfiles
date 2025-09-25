@@ -20,3 +20,5 @@ stow/i3/.config/config
 .aider*
 stow/env-modules/.modulefiles/fo*
 stow/gnupg/.gnupg/*
+stow/goose/.config/goose/history.txt
+**/autorandr/**/.tmp
