@@ -208,8 +208,8 @@ if [[ "khea" == "$(hostname)" ]]; then
 	module load docker khea
 	# module load bona
 
-elif [[ -e "${DOTFILES_SECRET_DIR}/work/profiles/$(hostname)" ]]; then
-	 source "${DOTFILES_SECRET_DIR}/work/profiles/$(hostname)"
+elif [[ -e "${DOTFILES_SECRET_DIR}/work/profile/$(hostname).zsh" ]]; then
+	 source "${DOTFILES_SECRET_DIR}/work/profile/$(hostname).zsh"
 fi
 
 # Load default python virtual env.

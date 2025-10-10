@@ -1,3 +1,6 @@
+GOOSE_MODEL: gpt-5
+OPENAI_BASE_PATH: v1/chat/completions
+OPENAI_HOST: https://api.openai.com
 extensions:
   atlassian:
     args:
@@ -142,5 +145,4 @@ extensions:
     name: tutorial
     timeout: 300
     type: builtin
-GOOSE_MODEL: gemini-2.5-pro
 GOOSE_PROVIDER: github_copilot
