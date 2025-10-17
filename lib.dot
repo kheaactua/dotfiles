@@ -139,24 +139,6 @@ function dotfiles_install_i3_config()
   symlink "${i3_dir}/${lower_hostname}.i3" "${i3_dir}/config" 1
 }
 
-function assemble_i3_config()
-{
-  # DEPRECATED
-  # This was used before i3 supported "include"
-
-  local parts_dir=${1:-${DOTFILES_DIR:-${HOME}/dotfiles}/config/i3}
-  local dest=${2:-${HOME}/.config/i3/config}
-
-  local files=($(find "${parts_dir}" -iname '*-common*.part' -or -iname \*$(dotfiles_hostname)\*.part | sort))
-  if [[ -e "${dest}" ]]; then
-    rm "${dest}"
-  fi
-  for f in ${files[@]}; do
-    echo -e "\n\n#\n# Include: ${f}\n#\n" >> "${dest}"
-    cat "${f}" >> "${dest}"
-    echo -e "\n#\n# /Include: ${f}\n#\n\n" >> "${dest}"
-  done
-}
 
 function dotfiles_install_i3()
 {
@@ -264,6 +246,45 @@ function is_ubuntu() {
 
 function is_arch() {
   [[ "arch" == "$(get_distro)" ]] && return 0;
+}
+
+function dotfiles_install_fzf()
+{
+  local home=${1:-${HOME}}
+
+  if [[ ! -e "${home}/.fzf" ]]; then
+    git clone --depth 1 https://github.com/junegunn/fzf.git "${home}/.fzf" || return 1
+    cd "${home}/.fzf" || return 1
+  else
+    pushd "${home}/.fzf" || return 1
+    git pull
+  fi
+  yes | "${home}/.fzf/install"
+}
+
+function dotfiles_install_pyvenv()
+{
+  local home=${1:-${HOME}}
+  local VENVS="${2:-"${home}/.virtualenvs"}"
+
+  if [[ "${DEFAULT_PYTHON_VENV:-undefined}" == "undefined" ]]; then
+    DEFAULT_PYTHON_VENV="default"
+  fi
+
+  if ! _exists uv; then
+    echo "Please install uv: https://docs.astral.sh/uv/getting-started/installation/"
+  else
+
+    if [[ ! -e "${VENVS}/${DEFAULT_PYTHON_VENV}" ]]; then
+      mkdir -p "${VENVS}"
+      pushd .
+      cd "${VENVS}" || return 1
+      echo "Creating virtual python environment ${DEFAULT_PYTHON_VENV}"
+      # python3 -m env "${DEFAULT_PYTHON_VENV}"
+      uv venv "${DEFAULT_PYTHON_VENV}"
+      popd || return 1
+    fi
+  fi
 }
 
 # vim: ts=2 sw=2 sts=0 ff=unix expandtab ft=sh :
