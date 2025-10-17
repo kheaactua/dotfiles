@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2155
 
 # This script used to attempt to use dotfiles from the windows partition if
 # this was running on the WSL (if WINHOME was defined), however this just
@@ -28,6 +29,7 @@ ARGUMENT_FLAG_LIST=(
   "skip-gnupg"
   "skip-cargo"
   "small"
+  "stow"
 )
 
 # read arguments
@@ -50,6 +52,7 @@ declare skip_rofi=0
 declare skip_i3=0
 declare skip_gnupg=0
 declare skip_cargo=0
+declare just_stow=0
 while [[ "" != $1 ]]; do
   case "$1" in
   "--home")
@@ -100,6 +103,19 @@ while [[ "" != $1 ]]; do
     skip_i3=1
     skip_gnupg=1
     skip_cargo=1
+    ;;
+  "--stow")
+    skip_apt=1
+    skip_tmux=1
+    skip_fzf=1
+    skip_python_venv=1
+    skip_powerline=1
+    skip_submodules=1
+    skip_rofi=1
+    skip_i3=1
+    skip_gnupg=1
+    skip_cargo=1
+    just_stow=1
     ;;
   "--")
     shift
@@ -192,10 +208,25 @@ fi
 # Make sure config directory exists
 [[ -e "${h}/.config" ]] || mkdir -p "${h}/.config"
 
-# Setup i3
-if _exists i3 && [[ "1" != "${skip_i3}" ]]; then
-  dotfiles_install_i3 "${h}"
-  stows+=('i3')
+# Because sway points to i3, this doesn't fit well with stow.  I can remove the
+# complexity once all my systems are using sway.
+declare current_wm;
+if [ "$XDG_SESSION_DESKTOP" = "sway" ] || [ "$DESKTOP_SESSION" = "sway" ]; then
+  current_wm="sway"
+elif [ "$XDG_SESSION_DESKTOP" = "i3" ] || [ "$DESKTOP_SESSION" = "i3" ]; then
+  current_wm="i3"
+fi
+
+if [[ "1" != "${skip_i3}" ]]; then
+  if [ "i3" == "${current_wm}" ]; then
+    dotfiles_install_i3 "${h}"
+    stows+=('i3')
+  elif [ "sway" == "${current_wm}" ]; then
+    # dotfiles_install_sway "${h}"
+    stows+=('sway')
+  fi
+else
+  echo "Skipped installing i3/sway"
 fi
 
 # Setup pwsh on linux
@@ -206,39 +237,17 @@ _exists fsb && stows+=('fsb')
 
 # Install fzf
 if [[ "1" != "${skip_fzf}" ]]; then
-  if [[ ! -e "${h}/.fzf" ]]; then
-    git clone --depth 1 https://github.com/junegunn/fzf.git "${h}/.fzf"
-    yes | "${h}/.fzf/install"
-  fi
+  dotfiles_install_fzf "${h}"
 else
   echo "Skipped installing fzf"
 fi
 
 # Setup default virtualenv
 if [[ "1" != "${skip_python_venv}" ]]; then
-  if [[ "${DEFAULT_PYTHON_VENV:-undefined}" == "undefined" ]]; then
-    DEFAULT_PYTHON_VENV="default"
-  fi
-
-  if ! _exists uv; then
-    echo "Please install uv: https://docs.astral.sh/uv/getting-started/installation/"
-  else
-
-    if [[ ! -e "${VENVS}/${DEFAULT_PYTHON_VENV}" ]]; then
-      mkdir -p "${VENVS}"
-      pushd .
-      cd "${VENVS}"
-      echo "Creating virtual python environment ${DEFAULT_PYTHON_VENV}"
-      # python3 -m env "${DEFAULT_PYTHON_VENV}"
-      uv venv "${DEFAULT_PYTHON_VENV}"
-      popd
-    fi
-  fi
+  dotfiles_setup_python_venvs "${h}" "${VENVS}"
 else
   echo "Skipped setting up python virtual environments"
 fi
-
-
 
 # GPG-Agent
 if [[ "1" != "${skip_gnupg}" ]]; then
@@ -262,7 +271,11 @@ done
 # Setup's that can or should occur after stow
 #
 
-dotfiles_install_npm "${h}"
+if [[ "1" != "${just_stow}" ]]; then
+  dotfiles_install_npm "${h}"
+else
+  echo "Skipping npm install"
+fi
 
 # Cargo
 if [[ "1" != "${skip_cargo}" ]]; then
@@ -274,6 +287,7 @@ fi
 
 # Run stow on the dotfiles-secret stows
 if [[ -e "${DOTFILES_SECRET_DIR}/install.sh" ]]; then
+  echo "Running secret install script"
   "${DOTFILES_SECRET_DIR}/install.sh"
 else
   echo "Couldn't find ${DOTFILES_SECRET_DIR}/install.sh, skipping stow"
