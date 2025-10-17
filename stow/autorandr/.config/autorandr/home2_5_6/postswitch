@@ -42,7 +42,7 @@ detect_displays() {
   # --- Define Monitor Identification Criteria ---
   # These values MUST match your xrandr --verbose output exactly.
 
-  local -a MONITOR_RESOLUTIONS=(
+  local -A MONITOR_RESOLUTIONS=(
     ["home_left"]="1920x1200"
     ["home_center"]="2560x1080"
     ["home_right"]="1080x1920" # Portrait mode, daisy chained
@@ -85,7 +85,7 @@ move_workspace_to_output() {
 
   # TODO I think this actually uses the name, not the number
   if [ -n "${output_name}" ]; then
-    output=$(i3-msg [workspace=${workspace_number}] move workspace to output ${output_name} 2>/dev/null)
+    output=$(i3-msg \[workspace=${workspace_number}\] move workspace to output ${output_name} 2>/dev/null)
     echo "i3-msg '[workspace=${workspace_number}]' move workspace to output ${output_name} → ${output}" >> "${log_file}"
   else
     echo "No output detected for workspace ${workspace_number}, skipping move." >> "${log_file}"
@@ -159,4 +159,6 @@ postfix_main() {
   fix_backgrounds
 }
 
-# vim: ft=sh
+postfix_main
+
+# vim: ft=sh ts=2 sw=2 sts=2 et
