@@ -40,7 +40,6 @@ return {
   -- Adding this so I can search/replace and preserve letter case
   'tpope/vim-abolish',
 
-
   -- Plug to assist with commenting out blocks of text:
   'tpope/vim-commentary',
 
@@ -625,7 +624,7 @@ return {
             "ChocolateLiquor",
             "MountainDew",
             "PapayaWhip",
-            "Revolution",
+            -- "Revolution",
             -- "Tomorrow-Night-Eighties",
             -- "abbott",
             "anotherdark",
@@ -669,7 +668,7 @@ return {
             -- "eclipse",
             "ecostation",
             "ego",
-            "elrodeo",
+            -- "elrodeo",
             "flatland",
             -- "flatlandia",
             "flattened_dark",
@@ -681,7 +680,7 @@ return {
             "gor",
             -- "gotham",
             "greenvision",
-            "gryffin",
+            -- "gryffin",
             "guardian",
             "guepardo",
             "h80",
@@ -701,7 +700,7 @@ return {
             "monokai-chris",
             "mopkai",
             "mud",
-            "nefertiti",
+            -- "nefertiti",
             -- "neodark",
             -- "neonwave",
             -- "neverland-darker",

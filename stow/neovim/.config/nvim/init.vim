@@ -100,6 +100,8 @@ augroup filetypes
    au BufNewFile,BufRead *.fsb               setlocal ft=fsb syntax=python
    au BufNewFile,BufRead *.dot               setlocal ft=zsh
    au BufNewFile,BufRead *.i3                setlocal ft=i3
+   au BufNewFile,BufRead *.lldb              setlocal ft=lldb
+   au BufNewFile,BufRead .lldbinit           setlocal ft=lldb
 augroup end
 
 augroup whitespace
@@ -122,6 +124,7 @@ augroup whitespace
    autocmd FileType go              setlocal ts=2 sw=2 sts=2 expandtab
    autocmd FileType fsb             setlocal ts=2 sw=2 sts=2 expandtab
    autocmd FileType kdl             setlocal ts=4 sw=4 sts=4 expandtab
+   autocmd FileType lldb            setlocal ts=4 sw=4 sts=4 expandtab
 augroup END
 
 " Set the comment string for certain filetypes to
@@ -130,9 +133,8 @@ augroup FTOptions
     autocmd!
     autocmd FileType c,cpp,cs,java,bzl,javascript,php,fidl setlocal commentstring=//\ %s
     autocmd FileType sh,jdb,cmake                          setlocal commentstring=#\ %s
+    autocmd FileType fsb,i3,lldb                           setlocal commentstring=#\ %s
     autocmd FileType tmpl                                  setlocal commentstring=##\ %s
-    autocmd FileType fsb                                   setlocal commentstring=#\ %s
-    autocmd FileType i3                                    setlocal commentstring=#\ %s
 augroup END
 
 augroup SHORTCUTS

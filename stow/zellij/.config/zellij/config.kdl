@@ -196,7 +196,7 @@ keybinds clear-defaults=true {
     shared_except "locked" "tab" "entersearch" "renametab" "renamepane" {
         bind "t" { SwitchToMode "tab"; }
     }
-    shared_except "locked" "tab" "scroll" "entersearch" "renametab" "renamepane" {
+    shared_except "locked" "tab" "scroll" "entersearch" "renametab" "renamepane" "tmux" {
         bind "s" { SwitchToMode "scroll"; }
     }
     shared_among "normal" "resize" "tab" "scroll" "prompt" "tmux" {
@@ -356,6 +356,7 @@ pane_frames false
 // Default: default
 //
 theme "dracula"
+theme "nord"
 
 // The name of the default layout to load on startup
 // Default: "default"

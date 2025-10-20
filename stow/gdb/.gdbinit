@@ -22,6 +22,9 @@ set pagination off
 set confirm off
 set breakpoint pending on
 
+# This won't help for my code, but it does get the system libs on linux
+set debuginfod enabled on
+
 set auto-load safe-path /f/phoenix/phx-fsb
 
 # source ~matt/dotfiles/gdb-dashboard/.gdbinit

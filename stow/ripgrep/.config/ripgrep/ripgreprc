@@ -67,5 +67,8 @@ fileset:fileset
 --type-add
 conan:conanfile.py
 
+--type-add
+xtend:*.xtend
+
 # Using glob patterns to include/exclude files or folders
 --glob=!git/*
