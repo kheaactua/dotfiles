@@ -19,7 +19,7 @@ layout {
     tab name="covesa" hide_floating_panes=true {
         pane size="50%" split_direction="vertical" {
             pane cwd="/home/matt/workspace/vsomeip" size="50%"
-            pane cwd="/home/matt/dotfiles/dotfiles-secret/ford/keys/gpg" size="50%"
+            pane cwd="/home/matt/dotfiles/dotfiles-secret/work/keys/gpg" size="50%"
         }
         pane size="50%" split_direction="vertical" {
             pane command="/home/matt/.local/share/bob/nightly/bin/nvim" cwd="/home/matt/dotfiles/dotfiles-secret" size="50%" {
