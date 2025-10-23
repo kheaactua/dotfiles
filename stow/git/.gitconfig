@@ -1,3 +1,6 @@
+[user]
+	name = Matthew Russell
+
 [include]
 	path = ~/.gitconfig-home
 
