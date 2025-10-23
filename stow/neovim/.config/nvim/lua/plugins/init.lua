@@ -628,7 +628,7 @@ return {
             -- "Tomorrow-Night-Eighties",
             -- "abbott",
             "anotherdark",
-            "argonaut",
+            -- "argonaut",
             "atom",
             "autumn",
             "ayu",
