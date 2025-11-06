@@ -8,8 +8,8 @@ sys.path.insert(0, '/usr/share/gcc/python')
 from libstdcxx.v6.printers import register_libstdcxx_printers
 #register_libstdcxx_printers (None)
 
-sys.path.insert(0, '/home/matt/workspace/gdb')
-import gdb_hexdump
+# sys.path.insert(0, '/home/matt/workspace/gdb')
+# import gdb_hexdump
 
 end
 
@@ -22,9 +22,11 @@ set pagination off
 set confirm off
 set breakpoint pending on
 
-# This won't help for my code, but it does get the system libs on linux
-set debuginfod enabled on
-
 set auto-load safe-path /f/phoenix/phx-fsb
+
+# This won't help for my code, but it does get the system libs on linux
+# Disabling it breaks ntoaarch64-gdb
+# set debuginfod enabled on
+
 
 # source ~matt/dotfiles/gdb-dashboard/.gdbinit
