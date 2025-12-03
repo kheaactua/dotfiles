@@ -5,6 +5,7 @@ global:
     ci-docker-container-home: /proj/jenkins
     ci-mode: false
     git-clone-mode: full
+    # git-mirror-root: /f/fsb-storage/git_mirror
     git-mirror-root: /home/matt/.fsb_git_mirror
     git-protocol: ssh
     jobs: 8
@@ -50,6 +51,7 @@ global:
 # which is tools/bin/ccache under the fsb suite dir
 ccache:
     ccache-enable: true
+    # ccache-dir: /f/ccache
     ccache-dir: /home/matt/fsb-ccache
     ccache-max-size: 50
 
@@ -66,6 +68,7 @@ ccache:
 #       always: will do a cache size check (and clean up if needed) when starting the build, and every
 #               time before adding a new file to the cache
 dl-cache:
+    # dl-cache-dir: /f/fsb-storage/dl_cache
     dl-cache-dir: /home/matt/fsb_dl_cache
     max-size: 128
     size-management: start
@@ -104,6 +107,7 @@ pbos-config:
     gcs-local-srv-address: 127.0.0.1:50001
     gcs-pbos-project-id: gcs-pbos-test-project-id
     gcs-pbos-bucket: pbos-bucket
+    # gcs-local-srv-root: /f/fsb-storage/pbos_local_srv_root_gcs
     gcs-local-srv-root: /home/matt/.pbos_local_srv_root_gcs
     gcs-local-srv-bin: bin/gcsemulator
     gcs-local-srv-storage: pbos_storage
@@ -111,6 +115,7 @@ pbos-config:
     s3-secretkey: testskey
     s3-region: ca-central-1
     s3-remote-srv-address: 127.0.0.1:50002
+    # s3-local-srv-root: /f/fsb-storage/pbos_local_srv_root_s3
     s3-local-srv-root: /home/matt/.pbos_local_srv_root_s3
     s3-local-srv-repo: pbos
     s3-local-srv-bin: bin/s3_server_emulator

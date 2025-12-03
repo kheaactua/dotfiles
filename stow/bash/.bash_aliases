@@ -266,4 +266,7 @@ function logs() {
   fi
 }
 
+# Testing this out to paste from a zellij selection (this works with the copy_command in zellij)
+# alias paste="xclip -o -sel clipboard"
+
 # vim: ts=3 sts=0 sw=3 noet ft=sh ff=unix :

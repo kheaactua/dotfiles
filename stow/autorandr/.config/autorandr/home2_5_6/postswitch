@@ -34,7 +34,7 @@ detect_displays() {
   # detect the difference by resolution alone on the worksetup, so just
   # hardcode for today
 
-  if [[ "khea" != "$(hostname)" ]]; then
+  if [[ "UGC14VW7PZ3" == "$(hostname)" ]]; then
     echo "DP-0 DP-2.8 DP-2.1"
     return
   fi
@@ -51,16 +51,32 @@ detect_displays() {
     ["work_left"]="1920x1200"
     ["work_center"]="1920x1200"
     ["work_right"]="1200x1920"
+
+    ["laptop_left"]="1366x768"
+    ["laptop_center"]="1920x1200"
+    ["laptop_right"]="2560x1080"
   )
 
   # --- Identify Current Outputs ---
-  local left_key="home_left"
-  local center_key="home_center"
-  local right_key="home_right"
-  if [[ "khea" != "$(hostname)" ]]; then
+  local left_key
+  local center_key
+  local right_key
+
+  if [[ "khea" == "$(hostname)" ]]; then
+    left_key="home_left"
+    center_key="home_center"
+    right_key="home_right"
+  elif [[ "UGC14VW7PZ3" == "$(hostname)" ]]; then
     left_key="work_left"
     center_key="work_center"
     right_key="work_right"
+  elif [[ "UGC147YVDS3" == "$(hostname)" ]]; then
+    left_key="laptop_left"
+    center_key="laptop_center"
+    right_key="laptop_right"
+  else
+    echo "Unknown hostname; cannot detect displays."
+    return 1
   fi
 
   local -r LEFT_DISPLAY_OUTPUT="$(get_all_outputs_by_resolution "${MONITOR_RESOLUTIONS[${left_key}]}" | head -n 1)"

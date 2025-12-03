@@ -16,6 +16,7 @@ declare -r DOTFILES_SECRET_DIR="${DOTFILES_DIR}/dotfiles-secret"
 ARGUMENT_STR_LIST=(
   "home"
 )
+# TODO re-write these to change skip to include
 ARGUMENT_FLAG_LIST=(
   "skip-apt"
   "install-powerline"
@@ -168,7 +169,7 @@ declare -a stows;
 stows+=(zsh bash bat vnc gdb neovim vim tmux git p10k env-modules procs rlwrap zellij aider screenlayout autorandr npm zoxide ripgrep goose kitty sway ccache)
 
 if [[ "1" != "${skip_powerline}" ]]; then
-  install_powerline_fonts
+  dotfiles_install_powerline_fonts
 else
   echo "Skipped installing powerline fonts"
 fi
@@ -217,6 +218,7 @@ elif [ "$XDG_SESSION_DESKTOP" = "i3" ] || [ "$DESKTOP_SESSION" = "i3" ]; then
   current_wm="i3"
 fi
 
+skip_i3=0
 if [[ "1" != "${skip_i3}" ]]; then
   if [ "i3" == "${current_wm}" ]; then
     dotfiles_install_i3 "${h}"
@@ -271,8 +273,10 @@ done
 # Setup's that can or should occur after stow
 #
 
+# NPM packages
 if [[ "1" != "${just_stow}" ]]; then
-  dotfiles_install_npm "${h}"
+  echo "skipping npm"
+  # dotfiles_install_npm "${h}"
 else
   echo "Skipping npm install"
 fi

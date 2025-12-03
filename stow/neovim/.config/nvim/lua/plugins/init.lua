@@ -33,6 +33,7 @@ return {
           enable = true,
           update_cwd = true
         },
+        cd_scope = "window",
       }
     end,
   },
@@ -200,7 +201,8 @@ return {
       -- This one searches all the files in the current git repo:
       map('n', '<c-k>', '<cmd>lua require("fzf-lua").git_files()<CR>', { silent = true })
       map('n', '<leader>h', '<cmd>lua require("fzf-lua").oldfiles()<CR>', { silent = true })
-      map('n', '<leader>t', '<cmd>lua require("fzf-lua").tabs()<CR>', { silent = true })
+      -- map('n', '<leader>t', '<cmd>lua require("fzf-lua").tabs()<CR>', { silent = true })
+      map('n', '<leader>t', '<cmd>lua require("fzf-lua").buffers()<CR>', { silent = true })
 
       -- Unmap center/<CR> from launching fzf which appears to be mapped by default.
       -- unmap <CR>
@@ -241,7 +243,9 @@ return {
       "mhartington/formatter.nvim",
     },
     config = function()
-      require("mason").setup()
+      require("mason").setup({
+        -- log_level = vim.log.levels.DEBUG
+      })
       require("mason-lspconfig").setup()
 
       -- Setup none-ls for linting if available
@@ -611,6 +615,7 @@ return {
 
   {
     'kheaactua/vim-managecolor',
+    -- dir = "/home/matt/workspace/vim-managecolor", -- For local development
     config = function()
       require("managecolor").setup({
         collections = {
