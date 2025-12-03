@@ -1,3 +1,5 @@
+# GITSTATUS_LOG_LEVEL=DEBUG
+
 [[ "undefined" == "${DOTFILES_DIR:-undefined}" ]] && export DOTFILES_DIR="${HOME}/dotfiles"
 [[ "undefined" == "${DOTFILES_SECRET_DIR:-undefined}" ]] && export DOTFILES_SECRET_DIR="${DOTFILES_DIR}/dotfiles-secret"
 
@@ -193,16 +195,11 @@ fi
 # This file is symlinked here after env modules is installed from source
 declare module_profile_file="/etc/profile.d/modules.sh"
 declare -f module > /dev/null || . "${module_profile_file}"
-if [[ $? == 1 ]]; then
-	# modules_enabled=1;
-
-	# Environmental Modules
-	# The module command is now installed in /etc/profile.d/env-modules.sh
-
-	if [[ -e "${HOME}/.modulefiles" ]]; then
-		module use "${HOME}/.modulefiles"
-	fi
-fi;
+if [[ $? == 1 && -e "${HOME}/.modulefiles" ]]; then
+	module use "${HOME}/.modulefiles"
+else
+	echo "Environemnt modules (/etc/profile.d/modules.sh) not installed"
+fi
 
 # Load host specific profile
 [[ -e "${DOTFILES_SECRET_DIR}/profiles/$(hostname).zsh" ]] && source "${DOTFILES_SECRET_DIR}/profiles/$(hostname).zsh"
@@ -261,5 +258,13 @@ _exists kitty && export TERMINAL=kitty
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
+
+# # Note: I use this less and less..
+# declare DEVEL_ENV="${HOME}/workspace/system-setup-scripts/devel/conanbuildenv.sh"
+# if [[ -e "${DEVEL_ENV}" ]]; then
+# 	source "${DEVEL_ENV}"
+# else
+# 	# echo "No development environment available, please run \`conan install\` to create ${DEVEL_ENV}"
+# fi
 
 # vim: sw=4 sts=0 ts=4 noet ff=unix :

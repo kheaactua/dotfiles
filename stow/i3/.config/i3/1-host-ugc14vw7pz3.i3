@@ -7,5 +7,5 @@ assign [class="ZSTray"] $ws9
 for_window [title="^Emulator$"] floating enable, border normal 0
 for_window [title="^Android Emulator - <build>:.*"] floating enable, border normal 0
 
-# Relay on autorandr's postswitch to position the workspaces
+# Rely on autorandr's postswitch to position the workspaces
 # This doesn't seem to be happening....

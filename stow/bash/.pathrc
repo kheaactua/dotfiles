@@ -35,7 +35,7 @@ for p in ${start_path[@]}; do
     new_path+=($p)
   fi
 done
-export PATH=$(echo -n ${new_path[@]} | awk -v RS=' ' '!($0 in a) {a[$0]; printf("%s%s", length(a) > 1 ? ":" : "", $0)}')
+export PATH=$(echo -n "${new_path[@]}" | awk -v RS=' ' '!($0 in a) {a[$0]; printf("%s%s", length(a) > 1 ? ":" : "", $0)}')
 
 # Remove python virtual env from path.  This will be added back later, but if
 # it's in now it'll corrupt tests and proper venv settings due to tmux copying
@@ -50,6 +50,7 @@ if [[ -e "${HOME}/.linuxbrew" ]]; then
 elif [[ -e /home/linuxbrew/.linuxbrew ]]; then
   export LINUXBREWHOME=/home/linuxbrew/.linuxbrew
 fi
+eval "$("${LINUXBREWHOME}/bin/brew" shellenv)"
 
 # Directories we'll prepend
 declare -a pdirs;
@@ -79,7 +80,6 @@ done
 
 # paths to PREpend
 pdirs+=( \
-  "${LINUXBREWHOME}/bin" \
 )
 
 # paths to APpend
@@ -121,8 +121,6 @@ path_prepend "${LINUXBREWHOME:-bad_path}/share/info" INFOPATH
 declare -a fdirs;
 if [ -n "$ZSH_VERSION" ]; then
   fdirs=( \
-    # "${LINUXBREWHOME}/.linuxbrew/share/zsh/site-functions"
-
     # Pure Prompt https://github.com/sindresorhus/pure
     # /usr/local/lib/node_modules/pure-prompt/functions
 

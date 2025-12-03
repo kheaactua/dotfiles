@@ -156,6 +156,7 @@ keybinds clear-defaults=true {
         bind "8" { GoToTab 8; SwitchToMode "locked"; }
         bind "9" { GoToTab 9; SwitchToMode "locked"; }
         bind "d" { Detach; }
+        // bind "s" { NewPane "stacked"; SwitchToMode "locked"; }
     }
     shared_among "normal" "locked" {
         bind "Alt left" { Resize "Increase left"; }
@@ -205,6 +206,16 @@ keybinds clear-defaults=true {
     shared_except "locked" "resize" "pane" "tab" "entersearch" "renametab" "renamepane" {
         bind "r" { SwitchToMode "resize"; }
     }
+    // shared_except "locked" {
+    //     bind "Ctrl y" {
+    //         // https://github.com/karimould/zellij-forgot
+    //         LaunchOrFocusPlugin "file:~/.config/zellij/plugins/zellij_forgot.wasm" {
+    //             // I can put anything into this map
+    //             // "lock"                  "ctrl + g"
+    //             floating true
+    //         }
+    //     }
+    // }
     shared_among "normal" "locked" {
         bind "Ctrl y" {
             LaunchOrFocusPlugin "file:~/.config/zellij/plugins/room.wasm" {
@@ -264,10 +275,21 @@ plugins {
     configuration location="zellij:configuration"
     plugin-manager location="zellij:plugin-manager"
     about location="zellij:about"
+    // zellig-forgot location="zellij:zellij-forget"
+    // room location="zellij:room"
+    plugin "zjstatus.wasm"
 }
 
 // Plugins to load in the background when a new session starts
 load_plugins {
+    // "https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+    // }
+    // "https://github.com/dj95/zjstatus/releases/latest/download/zjframes.wasm" {
+    //     hide_frame_for_single_pane       "true"
+    //     hide_frame_except_for_search     "true"
+    //     hide_frame_except_for_scroll     "true"
+    //     hide_frame_except_for_fullscreen "true"
+    // }
 }
 
 // Choose what to do when zellij receives SIGTERM, SIGINT, SIGQUIT or SIGHUP
@@ -362,7 +384,8 @@ theme "nord"
 // Default: "default"
 // (Requires restart)
 //
-default_layout "classic"
+// default_layout "classic"
+default_layout "compact"
 
 // Choose the mode that zellij uses when starting up.
 // Default: normal
@@ -377,7 +400,7 @@ default_mode "locked"
 //   - true (default)
 //   - false
 //
-// mouse_mode false
+// mouse_mode true
 
 // Configure the scroll back buffer size
 // This is the number of lines zellij stores for each pane in the scroll back
@@ -394,7 +417,7 @@ default_mode "locked"
 // that will be used by default if this option is not set.
 // Examples:
 //
-copy_command "xclip -selection clipboard" // x11
+// copy_command "xclip -selection clipboard" // x11
 // copy_command "wl-copy"                    // wayland
 // copy_command "pbcopy"                     // osx
 // WSL: I should instead call a script which detects the platform
@@ -407,6 +430,7 @@ copy_command "xclip -selection clipboard" // x11
 //   - system (default)
 //   - primary
 //
+// copy_clipboard "primary"
 
 // Enable or disable automatic copy (and clear) of selection when releasing mouse
 // Default: true
