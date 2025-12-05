@@ -22,3 +22,14 @@ stow/env-modules/.modulefiles/fo*
 stow/gnupg/.gnupg/*
 stow/goose/.config/goose/history.txt
 **/autorandr/**/.tmp
+stow/dircolors/
+stow/i3/.config/i3/config
+stow/rofi/.config/rofi/applets
+stow/rofi/.config/rofi/colors/
+stow/rofi/.config/rofi/images/
+stow/rofi/.config/rofi/launchers/
+stow/rofi/.config/rofi/powermenu/
+stow/rofi/.config/rofi/scripts/
+stow/screenlayout/.screenlayout/*.sh
+stow/zellij/.config/zellij/plugins/
+stow/zellij/zellij-sessions/
