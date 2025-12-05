@@ -190,27 +190,22 @@ fi
 # Aliases
 [ -e "${HOME}/.bash_aliases" ] && source "${HOME}/.bash_aliases"
 
-declare -f module > /dev/null || . /etc/profile.d/env-modules.sh
+# This file is symlinked here after env modules is installed from source
+declare module_profile_file="/etc/profile.d/modules.sh"
+declare -f module > /dev/null || . "${module_profile_file}"
 if [[ $? == 1 ]]; then
 	# modules_enabled=1;
 
 	# Environmental Modules
 	# The module command is now installed in /etc/profile.d/env-modules.sh
 
-	module use ${HOME}/.modulefiles
+	if [[ -e "${HOME}/.modulefiles" ]]; then
+		module use "${HOME}/.modulefiles"
+	fi
 fi;
 
-if [[ "khea" == "$(hostname)" ]]; then
-	# Not using conan at the moment
-	# export CONAN_SYSREQUIRES_MODE=disabled CONAN_SYSREQUIRES_SUDO=0
-
-	# module load modules
-	module load docker khea
-	# module load bona
-
-elif [[ -e "${DOTFILES_SECRET_DIR}/work/profile/$(hostname).zsh" ]]; then
-	 source "${DOTFILES_SECRET_DIR}/work/profile/$(hostname).zsh"
-fi
+# Load host specific profile
+[[ -e "${DOTFILES_SECRET_DIR}/profiles/$(hostname).zsh" ]] && source "${DOTFILES_SECRET_DIR}/profiles/$(hostname).zsh"
 
 # Load default python virtual env.
 [[ "undefined" == "${DEFAULT_PYTHON_VENV:-undefined}" ]] && DEFAULT_PYTHON_VENV="default"
