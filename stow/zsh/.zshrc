@@ -192,14 +192,7 @@ fi
 # Aliases
 [ -e "${HOME}/.bash_aliases" ] && source "${HOME}/.bash_aliases"
 
-# This file is symlinked here after env modules is installed from source
-declare module_profile_file="/etc/profile.d/modules.sh"
-declare -f module > /dev/null || . "${module_profile_file}"
-if [[ $? == 1 && -e "${HOME}/.modulefiles" ]]; then
-	module use "${HOME}/.modulefiles"
-else
-	echo "Environemnt modules (/etc/profile.d/modules.sh) not installed"
-fi
+[ -e "${DOTFILES_DIR}/load_env_modules.sh" ] && source "${DOTFILES_DIR}/load_env_modules.sh"
 
 # Load host specific profile
 [[ -e "${DOTFILES_SECRET_DIR}/profiles/$(hostname).zsh" ]] && source "${DOTFILES_SECRET_DIR}/profiles/$(hostname).zsh"
