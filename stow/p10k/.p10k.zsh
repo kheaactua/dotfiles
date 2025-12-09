@@ -98,13 +98,8 @@
     # battery               # internal battery
     # wifi                  # wifi speed
     # example               # example user-defined segment (see prompt_example function below)
+    context                 # user@hostname
   )
-
-  if [[ "ugc15x24r53" != "$(hostname)" ]]; then
-    POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS+=(
-      context                 # user@hostname
-    )
-  fi
 
   # Defines character set used by powerlevel10k. It's best to let `p10k configure` set it for you.
   typeset -g POWERLEVEL9K_MODE=nerdfont-complete
@@ -842,9 +837,14 @@
   # Default context format (no privileges, no SSH): user@hostname.
   typeset -g POWERLEVEL9K_CONTEXT_TEMPLATE='%n@%m'
 
+  # Use custom hostname function
+  typeset -g POWERLEVEL9K_CONTEXT_ROOT_CONTENT_EXPANSION='%B%n@$(_p10k_get_custom_hostname)'
+  typeset -g POWERLEVEL9K_CONTEXT_{REMOTE,REMOTE_SUDO}_CONTENT_EXPANSION='%n@$(_p10k_get_custom_hostname)'
+  typeset -g POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_CONTENT_EXPANSION='%n@$(_p10k_get_custom_hostname)'
+
   # Don't show context unless running with privileges or in SSH.
   # Tip: Remove the next line to always show context.
-  typeset -g POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_{CONTENT,VISUAL_IDENTIFIER}_EXPANSION=
+  # typeset -g POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_{CONTENT,VISUAL_IDENTIFIER}_EXPANSION=
 
   # Custom icon.
   # typeset -g POWERLEVEL9K_CONTEXT_VISUAL_IDENTIFIER_EXPANSION='⭐'
@@ -1506,6 +1506,26 @@
   # typeset -g POWERLEVEL9K_TIME_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # Custom prefix.
   # typeset -g POWERLEVEL9K_TIME_PREFIX='%fat '
+
+  # Custom function to determine the display hostname
+  _p10k_get_custom_hostname() {
+    local current_hostname
+    # Get the short hostname
+    current_hostname=$(hostname -s)
+
+    case "$current_hostname" in
+      "UGC14VW7PZ3")
+        echo "desktop"
+        ;;
+      "UGC147YVDS3")
+        echo "lt"
+        ;;
+      *)
+        # Default: show the actual short hostname if no specific rule matches
+        echo "$current_hostname"
+        ;;
+    esac
+  }
 
   # Example of a user-defined prompt segment. Function prompt_example will be called on every
   # prompt if `example` prompt segment is added to POWERLEVEL9K_LEFT_PROMPT_ELEMENTS or
