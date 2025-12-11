@@ -132,9 +132,14 @@ return {
     'mhinz/vim-grepper',
     init = function()
       local map = require("utils").map
-      map('n', '<leader>G', ":Grepper -tool rg -buffer -cword -noprompt<CR>", { silent = true })
+      map('n', '<leader>G', ":Grepper -tool rg<CR>", { silent = true })
+
+      -- Run Grepper on the current selected work
       map('n', '<leader>GG', ":Grepper -tool rg -cword -noprompt<CR>", { silent = true })
-      map('v', '<leader>GG', ":Grepper -tool rg -noprompt<CR>", { silent = true })
+
+      -- map('v', '<leader>GG', ":Grepper -tool rg -noprompt<CR>", { silent = true })
+      -- Run grepper in the current buffer
+      map('n', '<leader>GGG', ":Grepper -tool rg -buffer -cword -noprompt<CR>", { silent = true })
     end,
   },
 

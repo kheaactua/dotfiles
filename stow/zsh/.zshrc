@@ -250,6 +250,10 @@ if [[ -n $DISPLAY || -n ${XDG_SESSION_TYPE} ]]; then
 	function run-feh() {
 		_exists feh && feh --randomize --bg-fill ~/Desktop/Backgrounds/*
 	}
+
+	# Gemni suggested this to get kitty working better
+	export QT_QPA_PLATFORMTHEME=xdgdesktopportal
+	export GTK_USE_PORTAL=1
 fi
 
 # Set terminal to kitty if it exists, this should be respected by i3-sensible-terminal
