@@ -50,7 +50,9 @@ if [[ -e "${HOME}/.linuxbrew" ]]; then
 elif [[ -e /home/linuxbrew/.linuxbrew ]]; then
   export LINUXBREWHOME=/home/linuxbrew/.linuxbrew
 fi
-eval "$("${LINUXBREWHOME}/bin/brew" shellenv)"
+if [[ -e "${LINUXBREWHOME}/bin/brew" ]]; then
+  eval "$("${LINUXBREWHOME}/bin/brew" shellenv)"
+fi
 
 # Directories we'll prepend
 declare -a pdirs;
