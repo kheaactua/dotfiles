@@ -85,8 +85,15 @@ bindsym $mod+a focus parent
 #bindsym $mod+d focus child
 
 # move focused workspace between monitors
+bindsym $mod+Ctrl+Right move workspace to output right
+bindsym $mod+Ctrl+Left move workspace to output left
+bindsym $mod+Ctrl+Down move workspace to output down
+bindsym $mod+Ctrl+Up move workspace to output up
+# Old binings
 bindsym $mod+Ctrl+greater move workspace to output right
 bindsym $mod+Ctrl+less move workspace to output left
+bindsym $mod+Ctrl+? move workspace to output down
+bindsym $mod+Ctrl+m move workspace to output up
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
