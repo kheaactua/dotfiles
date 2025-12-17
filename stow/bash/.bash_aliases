@@ -130,6 +130,7 @@ alias rl="repo sync -j8 -q -c --no-tags"
 alias gpsup='git push --set-upstream $(git_current_remote) $(git_current_branch)'
 alias ggsup='git branch --set-upstream-to=$(git_current_remote)/$(git_current_branch)'
 alias grsd=git_set_default_remote
+alias gpsf="git push --force-with-lease"
 
 if [[ "$(alias gf 2>/dev/null)" != "" ]]; then
    unalias gf
