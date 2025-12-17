@@ -43,18 +43,19 @@ detect_displays() {
   # These values MUST match your xrandr --verbose output exactly.
 
   local -A MONITOR_RESOLUTIONS=(
-    ["home_left"]="1920x1200"
-    ["home_center"]="2560x1080"
-    ["home_right"]="1080x1920" # Portrait mode, daisy chained
+    ["home_left"]="2560x1080"
+    ["home_center"]="3440x1440"
+    ["home_right"]=""
 
     # I'll have to figure out a way to differentiate left and center
     ["work_left"]="1920x1200"
     ["work_center"]="1920x1200"
     ["work_right"]="1200x1920"
 
-    ["laptop_left"]="1366x768"
-    ["laptop_center"]="1920x1200"
-    ["laptop_right"]="2560x1080"
+    ["laptop_left"]="2560x1080"
+    ["laptop_center"]="3440x1440"
+    # This is actually "top"
+    ["laptop_right"]="1366x768"
   )
 
   # --- Identify Current Outputs ---
