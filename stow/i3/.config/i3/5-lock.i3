@@ -1,5 +1,5 @@
 # Set the screens to turn off after X seconds of inactivity:
-exec "xset dpms 5000"
+exec "xset dpms 10000"
 
 # The combination of xss-lock, nm-applet and pactl is a popular choice, so
 # they are included here as an example. Modify as you see fit.

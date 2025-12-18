@@ -68,9 +68,8 @@ exec_always --no-startup-id numlockx on
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
-bar {
-  status_command i3status
-}
+# Launch Polybar
+exec_always --no-startup-id ~/.config/polybar/launch.sh
 
 # Sources:
 # - https://github.com/TalAmuyal/MyConfigs
