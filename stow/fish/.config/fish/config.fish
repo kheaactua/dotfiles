@@ -1,16 +1,8 @@
-# Initialize environment modules
-if test -f /usr/share/modules/init/fish
-    source /usr/share/modules/init/fish
-end
-
-# Load hostname-specific profile
-if set -q DOTFILES_SECRET_DIR
-    set -l hostname_profile "$DOTFILES_SECRET_DIR/profiles/"(hostname)".fish"
-    if test -f "$hostname_profile"
-        source "$hostname_profile"
-    end
-end
+# Fish shell configuration
+# Most configuration has been moved to conf.d/*.fish files for modularity
 
 if status is-interactive
     # Commands to run in interactive sessions can go here
 end
+
+# vim: sw=4 sts=0 ts=4 expandtab ff=unix ft=fish :

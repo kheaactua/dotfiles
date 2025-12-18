@@ -38,3 +38,14 @@ stow/wireshark/.config/wireshark/recent
 stow/wireshark/.config/wireshark/recent_common
 stow/zellij/.config/zellij/plugins/
 stow/zellij/zellij-sessions/
+
+# Fisher-installed plugin files (managed by fish_plugins)
+stow/fish/.config/fish/conf.d/fzf.fish
+stow/fish/.config/fish/conf.d/nvm.fish
+stow/fish/.config/fish/functions/__bass.py
+stow/fish/.config/fish/functions/bass.fish
+stow/fish/.config/fish/functions/_fzf*.fish
+stow/fish/.config/fish/functions/fzf_configure_bindings.fish
+stow/fish/.config/fish/functions/_nvm*.fish
+stow/fish/.config/fish/functions/nvm.fish
+stow/fish/.config/fish/fish_variables

@@ -30,7 +30,7 @@ path_filter() {
 declare -a start_path;
 declare -a new_path;
 start_path=($(echo -n $PATH | awk -v RS=: '!($0 in a) {a[$0]; printf("%s%s", length(a) > 1 ? " " : "", $0)}'))
-for p in ${start_path[@]}; do
+for p in "${start_path[@]}"; do
   if [[ -e $p ]]; then
     new_path+=($p)
   fi
@@ -126,7 +126,7 @@ if [ -n "$ZSH_VERSION" ]; then
     # Pure Prompt https://github.com/sindresorhus/pure
     # /usr/local/lib/node_modules/pure-prompt/functions
 
-    ${HOME}/dotfiles/completions
+    "${HOME}/dotfiles/completions"
   )
   for f in $fdirs; do
     fpath+=($f)
