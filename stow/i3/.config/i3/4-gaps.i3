@@ -2,6 +2,11 @@
 ### settings for i3-gaps: ###
 #############################
 
+# Remove title bars and borders for clean polybar look
+default_border pixel 1
+default_floating_border normal
+hide_edge_borders smart
+
 # Set inner/outer gaps
 for_window [class="^.*"] border pixel 0
 gaps inner 7
