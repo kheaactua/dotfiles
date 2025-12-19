@@ -39,6 +39,9 @@ stow/wireshark/.config/wireshark/recent_common
 stow/zellij/.config/zellij/plugins/
 stow/zellij/zellij-sessions/
 
+# Colour schemes
+stow/kitty/.config/kitty/*.conf
+
 # Fisher-installed plugin files (managed by fish_plugins)
 stow/fish/.config/fish/conf.d/fzf.fish
 stow/fish/.config/fish/conf.d/nvm.fish
