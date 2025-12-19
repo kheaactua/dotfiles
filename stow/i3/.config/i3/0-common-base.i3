@@ -25,6 +25,12 @@ exec --no-startup-id dex --autostart --environment i3
 # and nm-applet is a desktop environment-independent system tray GUI for it.
 exec --no-startup-id nm-applet
 
+# Fix default audio sink on startup (sets USB Composite Device as default)
+exec --no-startup-id ~/.config/i3/scripts/fix-audio-sink.sh
+
+# Launch Polybar on startup (also runs via autorandr on display changes)
+exec --no-startup-id python3 ~/.config/autorandr/postswitch.py
+
 # Use wpctl to adjust volume in WirePlumber (Ubuntu 24.04+ default).
 set $refresh_i3status pkill -RTMIN+1 i3blocks # This should still work if i3blocks uses pactl compatibility
 bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ && $refresh_i3status
@@ -35,6 +41,13 @@ bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && $refres
 # To set a specific sink as default (replace <ID> with the actual sink ID):
 # wpctl set-default <ID>
 # The shell function fix-default-audio-sink sets this to USB Composite Device
+
+# Media player controls (YouTube Music, Spotify, etc. via playerctl)
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioPause exec playerctl pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+bindsym XF86AudioStop exec playerctl stop
 
 # Sreen brightness controls
 bindsym XF86MonBrightnessUp exec xbacklight -inc 20 # increase screen brightness
@@ -68,8 +81,11 @@ exec_always --no-startup-id numlockx on
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
-# Launch Polybar
-exec_always --no-startup-id ~/.config/polybar/launch.sh
+# Disabled in favor of Polybar
+# bar {
+#   status_command i3status
+# }
+# Launch Polybar - DISABLED: Now handled by autorandr postswitch.py
 
 # Sources:
 # - https://github.com/TalAmuyal/MyConfigs

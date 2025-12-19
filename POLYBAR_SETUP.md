@@ -81,6 +81,27 @@ This tells Polybar which physical monitor to display on.
 
 ## Usage
 
+### Switch Polybar Themes
+
+All adi1090x themes are now configured to work with your multi-monitor setup:
+
+```bash
+# Switch themes
+~/.config/polybar/switch-theme.sh forest
+~/.config/polybar/switch-theme.sh blocks
+~/.config/polybar/switch-theme.sh shapes
+
+# Show current theme and available options
+~/.config/polybar/switch-theme.sh
+```
+
+Available themes: blocks, colorblocks, cuts, docky, forest, grayblocks, hack, material, shades, shapes
+
+All themes automatically:
+- Use the correct monitor (via `MONITOR` environment variable)
+- Have hardware settings fixed (WiFi, battery, backlight, etc.)
+- Work with autorandr display changes
+
 ### Manual Trigger
 ```bash
 python3 ~/.config/autorandr/postswitch.py
@@ -166,3 +187,28 @@ cat /tmp/i3_autorandr_debug.log
 
 ### Wrong monitor selected
 Edit the priority logic in `PolybarManager.select_monitor_for_polybar()`
+
+## Hardware Configuration Errors
+
+If you see errors like:
+- `Invalid network interface "wlan0"`
+- `The file '/sys/class/backlight/...' does not exist`
+- `No suitable way to get current charge state`
+- `Connection refused` (MPD)
+
+These are hardware-specific settings. Run the auto-fix script:
+
+```bash
+~/.config/polybar/fix_hardware.sh
+```
+
+This script automatically detects:
+- WiFi interface (wlp0s20f3)
+- Ethernet interface (enp0s31f6)
+- Backlight device (intel_backlight)
+- Battery (BAT0)
+- AC adapter (AC)
+- Temperature sensors
+- Disables MPD module (Music Player Daemon) if not using it
+
+The script updates all adi1090x polybar themes at once.
