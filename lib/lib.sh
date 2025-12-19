@@ -170,27 +170,6 @@ function dotfiles_install_i3_config()
   symlink "${i3_dir}/${lower_hostname}.i3" "${i3_dir}/config" 1
 }
 
-# function assemble_i3_config()
-# {
-#   # DEPRECATED
-#   # This was used before i3 supported "include"
-
-#   local parts_dir=${1:-${DOTFILES_DIR:-${HOME}/dotfiles}/config/i3}
-#   local dest=${2:-${HOME}/.config/i3/config}
-
-#   local files=($(find "${parts_dir}" -iname '*-common*.part' -or -iname \*$(dotfiles_hostname)\*.part | sort))
-#   if [[ -e "${dest}" ]]; then
-#     rm "${dest}"
-#   fi
-#   for f in "${files[@]}"; do
-#     {
-#       echo -e "\n\n#\n# Include: ${f}\n#\n";
-#       cat "${f}";
-#       echo -e "\n#\n# /Include: ${f}\n#\n\n";
-#     } >> "${dest}"
-#   done
-# }
-
 function dotfiles_install_i3()
 {
   local home=${1:-${HOME}}
@@ -204,20 +183,6 @@ function dotfiles_install_i3()
     dotfiles_install_i3_config "${i3_config_dir}"
     symlink "${DOTFILES_DIR:-${HOME}/dotfiles}/stow/screenlayout/.screenlayout/$(dotfiles_hostname).sh" "${home}/.screenlayout/host.sh" 1
   fi
-
-  [[ -e "${home}/bin" ]] || mkdir -p "${home}/bin"
-
-  # I have no idea why I'm writing this file rather than stowing it...
-  cat <<TOHERE > "${home}/bin/do_lock.sh"
-#!/bin/bash
-
-# Lock, sleep, then suspend the displays
-i3lock --ignore-empty-password \
-& sleep 3 \
-&& xset dpms force suspend
-
-TOHERE
-  chmod u+x "${home}/bin/do_lock.sh"
 }
 
 # deleted dotfiles_install_kotlin_language_server()
