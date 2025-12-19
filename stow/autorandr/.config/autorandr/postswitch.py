@@ -12,6 +12,7 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Dict, Optional
+from enum import Enum
 import logging
 from datetime import datetime
 
@@ -28,6 +29,20 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+class PolybarTheme(str, Enum):
+    """Available Polybar themes from adi1090x/polybar-themes"""
+    BLOCKS = "blocks"
+    COLORBLOCKS = "colorblocks"
+    CUTS = "cuts"
+    DOCKY = "docky"
+    FOREST = "forest"
+    GRAYBLOCKS = "grayblocks"
+    HACK = "hack"
+    MATERIAL = "material"
+    SHADES = "shades"
+    SHAPES = "shapes"
+
+
 @dataclass
 class Monitor:
     """Represents a connected monitor configuration"""
@@ -37,7 +52,7 @@ class Monitor:
     position: str  # e.g., "2560+768"
     is_primary: bool = False
     workspaces: List[int] = field(default_factory=list)
-    polybar: bool = False
+    polybar: Optional[PolybarTheme] = None  # None = no polybar, PolybarTheme.BLOCKS = specific theme
 
     @property
     def width(self) -> int:
@@ -58,7 +73,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             position="0+0",
             is_primary=True,
             workspaces=[2, 4, 5, 6, 7, 9, 10],
-            polybar=True,
+            polybar=PolybarTheme.BLOCKS,  # Can specify theme per monitor!
         ),
         Monitor(
             device="DP-1-2",
@@ -66,6 +81,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             position="2560+0",
             is_primary=False,
             workspaces=[1, 8],
+            polybar=None,  # No polybar on this monitor
         ),
     ],
     "UGC14VW7PZ3-3": [  # Work setup
@@ -75,6 +91,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             position="0+0",
             is_primary=True,
             workspaces=[1, 8],
+            polybar=None,
         ),
         Monitor(
             device="DP-2.8",
@@ -82,7 +99,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             position="1920+0",
             is_primary=False,
             workspaces=[2, 4, 5, 6, 7, 9, 10],
-            polybar=True,
+            polybar=PolybarTheme.BLOCKS,
         ),
         Monitor(
             device="DP-2.1",
@@ -90,6 +107,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             position="3840+0",
             is_primary=False,
             workspaces=[3, 11, 12],
+            polybar=None,
         ),
     ],
     "UGC147YVDS3-3": [  # Laptop with 2 external monitors
@@ -99,15 +117,15 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             position="0+1128",
             is_primary=False,
             workspaces=[1, 8],
-            polybar=True,
-        ),  # Added polybar=True here
+            polybar=PolybarTheme.FOREST,
+        ),
         Monitor(
             device="DP-1-2",
             resolution="3440x1440",
             position="2560+768",
             is_primary=True,
             workspaces=[2, 4, 5, 6, 7, 10],
-            polybar=True,
+            polybar=PolybarTheme.MATERIAL,  # Or use same theme on both
         ),
         Monitor(
             device="eDP-1",
@@ -115,6 +133,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             position="3469+0",
             is_primary=False,
             workspaces=[3, 9, 11, 12],
+            polybar=None,  # No bar on laptop screen
         ),
     ],
     "UGC147YVDS3-1": [  # Laptop only
@@ -124,7 +143,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             position="0+0",
             is_primary=True,
             workspaces=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-            polybar=True,
+            polybar=PolybarTheme.BLOCKS,
         ),
     ],
 }
@@ -259,8 +278,51 @@ class PolybarManager:
         )
         return polybar_monitors
 
+    def get_theme_config(self, monitor: Monitor) -> Optional[Path]:
+        """
+        Get the polybar config file for a specific monitor.
+        Priority:
+        1. Monitor's polybar field (theme name)
+        2. Environment variable POLYBAR_THEME
+        3. current-theme symlink
+        4. Default config.ini
+        """
+        # Use monitor-specific theme if set
+        if monitor.polybar and isinstance(monitor.polybar, str):
+            theme_config = self.polybar_config_dir / monitor.polybar / "config.ini"
+            if theme_config.exists():
+                logger.info(f"Polybar: Using monitor-specific theme '{monitor.polybar}' for {monitor.device}")
+                return theme_config
+            else:
+                logger.warning(f"Polybar: Monitor theme '{monitor.polybar}' not found for {monitor.device}, falling back")
+
+        # Check for environment variable override
+        theme_override = os.environ.get("POLYBAR_THEME")
+        if theme_override:
+            theme_config = self.polybar_config_dir / theme_override / "config.ini"
+            if theme_config.exists():
+                logger.info(f"Polybar: Using theme from POLYBAR_THEME env: {theme_override}")
+                return theme_config
+            else:
+                logger.warning(f"Polybar: POLYBAR_THEME '{theme_override}' not found, using default")
+
+        # Check for symlink to current theme
+        current_theme_link = self.polybar_config_dir / "current-theme"
+        if current_theme_link.exists():
+            logger.info(f"Polybar: Using theme from current-theme symlink for {monitor.device}")
+            return current_theme_link
+
+        # Default to main config.ini
+        default_config = self.polybar_config_dir / "config.ini"
+        if default_config.exists():
+            logger.info(f"Polybar: Using default config.ini for {monitor.device}")
+            return default_config
+
+        logger.error(f"Polybar: No config file found for {monitor.device}!")
+        return None
+
     def launch_polybar(self):
-        """Launch Polybar on all configured monitors"""
+        """Launch Polybar on all configured monitors with per-monitor theme support"""
         polybar_monitors = self.get_polybar_monitors()
 
         if not polybar_monitors:
@@ -268,24 +330,30 @@ class PolybarManager:
             return
 
         # Kill existing Polybar instances
-        # Use killall which waits for processes to terminate
         subprocess.run(["killall", "polybar"], check=False)
 
         # Launch Polybar on each configured monitor
         for monitor in polybar_monitors:
+            # Get theme config for this specific monitor
+            config_file = self.get_theme_config(monitor)
+            if not config_file:
+                logger.error(f"No polybar config available for {monitor.device}, skipping")
+                continue
+
             log_file = Path(f"/tmp/polybar_{monitor.device}.log")
             env = os.environ.copy()
             env["MONITOR"] = monitor.device
 
             with open(log_file, "a") as f:
                 subprocess.Popen(
-                    ["polybar", "main"],  # No --reload needed when we kill first
+                    ["polybar", "-c", str(config_file), "main"],
                     env=env,
                     stdout=f,
                     stderr=subprocess.STDOUT,
                 )
 
-            logger.info(f"Polybar: Launched on {monitor.device} (log: {log_file})")
+            theme_name = monitor.polybar if isinstance(monitor.polybar, str) else "default"
+            logger.info(f"Polybar: Launched '{theme_name}' on {monitor.device} (log: {log_file})")
 
         logger.info(
             f"Polybar: Successfully launched {len(polybar_monitors)} instance(s)"
