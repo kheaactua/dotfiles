@@ -1,0 +1,9 @@
+#!/bin/sh
+
+export XDG_DATA_DIRS="${HOME}/.local/share/bob/nightly/share:$XDG_DATA_DIRS"
+
+# You can add other X-specific commands here, e.g.:
+# xrandr --output HDMI-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal
+# numlockx on
+# This may be a better place than how I currently have this setup in my i3 config
+

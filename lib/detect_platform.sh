@@ -32,3 +32,7 @@ function detect_platform() {
 function detect_version_code() {
   echo $(. /etc/os-release && echo "$VERSION_CODENAME")
 }
+
+function detect_version_id() {
+  echo $(. /etc/os-release && echo "$VERSION_ID")
+}

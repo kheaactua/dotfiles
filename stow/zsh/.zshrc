@@ -7,8 +7,8 @@ declare WSL_VERSION=0
 declare IN_DOCKER=0
 declare PLATFORM=linux_x86_64
 
-if [[ -e "${DOTFILES_DIR}/detect_platform.dot" ]]; then
-	source "${DOTFILES_DIR}/detect_platform.dot"
+if [[ -e "${DOTFILES_DIR}/lib/detect_platform.sh" ]]; then
+	source "${DOTFILES_DIR}/lib/detect_platform.sh"
 
 	WSL_VERSION="$(detect_wsl)"
 	IN_DOCKER="$(detect_docker)"
@@ -17,10 +17,10 @@ else
 	echo "Warning: Cannot detect platform"
 fi
 
-[[ -e "${DOTFILES_DIR}/rclib.dot" ]] && source "${DOTFILES_DIR}/rclib.dot"
+[[ -e "${DOTFILES_DIR}/lib/rclib.sh" ]] && source "${DOTFILES_DIR}/lib/rclib.sh"
 
-if [[ -e "${DOTFILES_DIR}/agents.dot" ]]; then
-	source "${DOTFILES_DIR}/agents.dot"
+if [[ -e "${DOTFILES_DIR}/lib/agents.sh" ]]; then
+	source "${DOTFILES_DIR}/lib/agents.sh"
 	check_agent_file
 
 	if [[ 0 != "${WSL_VERSION}" ]]; then
