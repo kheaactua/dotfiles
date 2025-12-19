@@ -125,7 +125,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             position="2560+768",
             is_primary=True,
             workspaces=[2, 4, 5, 6, 7, 10],
-            polybar=PolybarTheme.MATERIAL,  # Or use same theme on both
+            polybar=PolybarTheme.SHAPES,  # Or use same theme on both
         ),
         Monitor(
             device="eDP-1",
