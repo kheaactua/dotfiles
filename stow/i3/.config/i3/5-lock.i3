@@ -1,14 +1,15 @@
-# Set the screens to turn off after X seconds of inactivity:
-exec "xset dpms 10000"
+# Screen timeout and lock configuration
 
-# The combination of xss-lock, nm-applet and pactl is a popular choice, so
-# they are included here as an example. Modify as you see fit.
-
-# xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
+# xss-lock grabs a logind suspend inhibit lock and will use i3lock-color to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
-exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+exec --no-startup-id xss-lock --transfer-sleep-lock -- ${HOME}/bin/do_lock.sh
 
-# Lock screen
+# Auto-lock screen after 5 minutes of inactivity
+# Screen will turn off 1 minute after locking (total 6 minutes idle)
+exec --no-startup-id xautolock -time 5 -locker "${HOME}/bin/do_lock.sh" -notify 30 -notifier "notify-send -u critical -t 10000 'Screen will lock in 30 seconds'"
+
+# Turn off screens 1 minute after lock (handled by xset dpms)
+exec --no-startup-id xset dpms 360 360 360
+
+# Manual lock screen keybinding
 bindsym Ctrl+mod1+L exec ${HOME}/bin/do_lock.sh
-
-# TODO maybe refactor this, review https://gist.github.com/rometsch/6b35524bcc123deb7cd30b293f2088d8
