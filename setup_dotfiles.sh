@@ -7,9 +7,9 @@
 declare h="${HOME}"
 
 declare -r DOTFILES_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-source "${DOTFILES_DIR}/detect_platform.dot"
-source "${DOTFILES_DIR}/rclib.dot"
-source "${DOTFILES_DIR}/lib.dot"
+source "${DOTFILES_DIR}/lib/detect_platform.sh"
+source "${DOTFILES_DIR}/lib/rclib.sh"
+source "${DOTFILES_DIR}/lib/lib.sh"
 
 declare -r DOTFILES_SECRET_DIR="${DOTFILES_DIR}/dotfiles-secret"
 
