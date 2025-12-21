@@ -8,8 +8,13 @@ cargo
 **/autorandr/**/.tmp
 .aider*
 .nvimlog
+dircolors-solarized/
 node_modules
+package-lock.json
+package.json
 ripgreprc
+stow/autorandr/.config/autorandr/home2_1/
+stow/clangd/
 stow/dircolors/
 stow/env-modules/.modulefiles/fo*
 stow/env-modules/.modulefiles/tokens
@@ -24,9 +29,15 @@ stow/gnupg/.gnupg/sshcontrol
 stow/gnupg/.gnupg/trustdb.gpg
 stow/goose/.config/goose/history.txt
 stow/i3/.config/config
+stow/i3/.config/i3/bak.default
 stow/i3/.config/i3/config
+stow/i3/.config/i3/default
+stow/i3/.config/i3/i3
 stow/neovim/.config/nvim/.netrwhist
+stow/neovim/.config/nvim/autoload/
 stow/neovim/.config/nvim/nvim_lsp/jdtls/
+stow/neovim/.config/nvim/plugin/
+stow/rofi/.config/DEL.rofi/
 stow/rofi/.config/rofi/applets
 stow/rofi/.config/rofi/colors/
 stow/rofi/.config/rofi/images/
@@ -39,6 +50,7 @@ stow/wireshark/.config/wireshark/recent
 stow/wireshark/.config/wireshark/recent_common
 stow/zellij/.config/zellij/plugins/
 stow/zellij/zellij-sessions/
+
 
 # Colour schemes
 stow/kitty/.config/kitty/*.conf
