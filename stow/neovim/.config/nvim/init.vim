@@ -125,6 +125,7 @@ augroup whitespace
    autocmd FileType fsb             setlocal ts=2 sw=2 sts=2 expandtab
    autocmd FileType kdl             setlocal ts=4 sw=4 sts=4 expandtab
    autocmd FileType lldb            setlocal ts=4 sw=4 sts=4 expandtab
+   autocmd FileType fish            setlocal ts=2 sw=2 sts=2 expandtab ai
 augroup END
 
 " Set the comment string for certain filetypes to
