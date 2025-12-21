@@ -8,6 +8,7 @@ cargo
 **/autorandr/**/.tmp
 .aider*
 .nvimlog
+node_modules
 ripgreprc
 stow/dircolors/
 stow/env-modules/.modulefiles/fo*
