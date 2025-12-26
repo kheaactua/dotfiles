@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Autorandr postswitch script for i3wm
 Manages workspace placement and Polybar configuration across multiple monitors
@@ -68,7 +69,7 @@ class Monitor:
 DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
     "khea-2": [  # Home setup
         Monitor(
-            device="DP-1",
+            device="DisplayPort-2",
             resolution="2560x1080",
             position="0+0",
             is_primary=True,
@@ -76,12 +77,12 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             polybar=PolybarTheme.BLOCKS,  # Can specify theme per monitor!
         ),
         Monitor(
-            device="DP-1-2",
-            resolution="1920x1200",
+            device="DisplayPort-1",
+            resolution="3440x1440",
             position="2560+0",
-            is_primary=False,
+            is_primary=True,
             workspaces=[1, 8],
-            polybar=None,  # No polybar on this monitor
+            polybar=PolybarTheme.SHAPES,  # Or use same theme on both
         ),
     ],
     "UGC14VW7PZ3-3": [  # Work setup
@@ -288,13 +289,15 @@ class PolybarManager:
         4. Default config.ini
         """
         # Use monitor-specific theme if set
-        if monitor.polybar and isinstance(monitor.polybar, str):
-            theme_config = self.polybar_config_dir / monitor.polybar / "config.ini"
+        if monitor.polybar:
+            # Get the actual string value from the enum
+            theme_name = monitor.polybar.value if isinstance(monitor.polybar, PolybarTheme) else str(monitor.polybar)
+            theme_config = self.polybar_config_dir / theme_name / "config.ini"
             if theme_config.exists():
-                logger.info(f"Polybar: Using monitor-specific theme '{monitor.polybar}' for {monitor.device}")
+                logger.info(f"Polybar: Using monitor-specific theme '{theme_name}' for {monitor.device}")
                 return theme_config
             else:
-                logger.warning(f"Polybar: Monitor theme '{monitor.polybar}' not found for {monitor.device}, falling back")
+                logger.warning(f"Polybar: Monitor theme '{theme_name}' not found for {monitor.device}, falling back")
 
         # Check for environment variable override
         theme_override = os.environ.get("POLYBAR_THEME")
