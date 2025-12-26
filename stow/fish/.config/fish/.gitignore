@@ -1,0 +1,29 @@
+# Fisher-managed plugins - these are installed dynamically
+functions/fisher.fish
+functions/__git.*.fish
+functions/gbage.fish
+functions/gbda.fish
+functions/gdv.fish
+functions/gignored.fish
+functions/glp.fish
+functions/grename.fish
+functions/grt.fish
+functions/gtest.fish
+functions/gtl.fish
+functions/gunwip.fish
+functions/gwip.fish
+functions/__bass.py
+functions/bass.fish
+functions/_nvm_*.fish
+functions/nvm.fish
+functions/_fzf_*.fish
+functions/fzf_configure_bindings.fish
+conf.d/nvm.fish
+conf.d/fzf.fish
+conf.d/git.fish
+completions/fisher.fish
+completions/nvm.fish
+completions/fzf_configure_bindings.fish
+
+# Fish variables (user-specific)
+fish_variables

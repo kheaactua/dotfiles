@@ -1,9 +1,5 @@
 #!/usr/bin/env fish
 
-function abort_update --on-signal SIGHUP SIGINT SIGQUIT SIGABRT
-    echo "Aborting dotfiles update"
-end
-
 function update_dotfiles
     set -l cwd (dirname (realpath (status --current-filename)))
     cd $cwd; or echo "Could not change to $cwd"
