@@ -49,7 +49,7 @@ class Monitor:
     """Represents a connected monitor configuration"""
 
     device: str  # e.g., "DP-1-2"
-    resolution: str  # e.g., "3440x1440"
+    resolution: str  # e.g., "5120x1440"
     position: str  # e.g., "2560+768"
     is_primary: bool = False
     workspaces: List[int] = field(default_factory=list)
@@ -73,15 +73,15 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             resolution="2560x1080",
             position="0+0",
             is_primary=True,
-            workspaces=[2, 4, 5, 6, 7, 9, 10],
+            workspaces=[2, 4, 9],
             polybar=PolybarTheme.BLOCKS,  # Can specify theme per monitor!
         ),
         Monitor(
             device="DisplayPort-1",
-            resolution="3440x1440",
+            resolution="5120x1440",
             position="2560+0",
             is_primary=True,
-            workspaces=[1, 8],
+            workspaces=[1, 5, 6, 7, 8, 10],
             polybar=PolybarTheme.SHAPES,  # Or use same theme on both
         ),
     ],
@@ -122,7 +122,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
         ),
         Monitor(
             device="DP-1-2",
-            resolution="3440x1440",
+            resolution="5120x1440",
             position="2560+768",
             is_primary=True,
             workspaces=[2, 4, 5, 6, 7, 10],
