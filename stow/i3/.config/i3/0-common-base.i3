@@ -85,7 +85,10 @@ exec_always --no-startup-id numlockx on
 # bar {
 #   status_command i3status
 # }
+
 # Launch Polybar - DISABLED: Now handled by autorandr postswitch.py
+# This ensures polybar launches with correct monitor configuration
+# exec_always --no-startup-id ~/.config/polybar/launch.sh
 
 # Sources:
 # - https://github.com/TalAmuyal/MyConfigs
