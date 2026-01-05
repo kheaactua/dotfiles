@@ -93,3 +93,6 @@ i3lock --nofork \
     --indicator \
     --time-size=48 \
     --date-size=24
+
+# Re-enable numlock after unlocking (because i3lock turns it off)
+numlockx on
