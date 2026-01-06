@@ -1,4 +1,4 @@
-function init_gpg_agent
+function agent-init-gpg
     # Initialize GPG agent for SSH
     if test -z "$SSH_AUTH_SOCK"
         set -gx SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)

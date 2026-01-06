@@ -1,4 +1,4 @@
-function check_agent_file
+function _agent-check-file
     set -l ssh_auth_sock $argv[1]
     if test -z "$ssh_auth_sock"
         set ssh_auth_sock $SSH_AUTH_SOCK

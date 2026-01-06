@@ -1,5 +1,5 @@
-function init_keyring
-    clean_ssh_env
+function agent-init-keyring
+    _clean-ssh-env
 
     # Get the major version of gnome-keyring-daemon
     set -l gkversion (gnome-keyring-daemon --version 2>/dev/null | sed -n 's/.*gnome-keyring[^\s]*\s\(\([0-9]\+\)\.[0-9]\+\).*/\2/p')
