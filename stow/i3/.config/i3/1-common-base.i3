@@ -28,6 +28,9 @@ exec --no-startup-id nm-applet
 # Fix default audio sink on startup (sets USB Composite Device as default)
 exec --no-startup-id ~/.config/i3/scripts/fix-audio-sink.sh
 
+# Position displays with arandr-generated script
+exec --no-startup-id ~/.screenlayout/host.sh
+
 # Launch Polybar on startup (also runs via autorandr on display changes)
 exec --no-startup-id python3 ~/.config/autorandr/postswitch.py
 
@@ -53,7 +56,6 @@ bindsym XF86AudioStop exec playerctl stop
 bindsym XF86MonBrightnessUp exec xbacklight -inc 20 # increase screen brightness
 bindsym XF86MonBrightnessDown exec xbacklight -dec 20 # decrease screen brightness
 
-
 # use to change keyboard brightness
 bindsym XF86KbdBrightnessUp exec light -s sysfs/leds/asus::kbd_backlight -A 100 # increace
 bindsym XF86KbdBrightnessDown exec light -s sysfs/leds/asus::kbd_backlight -U 100 # decrease
@@ -61,7 +63,8 @@ bindsym XF86KbdBrightnessDown exec light -s sysfs/leds/asus::kbd_backlight -U 10
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
+# bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+Return exec kitty
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -85,10 +88,6 @@ exec_always --no-startup-id numlockx on
 # bar {
 #   status_command i3status
 # }
-
-# Launch Polybar - DISABLED: Now handled by autorandr postswitch.py
-# This ensures polybar launches with correct monitor configuration
-# exec_always --no-startup-id ~/.config/polybar/launch.sh
 
 # Sources:
 # - https://github.com/TalAmuyal/MyConfigs

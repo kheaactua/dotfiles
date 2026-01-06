@@ -73,7 +73,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             resolution="2560x1080",
             position="0+0",
             is_primary=True,
-            workspaces=[2, 4, 9],
+            workspaces=[2, 4],
             polybar=PolybarTheme.BLOCKS,  # Can specify theme per monitor!
         ),
         Monitor(
@@ -81,7 +81,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             resolution="5120x1440",
             position="2560+0",
             is_primary=True,
-            workspaces=[1, 5, 6, 7, 8, 10],
+            workspaces=[1, 4, 5, 6, 7, 10, 11, 12],
             polybar=PolybarTheme.SHAPES,  # Or use same theme on both
         ),
     ],
@@ -117,7 +117,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             resolution="2560x1080",
             position="0+1128",
             is_primary=False,
-            workspaces=[1, 8],
+            workspaces=[2, 4],
             polybar=PolybarTheme.FOREST,
         ),
         Monitor(
@@ -125,7 +125,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             resolution="5120x1440",
             position="2560+768",
             is_primary=True,
-            workspaces=[2, 4, 5, 6, 7, 10],
+            workspaces=[1, 4, 5, 6, 7, 10, 11, 12],
             polybar=PolybarTheme.SHAPES,  # Or use same theme on both
         ),
         Monitor(
@@ -133,8 +133,8 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             resolution="1366x768",
             position="3469+0",
             is_primary=False,
-            workspaces=[3, 9, 11, 12],
-            polybar=None,  # No bar on laptop screen
+            workspaces=[9],
+            polybar=PolybarTheme.SHAPES,  # Or use same theme on both
         ),
     ],
     "UGC147YVDS3-1": [  # Laptop only
@@ -343,20 +343,24 @@ class PolybarManager:
                 logger.error(f"No polybar config available for {monitor.device}, skipping")
                 continue
 
+            # Use 'main' bar (with tray) for primary monitor, 'secondary' (no tray) for others
+            bar_name = "main" if monitor.is_primary else "secondary"
+
             log_file = Path(f"/tmp/polybar_{monitor.device}.log")
             env = os.environ.copy()
             env["MONITOR"] = monitor.device
 
             with open(log_file, "a") as f:
                 subprocess.Popen(
-                    ["polybar", "-c", str(config_file), "main"],
+                    ["polybar", "-c", str(config_file), bar_name],
                     env=env,
                     stdout=f,
                     stderr=subprocess.STDOUT,
                 )
 
             theme_name = monitor.polybar if isinstance(monitor.polybar, str) else "default"
-            logger.info(f"Polybar: Launched '{theme_name}' on {monitor.device} (log: {log_file})")
+            tray_status = "with tray" if monitor.is_primary else "no tray"
+            logger.info(f"Polybar: Launched '{theme_name}' bar '{bar_name}' ({tray_status}) on {monitor.device} (log: {log_file})")
 
         logger.info(
             f"Polybar: Successfully launched {len(polybar_monitors)} instance(s)"

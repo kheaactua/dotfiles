@@ -167,7 +167,7 @@ function dotfiles_install_i3_config()
 {
   local -r lower_hostname=$(dotfiles_hostname)
   local i3_dir=${1:-${DOTFILES_DIR:-${HOME}/dotfiles}/stow/i3/.config/i3}
-  symlink "${i3_dir}/${lower_hostname}.i3" "${i3_dir}/config" 1
+  symlink "${i3_dir}/0-config.${lower_hostname}.i3" "${i3_dir}/config" 1
 }
 
 function dotfiles_install_i3()
@@ -181,6 +181,8 @@ function dotfiles_install_i3()
     fi
 
     dotfiles_install_i3_config "${i3_config_dir}"
+
+    # Create a "host.sh" symlink with the appropriate screen layout
     symlink "${DOTFILES_DIR:-${HOME}/dotfiles}/stow/screenlayout/.screenlayout/$(dotfiles_hostname).sh" "${home}/.screenlayout/host.sh" 1
   fi
 }

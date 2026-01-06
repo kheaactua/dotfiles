@@ -6,5 +6,3 @@ assign [class="torguard"] $ws10
 
 # starting some apps in floating mode
 for_window [title="^TorGuard$"] floating enable, border normal 0
-
-# Relay on autorandr's postswitch to position the workspaces
