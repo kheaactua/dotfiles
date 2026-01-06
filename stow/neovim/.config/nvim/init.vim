@@ -113,6 +113,7 @@ augroup whitespace
    autocmd FileType xml             setlocal ts=2 sw=2 sts=2 expandtab ai
    autocmd FileType cmake           setlocal ts=2 sw=2 sts=2 expandtab ai
    autocmd FileType make            setlocal ts=8 sw=8 sts=8 noet ai
+   autocmd FileType i3              setlocal ts=2 sw=2 sts=2 expandtab ai
    autocmd FileType fidl            setlocal ts=2 sw=2 sts=2 expandtab ai
    autocmd FileType aidl            setlocal ts=2 sw=2 sts=2 expandtab ai
    autocmd FileType gitcommit       setlocal ts=2 sw=2 sts=2 expandtab spell | syntax off
