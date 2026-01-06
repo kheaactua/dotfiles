@@ -4,6 +4,11 @@
 # This script used to attempt to use dotfiles from the windows partition if
 # this was running on the WSL (if WINHOME was defined), however this just
 # causes more headaches than it solves
+#
+# Additional packages for i3 window manager (Arch Linux):
+#   sudo pacman -S dex numlockx xss-lock
+#   Note: xautolock not available in official repos, use AUR if needed
+#
 declare h="${HOME}"
 
 declare -r DOTFILES_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
