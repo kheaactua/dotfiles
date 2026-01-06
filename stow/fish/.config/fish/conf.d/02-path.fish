@@ -13,6 +13,7 @@ function path_prepend
 end
 
 # Common user paths (in reverse priority order - last one wins)
+path_prepend "$HOME/.config/autorandr"
 path_prepend "$HOME/bin"
 path_prepend "$HOME/utils"
 path_prepend "$HOME/.composer/vendor/bin"
