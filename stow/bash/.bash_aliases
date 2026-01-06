@@ -260,7 +260,7 @@ function kill-ps-fsb-stalled() {
 }
 
 function logs() {
-  if [[ ! -z "${PHX_FSB_ROOT}" ]]; then
+  if [[ -n "${PHX_FSB_ROOT}" ]]; then
     tail -f $(fd -t f --changed-within=5m 'package-.*log' ${PHX_FSB_ROOT}/logs)
   else
     echo "PHX_FSB_ROOT not set"
