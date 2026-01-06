@@ -1,4 +1,4 @@
-function clean_ssh_env
+function _clean-ssh-env
     set -e SSH_AGENT_PID
     set -e SSH_AUTH_SOCK
     set -e SSH_AUTH_AGENT
