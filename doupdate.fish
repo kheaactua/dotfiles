@@ -1,16 +1,19 @@
 #!/usr/bin/env fish
 
 function update_dotfiles
+    # Save the current directory before changing
+    set -l original_pwd (pwd)
+
     set -l cwd (dirname (realpath (status --current-filename)))
     cd $cwd; or echo "Could not change to $cwd"
-    
+
     set -l check_file (set -q DOTFILES_DIR; and echo $DOTFILES_DIR; or dirname (realpath (status --current-filename)))/.last_check
 
     set -l now (date +%s)
     if not test -e $check_file
         echo 0 > $check_file
     end
-    
+
     set -l last_update (cat $check_file)
     if test -z "$last_update"
         set last_update 0
@@ -26,6 +29,9 @@ function update_dotfiles
     else
         # echo "Not checking for update to dotfiles...."
     end
+
+    # Return to the original directory
+    cd $original_pwd
 end
 
 update_dotfiles
