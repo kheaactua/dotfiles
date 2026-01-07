@@ -17,6 +17,25 @@ return {
     end,
   },
 
+  -- Single tabpage interface for cycling through diffs for all modified files
+  {
+    'sindrets/diffview.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      require('diffview').setup({
+        -- Add any custom configuration here if needed
+        -- See :h diffview-config for options
+      })
+
+      -- Optional: Add key mappings for convenience
+      local map = require("utils").map
+      map('n', '<leader>dv', ':DiffviewOpen<CR>', { silent = true })
+      map('n', '<leader>dc', ':DiffviewClose<CR>', { silent = true })
+      map('n', '<leader>dh', ':DiffviewFileHistory<CR>', { silent = true })
+      map('n', '<leader>df', ':DiffviewFileHistory %<CR>', { silent = true })
+    end,
+  },
+
   -- Navigating the quickfix window better.  Recommended by fugitive
   'tpope/vim-unimpaired',
 

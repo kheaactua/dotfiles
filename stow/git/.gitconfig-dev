@@ -32,7 +32,12 @@
 [gc]
   writeCommitGraph = true
 [merge]
-  tool = nvimdiff
+  tool = diffview
+[mergetool "diffview"]
+  cmd = nvim -c \"DiffviewOpen\" \"$MERGED\"
+  trustExitCode = false
+[mergetool "nvimdiff"]
+  cmd = nvim -d \"$LOCAL\" \"$MERGED\" \"$REMOTE\"
 [credential]
   helper = cache --timeout=6048009
 [color]
