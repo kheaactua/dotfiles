@@ -1,10 +1,13 @@
 # Screen timeout and lock configuration
 #
 # NOTE: If running i3 on top of a GNOME session (via GDM), GNOME's power management
-# can interfere with these settings. To disable GNOME's auto-lock:
+# can interfere with these settings. To disable GNOME's screensaver completely:
 #   gsettings set org.gnome.desktop.screensaver lock-enabled false
+#   gsettings set org.gnome.desktop.screensaver idle-activation-enabled false
 #   gsettings set org.gnome.desktop.session idle-delay 0
 # These settings persist across reboots but aren't in dotfiles (stored in ~/.config/dconf/user)
+# Run this to check current status:
+#   gsettings get org.gnome.desktop.screensaver idle-activation-enabled
 
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock-color to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
