@@ -30,7 +30,8 @@ bindsym $mod+Shift+M move container to workspace $ws12
 bindsym $mod+Shift+minus move scratchpad
 
 # Show the first scratchpad window
-bindsym $mod+minus scratchpad show
+# Enhanced to properly center on the focused monitor in multi-monitor setups
+bindsym $mod+minus scratchpad show, move position center
 
 # change focus
 bindsym $mod+Left focus left
