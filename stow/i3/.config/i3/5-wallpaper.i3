@@ -12,6 +12,4 @@ client.background       #ffffff
 
 # Set wallpaper:
 # exec --no-startup-id feh --bg-scale ${HOME}/Desktop/Backgrounds/jason-scheier-jason-scheier-sunset-on-the-lake-js.jpg
-# exec_always --no-startup-id feh --bg-fill $HOME/.config/wallpapers/wall.jpg
-# exec_always --no-startup-id feh --bg-fill $HOME/.config/wallpapers/4L8C6E8.jpg
 exec_always --no-startup-id feh --randomize --bg-fill ~/Desktop/Backgrounds/*

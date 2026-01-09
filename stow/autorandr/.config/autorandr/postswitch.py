@@ -213,21 +213,23 @@ class DisplayManager:
         return [ws["num"] for ws in workspaces if ws["num"] is not None]
 
     def move_workspace_to_output(self, workspace_num: int, output: str):
-        """Move an i3 workspace to a specific output"""
-        workspaces = self.get_i3_workspaces()
+        """Move an i3 workspace to a specific output
+
+        Uses 'workspace number N' syntax which works with both:
+        - Plain numbered workspaces: "1"
+        - Named workspaces: "1: Main"
+        The 'number' keyword tells i3 to match by the numeric prefix.
+        """
+        workspaces = self.get_i3_workspaces(t)
 
         if workspace_num not in workspaces:
             logger.info(f"Workspace {workspace_num} does not exist, skipping move.")
             return
 
+        # Use 'workspace number N' syntax - works with named workspaces like "1: Main"
         cmd = [
             "i3-msg",
-            f"[workspace={workspace_num}]",
-            "move",
-            "workspace",
-            "to",
-            "output",
-            output,
+            f"workspace number {workspace_num}; move workspace to output {output}",
         ]
         result = self._run_cmd(cmd, check=False)
         logger.info(

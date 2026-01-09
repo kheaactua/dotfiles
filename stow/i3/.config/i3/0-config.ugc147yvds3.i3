@@ -3,8 +3,8 @@ set $mod Mod4
 
 # Name the workspaces
 # Keeping them mostly numeric because otherwise "move workspace" is a PITA
-set $ws1  "1"
-set $ws2  "2: Main"
+set $ws1  "1: Main"
+set $ws2  "2"
 set $ws3  "3"
 set $ws4  "4: Social"
 set $ws5  "5"

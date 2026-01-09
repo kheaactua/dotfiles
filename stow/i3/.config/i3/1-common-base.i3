@@ -81,17 +81,3 @@ exec_always --no-startup-id numlockx on
 
 # # translate highlighted text
 # bindsym ctrl+shift+j exec notitranslation
-
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-# Disabled in favor of Polybar
-# bar {
-#   status_command i3status
-# }
-
-# Sources:
-# - https://github.com/TalAmuyal/MyConfigs
-# - https://github.com/randyaf/dotfiles
-
-# include ~/.config/i3/1-workspaces.i3
-# include ~/.config/i3/2-host-khea.i3
