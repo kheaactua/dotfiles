@@ -66,10 +66,10 @@ bindsym $mod+Shift+space floating toggle
 bindsym $mod+space focus mode_toggle
 
 # focus the parent container
-bindsym $mod+a focus parent
+bindsym $mod+Shift+a focus parent
 
 # focus the child container
-#bindsym $mod+d focus child
+bindsym $mod+Shift+s focus child
 
 # move focused workspace between monitors
 bindsym $mod+Ctrl+Right move workspace to output right
