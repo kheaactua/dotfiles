@@ -28,6 +28,14 @@ path_prepend "$HOME/platform-tools"
 path_prepend "$HOME/.local/share/bob/nvim-bin"
 path_prepend "$HOME/.npm_packages/bin"
 
+# NVM node installation
+if test -e "$HOME/.nvm/versions/node"
+    set -l latest_node (command ls -1 "$HOME/.nvm/versions/node" | tail -1)
+    if test -n "$latest_node"
+        path_prepend "$HOME/.nvm/versions/node/$latest_node/bin"
+    end
+end
+
 path_append "/var/lib/snapd/bin"
 path_append "/snap/bin"
 path_append "/usr/local/go/bin"

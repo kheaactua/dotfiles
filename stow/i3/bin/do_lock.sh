@@ -91,8 +91,10 @@ i3lock --nofork \
     --wrong-font="sans-serif" \
     --clock \
     --indicator \
+    --force-clock \
     --time-size=48 \
-    --date-size=24
+    --date-size=24 \
+    --ind-pos="x+w/2:y+h/2"
 
 # Re-enable numlock after unlocking (because i3lock turns it off)
 numlockx on
