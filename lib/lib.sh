@@ -225,7 +225,7 @@ function dotfiles_install_npm() {
   local home=${1:-${HOME}}
 
   if ! _exists nvm; then
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 
     export NVM_DIR="${home}/.nvm"
     if [[ ! -s "$NVM_DIR/nvm.sh" ]]; then

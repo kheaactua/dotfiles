@@ -15,6 +15,15 @@ return {
     init = function()
       vim.opt.diffopt:append('vertical')
     end,
+    config = function()
+      -- Disable modelines in fugitive buffers to prevent E21 errors
+      vim.api.nvim_create_autocmd({'FileType', 'BufReadPost'}, {
+        pattern = {'fugitive', 'fugitive://*'},
+        callback = function()
+          vim.opt_local.modeline = false
+        end,
+      })
+    end,
   },
 
   -- Single tabpage interface for cycling through diffs for all modified files
@@ -41,7 +50,6 @@ return {
 
   -- This should improve Git Fugitive and Git Gutter
   'tmux-plugins/vim-tmux-focus-events',
-
 
   {
     'notjedi/nvim-rooter.lua',

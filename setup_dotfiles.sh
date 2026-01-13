@@ -171,7 +171,7 @@ fi
 #
 # Declare the stows we want to install
 declare -a stows;
-stows+=(zsh bash bat vnc gdb neovim vim tmux git p10k env-modules procs rlwrap zellij screenlayout autorandr npm zoxide ripgrep kitty sway ccache fish)
+stows+=(zsh bash bat vnc gdb neovim vim tmux git p10k env-modules procs rlwrap zellij screenlayout autorandr npm zoxide ripgrep kitty sway ccache fish polybar)
 
 if [[ "1" != "${skip_powerline}" ]]; then
   dotfiles_install_powerline_fonts
@@ -281,7 +281,7 @@ done
 # NPM packages
 if [[ "1" != "${just_stow}" ]]; then
   echo "skipping npm"
-  # dotfiles_install_npm "${h}"
+  dotfiles_install_npm "${h}"
 else
   echo "Skipping npm install"
 fi

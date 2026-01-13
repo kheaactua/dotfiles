@@ -90,16 +90,16 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             device="DP-0",
             resolution="1920x1200",
             position="0+0",
-            is_primary=True,
+            is_primary=False,
             workspaces=[1, 8],
-            polybar=None,
+            polybar=PolybarTheme.BLOCKS,
         ),
         Monitor(
             device="DP-2.8",
             resolution="1920x1200",
             position="1920+0",
-            is_primary=False,
-            workspaces=[2, 4, 5, 6, 7, 9, 10],
+            is_primary=True,
+            workspaces=[2, 5, 6, 7, 9, 10],
             polybar=PolybarTheme.BLOCKS,
         ),
         Monitor(
@@ -107,8 +107,8 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             resolution="1200x1920",
             position="3840+0",
             is_primary=False,
-            workspaces=[3, 11, 12],
-            polybar=None,
+            workspaces=[3, 4, 11, 12],
+            polybar=PolybarTheme.BLOCKS,
         ),
     ],
     "UGC147YVDS3-3": [  # Laptop with 2 external monitors
@@ -220,7 +220,7 @@ class DisplayManager:
         - Named workspaces: "1: Main"
         The 'number' keyword tells i3 to match by the numeric prefix.
         """
-        workspaces = self.get_i3_workspaces(t)
+        workspaces = self.get_i3_workspaces()
 
         if workspace_num not in workspaces:
             logger.info(f"Workspace {workspace_num} does not exist, skipping move.")
