@@ -125,7 +125,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             resolution="5120x1440",
             position="2560+768",
             is_primary=True,
-            workspaces=[1, 4, 5, 6, 7, 10, 11, 12],
+            workspaces=[1, 5, 6, 7, 10, 11, 12],
             polybar=PolybarTheme.SHAPES,  # Or use same theme on both
         ),
         Monitor(
