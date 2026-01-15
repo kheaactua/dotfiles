@@ -305,4 +305,45 @@ function dotfiles_install_pyvenv()
   fi
 }
 
+function dotfiles_setup_neovim_launcher()
+{
+  local home=${1:-${HOME}}
+
+  # Check if bob/nvim is installed
+  local nvim_path="${home}/.local/share/bob/nvim-bin/nvim"
+  if [[ ! -x "${nvim_path}" ]]; then
+    echo "Neovim not found at ${nvim_path}, skipping launcher setup"
+    return 0
+  fi
+
+  # Create applications directory if it doesn't exist
+  local apps_dir="${home}/.local/share/applications"
+  mkdir -p "${apps_dir}"
+
+  # Create desktop entry
+  local desktop_file="${apps_dir}/nvim.desktop"
+  cat > "${desktop_file}" <<EOF
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Neovim
+Comment=Hyperextensible Vim-based text editor
+Icon=nvim
+Exec=${nvim_path}
+Terminal=true
+Categories=Development;TextEditor;
+MimeType=text/plain;text/x-moc;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-makefile;text/x-python;text/x-sh;
+Keywords=Text;Editor;
+EOF
+
+  chmod +x "${desktop_file}"
+
+  # Update desktop database if the command is available
+  if _exists update-desktop-database; then
+    update-desktop-database "${apps_dir}" 2>/dev/null || true
+  fi
+
+  echo "Neovim launcher created at ${desktop_file}"
+}
+
 # vim: ts=2 sw=2 sts=0 ff=unix expandtab ft=sh :

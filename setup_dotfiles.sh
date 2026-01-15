@@ -294,6 +294,9 @@ else
   echo "Skipped installing cargo config"
 fi
 
+# Setup Neovim launcher (if bob/nvim is installed)
+dotfiles_setup_neovim_launcher "${h}"
+
 # Run stow on the dotfiles-secret stows
 if [[ -e "${DOTFILES_SECRET_DIR}/install.sh" ]]; then
   echo "Running secret install script"
