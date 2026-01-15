@@ -58,7 +58,6 @@ esac
 # Lock with hostname-specific theme
 # i3lock-color has tons of customization options!
 i3lock --nofork \
-    --ignore-empty-password \
     --show-failed-attempts \
     --color="$BG_COLOR" \
     --insidever-color="$VERIF_COLOR" \
@@ -68,7 +67,7 @@ i3lock --nofork \
     --ringwrong-color="$WRONG_COLOR" \
     --ring-color="$RING_COLOR" \
     --line-uses-ring \
-    --keyhl-color="$RING_COLOR" \
+    --keyhl-color="fbbf24ff" \
     --bshl-color="$WRONG_COLOR" \
     --separator-color="$RING_COLOR" \
     --verif-color="$TEXT_COLOR" \
@@ -77,7 +76,9 @@ i3lock --nofork \
     --date-color="$TEXT_COLOR" \
     --layout-color="$TEXT_COLOR" \
     --radius=120 \
-    --ring-width=10 \
+    --ring-width=15 \
+    --modif-size=10 \
+    --modif-pos="x+w/2:y+h/2" \
     --time-str="%H:%M:%S" \
     --date-str="%A, %B %d" \
     --verif-text="Verifying..." \
@@ -94,6 +95,8 @@ i3lock --nofork \
     --force-clock \
     --time-size=48 \
     --date-size=24 \
+    --time-pos="x+w/2:y+h/2-200" \
+    --date-pos="x+w/2:y+h/2-150" \
     --ind-pos="x+w/2:y+h/2"
 
 # Re-enable numlock after unlocking (because i3lock turns it off)
