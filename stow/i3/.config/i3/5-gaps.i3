@@ -22,6 +22,7 @@ smart_gaps on
 
 # Smart borders (draw borders around container only if it is not the only container on this workspace)
 # on|no_gaps (on=always activate and no_gaps=only activate if the gap size to the edge of the screen is 0)
+# Note: smart_borders is deprecated, using hide_edge_borders smart instead (see line 8)
 
 # Press $mod+Shift+g to enter the gap mode. Choose o or i for modifying
 # outer/inner gaps. Press one of + / - (in-/decrement for current workspace) or

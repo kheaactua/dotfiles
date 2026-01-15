@@ -72,3 +72,8 @@ stow/fish/.config/fish/functions/fzf_configure_bindings.fish
 stow/fish/.config/fish/functions/_nvm*.fish
 stow/fish/.config/fish/functions/nvm.fish
 stow/fish/.config/fish/fish_variables
+
+# Fish auto-generated migration files (fish 4.3+)
+stow/fish/.config/fish/conf.d/fish_frozen_key_bindings.fish
+stow/fish/.config/fish/conf.d/fish_frozen_theme.fish
+delta/
