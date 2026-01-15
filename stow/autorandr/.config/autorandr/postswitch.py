@@ -126,7 +126,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             position="2560+768",
             is_primary=True,
             workspaces=[1, 5, 6, 7, 10, 11, 12],
-            polybar=PolybarTheme.SHAPES,  # Or use same theme on both
+            polybar=PolybarTheme.BLOCKS,
         ),
         Monitor(
             device="eDP-1",
@@ -134,7 +134,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             position="3469+0",
             is_primary=False,
             workspaces=[9],
-            polybar=PolybarTheme.SHAPES,  # Or use same theme on both
+            polybar=PolybarTheme.BLOCKS,
         ),
     ],
     "UGC147YVDS3-1": [  # Laptop only
