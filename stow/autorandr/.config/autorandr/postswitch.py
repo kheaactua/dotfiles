@@ -345,8 +345,8 @@ class PolybarManager:
                 logger.error(f"No polybar config available for {monitor.device}, skipping")
                 continue
 
-            # Use 'main' bar (with tray) for primary monitor, 'secondary' (no tray) for others
-            bar_name = "main" if monitor.is_primary else "secondary"
+            # Use 'main' bar for all monitors (the tray will only appear on one)
+            bar_name = "main"
 
             log_file = Path(f"/tmp/polybar_{monitor.device}.log")
             env = os.environ.copy()
