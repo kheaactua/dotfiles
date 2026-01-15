@@ -1,3 +1,4 @@
+# Set mod key to "opt|start"
 set $mod Mod4
 
 # Name the workspaces
