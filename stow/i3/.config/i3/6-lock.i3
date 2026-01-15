@@ -19,9 +19,9 @@ exec --no-startup-id xss-lock --transfer-sleep-lock -- ${HOME}/bin/do_lock.sh
 # -t 10000 = notification timeout in milliseconds (10 seconds)
 exec --no-startup-id xautolock -time 10 -locker "${HOME}/bin/do_lock.sh" -notify 30 -notifier "notify-send -u critical -t 10000 'Screen will lock in 30 seconds'"
 
-# Turn off screens 6 minutes after lock (handled by xset dpms)
-# Values are in seconds: 360 = 6 minutes (Standby, Suspend, Off)
-exec --no-startup-id xset dpms 360 360 360
+# Turn off screens 15 minutes after inactivity (handled by xset dpms)
+# Values are in seconds: 900 = 15 minutes (Standby, Suspend, Off)
+exec --no-startup-id xset dpms 900 900 900
 
 # Manual lock screen keybinding
 bindsym Ctrl+mod1+L exec ${HOME}/bin/do_lock.sh
