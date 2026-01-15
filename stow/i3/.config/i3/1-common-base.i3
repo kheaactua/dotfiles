@@ -26,13 +26,14 @@ exec --no-startup-id dex --autostart --environment i3
 exec --no-startup-id nm-applet
 
 # Fix default audio sink on startup (sets USB Composite Device as default)
-exec --no-startup-id ~/.config/i3/scripts/fix-audio-sink.sh
+# exec --no-startup-id ~/.config/i3/scripts/fix-audio-sink.sh
 
 # Position displays with arandr-generated script
 exec --no-startup-id ~/.screenlayout/host.sh
 
 # Launch Polybar on startup (also runs via autorandr on display changes)
-exec --no-startup-id python3 ~/.config/autorandr/postswitch.py
+# Wait 2 seconds for X server to be fully ready before running
+# exec --no-startup-id sleep 2 && python3 ~/.config/autorandr/postswitch.py
 
 # Use wpctl to adjust volume in WirePlumber (Ubuntu 24.04+ default).
 set $refresh_i3status pkill -RTMIN+1 i3blocks # This should still work if i3blocks uses pactl compatibility

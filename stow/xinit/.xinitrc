@@ -1,2 +1,3 @@
-setxkbmap -option "apple:alupckeys"
-setxkbmap -option altwin:swap_alt_win
+#!/bin/sh
+
+exec i3
