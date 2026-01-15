@@ -2,3 +2,6 @@
 # Functions are autoloaded from ~/.config/fish/functions/
 _agent-check-file
 agent-init-keyring  # Use agent-init-gpg if you prefer GPG agent for SSH
+
+# Set GPG_TTY for pinentry to work properly
+set -gx GPG_TTY (tty)
