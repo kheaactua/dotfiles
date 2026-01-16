@@ -20,6 +20,7 @@ abbr -a dks 'docker start'
 abbr -a dkt 'docker stop'
 abbr -a dvls 'docker volume ls'
 abbr -a dkx 'docker exec -it'
+abbr -a dkps 'docker ps'
 
 # Docker Compose aliases
 abbr -a dkcr 'docker compose run'
@@ -30,3 +31,4 @@ abbr -a dclogs 'docker compose logs'
 abbr -a dcps 'docker compose ps'
 abbr -a dcbuild 'docker compose build'
 abbr -a dcrestart 'docker compose restart'
+abbr -a dkcps 'docker compose ps'
