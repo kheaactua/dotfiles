@@ -6,9 +6,7 @@ if [[ "undefined" == "${DOTFILES_DIR:-undefined}" ]]; then
    fi
 fi
 if ! typeset -f _exists > /dev/null ; then
-   if [[ -e "${DOTFILES_DIR}/rclib.dot" ]]; then
-      source "${DOTFILES_DIR}/rclib.dot"
-   fi
+   [[ -e "${DOTFILES_DIR}/lib/rclib.sh" ]] && source "${DOTFILES_DIR}/lib/rclib.sh"
 fi
 
 alias df="df -h"
