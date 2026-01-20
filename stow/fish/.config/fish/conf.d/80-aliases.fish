@@ -132,6 +132,7 @@ alias gdr='git diff (git_current_remote)/(git_current_branch)'
 alias gpsup='git push --set-upstream (git_current_remote) (git_current_branch)'
 alias ggsup='git branch --set-upstream-to=(git_current_remote)/(git_current_branch)'
 alias grsd=git_set_default_remote
+alias grb="git rebase"
 
 # Git fetch function
 function gf
