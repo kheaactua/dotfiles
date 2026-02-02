@@ -35,6 +35,9 @@ function goose-fsb --description "Run goose in podman for FSB development"
     # ========================================
     # Goose/LLM tokens
     test -n "$OPENAI_API_KEY" && set -a cmd -e OPENAI_API_KEY
+    test -n "$OPENAI_API_BASE" && set -a cmd -e OPENAI_API_BASE
+    # For GitHub Copilot: set OPENAI_HOST to https://api.githubcopilot.com (no trailing slash or /v1/)
+    test -n "$OPENAI_HOST" && set -a cmd -e OPENAI_HOST
     test -n "$ANTHROPIC_API_KEY" && set -a cmd -e ANTHROPIC_API_KEY
 
     # Jira
@@ -65,6 +68,12 @@ function goose-fsb --description "Run goose in podman for FSB development"
 
     # Disable langfuse telemetry (fixes import error with langfuse.decorators)
     set -a cmd -e LANGFUSE_ENABLED=false
+
+    # Disable goose keyring (prevents gnome keyring errors in container)
+    set -a cmd -e GOOSE_DISABLE_KEYRING=1
+
+    # Terminal settings (for proper Ctrl-J and other key handling)
+    test -n "$TERM" && set -a cmd -e TERM
 
     # ========================================
     # Volume Mounts
@@ -122,10 +131,10 @@ function goose-fsb --description "Run goose in podman for FSB development"
 
     # Pass through any arguments to goose
     if count $argv > /dev/null
-        set -a cmd $argv
+        set -a cmd goose $argv
     else
-        # Default: start a new goose session (not just 'goose session' which shows help)
-        set -a cmd goose session start
+        # Default: start an interactive goose session
+        set -a cmd goose session
     end
 
     # Execute
