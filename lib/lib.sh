@@ -320,6 +320,23 @@ function dotfiles_setup_neovim_launcher()
   local apps_dir="${home}/.local/share/applications"
   mkdir -p "${apps_dir}"
 
+  # Create wrapper script for clipboard support
+  local wrapper_script="${home}/.local/bin/nvim-desktop"
+  mkdir -p "${home}/.local/bin"
+  cat > "${wrapper_script}" <<WRAPPER
+#!/bin/bash
+# Wrapper script to launch Neovim with proper clipboard environment
+
+# Get the current display from the session
+if [ -z "\$DISPLAY" ]; then
+    export DISPLAY=:0
+fi
+
+# Launch Neovim
+exec ${nvim_path} "\$@"
+WRAPPER
+  chmod +x "${wrapper_script}"
+
   # Create desktop entry
   local desktop_file="${apps_dir}/nvim.desktop"
   cat > "${desktop_file}" <<EOF
@@ -329,7 +346,7 @@ Type=Application
 Name=Neovim
 Comment=Hyperextensible Vim-based text editor
 Icon=nvim
-Exec=${nvim_path}
+Exec=${wrapper_script}
 Terminal=true
 Categories=Development;TextEditor;
 MimeType=text/plain;text/x-moc;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-makefile;text/x-python;text/x-sh;

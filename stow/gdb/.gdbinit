@@ -23,6 +23,7 @@ set confirm off
 set breakpoint pending on
 
 set auto-load safe-path /f/phoenix/phx-fsb
+set auto-load safe-path /
 
 # This won't help for my code, but it does get the system libs on linux
 # Disabling it breaks ntoaarch64-gdb

@@ -14,6 +14,7 @@
 [include]
 	# Config that includes development tools
 	path = ~/.gitconfig-dev
+	path = ~/.gitconfig-tools
 
 [commit]
   gpgsign = true

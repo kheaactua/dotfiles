@@ -1,3 +1,6 @@
+; Config setup for development.  Tool related config options were moved to
+; gitconfig-tools so it's easier to not map them in containers
+
 [includeIf "gitdir:~/workspace/capi/**/"]
   path = ~/.gitconfig-work
 [includeIf "gitdir:~/workspace/phx-fsb/**/"]
@@ -27,19 +30,11 @@
   quotepath = false
   commitGraph = true
   commentchar = @
-  excludesfile = ~/dotfiles/gitignore
   ; pager = delta
 [gc]
   writeCommitGraph = true
 [merge]
   tool = diffview
-[mergetool "diffview"]
-  cmd = nvim -c \"DiffviewOpen\" \"$MERGED\"
-  trustExitCode = false
-[mergetool "nvimdiff"]
-  cmd = nvim -d \"$LOCAL\" \"$MERGED\" \"$REMOTE\"
-[credential]
-  helper = cache --timeout=6048009
 [color]
   ui = auto
 [push]
@@ -61,49 +56,14 @@
 [init]
   defaultBranch = main
 
-[merge "tool"]
-  path = /usr/bin/nvim
-[mergetool "nvim"]
-  path = /usr/bin/nvim
-
 [merge]
-	conflictStyle = diff3
-
-[diff]
-  colorMoved = default
-
-  # Set difftastic as the default difftool, so we don't need to specify
-  # `-t difftastic` every time.
-  tool = difftastic
-
-[difftool "difftastic"]
-  # See `man git-difftool` for a description of MERGED, LOCAL and REMOTE.
-  cmd = difft "$MERGED" "$LOCAL" "abcdef1" "100644" "$REMOTE" "abcdef2" "100644"
+  conflictStyle = diff3
 
 [difftool]
   # Run the difftool immediately, don't ask 'are you sure' each time.
   prompt = false
 
-[pager]
-  # Use a pager if the difftool output is larger than one screenful,
-  # consistent with the behaviour of `git diff`.
-  difftool = true
-
-[alias]
-  # `git log` with patches shown with difftastic.
-  dl = -c diff.external=difft log -p --ext-diff
-
-  # Show the most recent commit with difftastic.
-  ds = -c diff.external=difft show --ext-diff
-
-  # `git diff` with difftastic.
-  dft = -c diff.external=difft diff
-
 [protocol]
 	allow = always
-
-[merge "mergiraf"]
-	name = mergiraf
-	driver = mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P -l %L
 
 ; vim: ts=2 sw=2 sts=0 noet ft=gitconfig :
