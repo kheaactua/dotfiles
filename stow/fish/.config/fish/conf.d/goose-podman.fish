@@ -15,7 +15,7 @@ function goose-podman --description "Run goose in podman to isolate session from
     # Configuration - easy to modify
     set -l IMAGE "goose-ubuntu:latest"  # Or use "ubuntu:22.04" as base
     set -l CONTAINER_USER (id -u):(id -g)
-    set -l WORK_DIR "/f/phoenix/phx-fsb"
+    set -l WORK_DIR (pwd)  # Use current working directory
 
     # Base command array - easier to read and modify
     set -l cmd podman run -it --rm
@@ -36,102 +36,119 @@ function goose-podman --description "Run goose in podman to isolate session from
     # ========================================
     # Environment Variables
     # ========================================
-    # Goose/LLM tokens
-    test -n "$OPENAI_API_KEY" && set -a cmd -e OPENAI_API_KEY
-    test -n "$OPENAI_API_BASE" && set -a cmd -e OPENAI_API_BASE
-    # For GitHub Copilot: set OPENAI_HOST to https://api.githubcopilot.com (no trailing slash or /v1/)
-    test -n "$OPENAI_HOST" && set -a cmd -e OPENAI_HOST
-    test -n "$ANTHROPIC_API_KEY" && set -a cmd -e ANTHROPIC_API_KEY
+    # Define environment variables to pass through (if they exist)
+    set -l env_vars_to_pass \
+        OPENAI_API_KEY OPENAI_API_BASE OPENAI_HOST ANTHROPIC_API_KEY \
+        JIRA_API_TOKEN JIRA_EMAIL JIRA_SERVER \
+        GITHUB_TOKEN WORK_GITHUB_TOKEN \
+        JFROG_SH_TOKEN JFROG_EXT_TOKEN \
+        GPG_TTY \
+        http_proxy https_proxy no_proxy \
+        TERM
 
-    # Jira
-    test -n "$JIRA_API_TOKEN" && set -a cmd -e JIRA_API_TOKEN
-    test -n "$JIRA_EMAIL" && set -a cmd -e JIRA_EMAIL
-    test -n "$JIRA_SERVER" && set -a cmd -e JIRA_SERVER
+    # Pass through environment variables if they exist
+    for var in $env_vars_to_pass
+        if set -q $var
+            set -a cmd -e $var
+        end
+    end
 
-    # Git/GitHub
-    test -n "$GITHUB_TOKEN" && set -a cmd -e GITHUB_TOKEN
-    test -n "$WORK_GITHUB_TOKEN" && set -a cmd -e WORK_GITHUB_TOKEN
+    # SSH Agent - needs special handling for socket path
+    if set -q SSH_AUTH_SOCK
+        set -a cmd -e SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock
+    end
 
-    # JFrog
-    test -n "$JFROG_SH_TOKEN" && set -a cmd -e JFROG_SH_TOKEN
-    test -n "$JFROG_EXT_TOKEN" && set -a cmd -e JFROG_EXT_TOKEN
-
-    # SSH Agent
-    test -n "$SSH_AUTH_SOCK" && set -a cmd -e SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock
-
-    # GPG Agent (for commit signing)
-    test -n "$GPG_TTY" && set -a cmd -e GPG_TTY
-    # Note: GPG agent socket location varies by system
-    # Common locations: ~/.gnupg/S.gpg-agent or /run/user/$(id -u)/gnupg/S.gpg-agent
-
-    # Corporate proxy (for network access inside container)
-    test -n "$http_proxy" && set -a cmd -e http_proxy
-    test -n "$https_proxy" && set -a cmd -e https_proxy
-    test -n "$no_proxy" && set -a cmd -e no_proxy
-
-    # Disable langfuse telemetry (fixes import error with langfuse.decorators)
-    set -a cmd -e LANGFUSE_ENABLED=false
-
-    # Disable goose keyring (prevents gnome keyring errors in container)
-    set -a cmd -e GOOSE_DISABLE_KEYRING=1
-
-    # Terminal settings (for proper Ctrl-J and other key handling)
-    test -n "$TERM" && set -a cmd -e TERM
-
-    # Temporary directory (makes temp files accessible on host)
-    set -a cmd -e TMPDIR=/home/matt/tmp
+    # Always set these (not conditional)
+    set -a cmd -e LANGFUSE_ENABLED=false  # Disable langfuse telemetry
+    set -a cmd -e GOOSE_DISABLE_KEYRING=1  # Disable goose keyring
+    set -a cmd -e TMPDIR=/home/matt/tmp  # Temporary directory
 
     # ========================================
     # Volume Mounts
     # ========================================
-    # Goose config (persistent sessions, preferences)
+    # Goose config (persistent sessions, preferences) - always mount
     set -a cmd -v $HOME/.config/goose:/home/matt/.config/goose:z
 
-    # SSH setup - agent socket, config, and known_hosts
-    # Note: Private keys (id_rsa, id_ed25519) should NOT be mounted - the agent handles them
-    test -e $HOME/.ssh/config && set -a cmd -v $HOME/.ssh/config:/home/matt/.ssh/config:ro
-    test -e $HOME/.ssh/known_hosts && set -a cmd -v $HOME/.ssh/known_hosts:/home/matt/.ssh/known_hosts:ro
-    test -n "$SSH_AUTH_SOCK" && set -a cmd -v $SSH_AUTH_SOCK:/run/host-services/ssh-auth.sock
+    # Define conditional file mounts (format: host_path:container_path:options)
+    set -l file_mounts \
+        $HOME/.ssh/config:/home/matt/.ssh/config:ro \
+        $HOME/.ssh/known_hosts:/home/matt/.ssh/known_hosts:ro \
+        $HOME/.gitconfig:/home/matt/.gitconfig:ro \
+        $HOME/.gitconfig-dev:/home/matt/.gitconfig-dev:ro \
+        $HOME/.gitconfig-work:/home/matt/.gitconfig-work:ro \
+        $HOME/.gitconfig-fsb:/home/matt/.gitconfig-fsb:ro \
+        $HOME/.gitconfig-proxy:/home/matt/.gitconfig-proxy:ro \
+        $HOME/.netrc:/home/matt/.netrc:ro \
+        $HOME/.gitcookies:/home/matt/.gitcookies:ro \
+        $HOME/.git-credentials:/home/matt/.git-credentials:ro
 
-    # Git credentials and config files
-    # Mount all .gitconfig* files (main config uses includeIf to reference others)
-    # Note: .gitconfig-tools is NOT mounted - it contains references to host-only tools (delta, difftastic, etc.)
-    test -e $HOME/.gitconfig && set -a cmd -v $HOME/.gitconfig:/home/matt/.gitconfig:ro
-    test -e $HOME/.gitconfig-dev && set -a cmd -v $HOME/.gitconfig-dev:/home/matt/.gitconfig-dev:ro
-    test -e $HOME/.gitconfig-work && set -a cmd -v $HOME/.gitconfig-work:/home/matt/.gitconfig-work:ro
-    test -e $HOME/.gitconfig-fsb && set -a cmd -v $HOME/.gitconfig-fsb:/home/matt/.gitconfig-fsb:ro
-    test -e $HOME/.gitconfig-proxy && set -a cmd -v $HOME/.gitconfig-proxy:/home/matt/.gitconfig-proxy:ro
-    test -e $HOME/.netrc && set -a cmd -v $HOME/.netrc:/home/matt/.netrc:ro
-    test -e $HOME/.gitcookies && set -a cmd -v $HOME/.gitcookies:/home/matt/.gitcookies:ro
-    test -e $HOME/.git-credentials && set -a cmd -v $HOME/.git-credentials:/home/matt/.git-credentials:ro
+    # Mount files if they exist
+    for mount in $file_mounts
+        set -l parts (string split : $mount)
+        set -l host_path $parts[1]
+        if test -e $host_path
+            set -a cmd -v $mount
+        end
+    end
 
-    # Primary workspace
-    set -a cmd -v /f/phoenix/phx-fsb:/f/phoenix/phx-fsb
+    # SSH Agent socket - special handling
+    if set -q SSH_AUTH_SOCK
+        set -a cmd -v $SSH_AUTH_SOCK:/run/host-services/ssh-auth.sock
+    end
 
-    # FSB-specific directories (from your compose file)
-    test -d $HOME/.fsb_git_mirror && set -a cmd -v $HOME/.fsb_git_mirror:/home/matt/.fsb_git_mirror
-    test -d $HOME/.fsb_dl_cache && set -a cmd -v $HOME/.fsb_dl_cache:/home/matt/.fsb_dl_cache
-    test -d $HOME/.fsb-ccache && set -a cmd -v $HOME/.fsb-ccache:/home/matt/.fsb-ccache
-    test -d $HOME/.pbos_local_srv_root_gcs && set -a cmd -v $HOME/.pbos_local_srv_root_gcs:/home/matt/.pbos_local_srv_root_gcs
-    test -d $HOME/.pbos_local_srv_root_s3 && set -a cmd -v $HOME/.pbos_local_srv_root_s3:/home/matt/.pbos_local_srv_root_s3
+    # Define directory mounts that should always be mounted (format: host:container)
+    set -l always_dir_mounts \
+        /f/phoenix/phx-fsb:/f/phoenix/phx-fsb \
+        /f/phoenix/aosp:/f/phoenix/aosp \
+        $HOME/workspace/preprocess-jiras:/home/matt/workspace/preprocess-jiras \
+        $HOME/tmp:/home/matt/tmp \
+        /etc/localtime:/etc/localtime:ro
 
-    # QNX (if exists)
-    test -d $HOME/.qnx && set -a cmd -v $HOME/.qnx:/home/matt/.qnx
-    test -d $HOME/qnx && set -a cmd -v $HOME/qnx:/home/matt/qnx
+    # Define conditional directory mounts (format: host:container)
+    set -l conditional_dir_mounts \
+        $HOME/.fsb_git_mirror:/home/matt/.fsb_git_mirror \
+        $HOME/.fsb_dl_cache:/home/matt/.fsb_dl_cache \
+        $HOME/.fsb-ccache:/home/matt/.fsb-ccache \
+        $HOME/.pbos_local_srv_root_gcs:/home/matt/.pbos_local_srv_root_gcs \
+        $HOME/.pbos_local_srv_root_s3:/home/matt/.pbos_local_srv_root_s3 \
+        $HOME/.qnx:/home/matt/.qnx \
+        $HOME/qnx:/home/matt/qnx \
+        $HOME/.config/wireshark:/home/matt/.config/wireshark
 
-    # Wireshark config (profiles, preferences, captures)
-    test -d $HOME/.config/wireshark && set -a cmd -v $HOME/.config/wireshark:/home/matt/.config/wireshark
+    # Collect all mount paths for duplicate detection
+    set -l explicit_mounts
 
-    # Temporary directory (accessible on host at ~/tmp)
-    set -a cmd -v $HOME/tmp:/home/matt/tmp
+    # Add always mounts to command and collect their paths
+    for mount in $always_dir_mounts
+        set -l parts (string split : $mount)
+        set -l host_path $parts[1]
+        set -a cmd -v $mount
+        set -a explicit_mounts $host_path
+    end
 
-    # GPG agent socket (for commit signing - uncomment if you use GPG)
-    # test -S $HOME/.gnupg/S.gpg-agent && set -a cmd -v $HOME/.gnupg/S.gpg-agent:/home/matt/.gnupg/S.gpg-agent
-    # Or if using /run/user based socket:
-    # test -S /run/user/(id -u)/gnupg/S.gpg-agent && set -a cmd -v /run/user/(id -u)/gnupg/S.gpg-agent:/run/user/(id -u)/gnupg/S.gpg-agent
+    # Add conditional mounts if they exist
+    for mount in $conditional_dir_mounts
+        set -l parts (string split : $mount)
+        set -l host_path $parts[1]
+        if test -d $host_path
+            set -a cmd -v $mount
+            set -a explicit_mounts $host_path
+        end
+    end
 
-    # Timezone
-    set -a cmd -v /etc/localtime:/etc/localtime:ro
+    # Check if current working directory is already covered by any mount
+    set -l cwd_mounted false
+    for mount_path in $explicit_mounts
+        if string match -q "$mount_path*" $WORK_DIR
+            set cwd_mounted true
+            break
+        end
+    end
+
+    # Mount current directory if not already covered
+    if test "$cwd_mounted" = false
+        set -a cmd -v $WORK_DIR:$WORK_DIR
+    end
 
     # ========================================
     # Image and command
