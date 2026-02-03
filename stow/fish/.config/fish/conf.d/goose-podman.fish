@@ -11,7 +11,7 @@
 # - text editors: vim/nvim, nano
 # - shell utilities: bash, fish, zsh
 
-function goose-fsb --description "Run goose in podman for FSB development"
+function goose-podman --description "Run goose in podman to isolate session from host"
     # Configuration - easy to modify
     set -l IMAGE "goose-ubuntu:latest"  # Or use "ubuntu:22.04" as base
     set -l CONTAINER_USER (id -u):(id -g)
@@ -19,6 +19,9 @@ function goose-fsb --description "Run goose in podman for FSB development"
 
     # Base command array - easier to read and modify
     set -l cmd podman run -it --rm
+
+    # Container name (makes it easier to identify in podman ps)
+    set -a cmd --name goose-podman
 
     # Keep user ID mapping for proper file permissions
     set -a cmd --userns=keep-id
@@ -75,6 +78,9 @@ function goose-fsb --description "Run goose in podman for FSB development"
     # Terminal settings (for proper Ctrl-J and other key handling)
     test -n "$TERM" && set -a cmd -e TERM
 
+    # Temporary directory (makes temp files accessible on host)
+    set -a cmd -e TMPDIR=/home/matt/tmp
+
     # ========================================
     # Volume Mounts
     # ========================================
@@ -116,6 +122,9 @@ function goose-fsb --description "Run goose in podman for FSB development"
     # Wireshark config (profiles, preferences, captures)
     test -d $HOME/.config/wireshark && set -a cmd -v $HOME/.config/wireshark:/home/matt/.config/wireshark
 
+    # Temporary directory (accessible on host at ~/tmp)
+    set -a cmd -v $HOME/tmp:/home/matt/tmp
+
     # GPG agent socket (for commit signing - uncomment if you use GPG)
     # test -S $HOME/.gnupg/S.gpg-agent && set -a cmd -v $HOME/.gnupg/S.gpg-agent:/home/matt/.gnupg/S.gpg-agent
     # Or if using /run/user based socket:
@@ -138,7 +147,7 @@ function goose-fsb --description "Run goose in podman for FSB development"
     end
 
     # Execute
-    echo "🪿 Starting goose-fsb in podman..."
+    echo "🪿 Starting goose-podman in podman..."
     echo "Working directory: $WORK_DIR"
     eval $cmd
 end
@@ -175,6 +184,6 @@ end
 # test -n "\$VAR_NAME" && set -a cmd -e VAR_NAME
 #
 # Usage examples:
-# goose-fsb                    # Start interactive goose session
-# goose-fsb --help             # Pass arguments to goose
-# goose-fsb bash               # Drop into bash shell instead
+# goose-podman                    # Start interactive goose session
+# goose-podman --help             # Pass arguments to goose
+# goose-podman bash               # Drop into bash shell instead
