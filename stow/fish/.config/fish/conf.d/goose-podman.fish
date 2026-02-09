@@ -68,7 +68,7 @@ function goose-podman --description "Run goose in podman to isolate session from
     # Volume Mounts
     # ========================================
     # Goose config (persistent sessions, preferences) - always mount
-    set -a cmd -v $HOME/.config/goose:/home/matt/.config/goose:z
+    set -a cmd -v $HOME/.config/goose:/home/matt/.config/goose
 
     # Define conditional file mounts (format: host_path:container_path:options)
     set -l file_mounts \
@@ -146,9 +146,20 @@ function goose-podman --description "Run goose in podman to isolate session from
         end
     end
 
-    # Mount current directory if not already covered
+    # Mount current directory (or git root) if not already covered
     if test "$cwd_mounted" = false
-        set -a cmd -v $WORK_DIR:$WORK_DIR
+        # Check if we're in a git repository
+        set -l git_root (git rev-parse --show-toplevel 2>/dev/null)
+
+        if test -n "$git_root"
+            # We're in a git repo - mount the repository root instead of just cwd
+            # This ensures .git and all repo files are accessible
+            set -a cmd -v $git_root:$git_root
+            echo "📂 Detected git repository, mounting: $git_root"
+        else
+            # Not in a git repo - mount current directory
+            set -a cmd -v $WORK_DIR:$WORK_DIR
+        end
     end
 
     # ========================================
@@ -156,9 +167,14 @@ function goose-podman --description "Run goose in podman to isolate session from
     # ========================================
     set -a cmd $IMAGE
 
-    # Pass through any arguments to goose
+    # Pass through any arguments to goose (or run bash/other commands for debugging)
     if count $argv > /dev/null
-        set -a cmd goose $argv
+        # Check if first arg is 'bash' or other shell commands (for debugging)
+        if test "$argv[1]" = "bash" -o "$argv[1]" = "sh" -o "$argv[1]" = "fish"
+            set -a cmd $argv
+        else
+            set -a cmd goose $argv
+        end
     else
         # Default: start an interactive goose session
         set -a cmd goose session
