@@ -1,3 +1,5 @@
+output DP-2.1
+off
 output DP-1
 off
 output DP-2
@@ -8,19 +10,17 @@ output DP-4
 off
 output DP-5
 off
-output DP-6
-off
 output DP-7
 off
-output DP-2.1
-crtc 2
+output DP-6
+crtc 1
 mode 1920x1200
 pos 3840x0
 rate 59.95
 rotate left
 x-prop-non_desktop 0
 output DP-0
-crtc 1
+crtc 2
 mode 1920x1200
 pos 0x720
 rate 59.95
