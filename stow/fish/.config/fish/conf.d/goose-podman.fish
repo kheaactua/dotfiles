@@ -21,7 +21,8 @@ function goose-podman --description "Run goose in podman to isolate session from
     set -l cmd podman run -it --rm
 
     # Container name (makes it easier to identify in podman ps)
-    set -a cmd --name goose-podman
+    set -l container_name "goose-podman-"(date +%H%M%S)
+    set -a cmd --name $container_name
 
     # Keep user ID mapping for proper file permissions
     set -a cmd --userns=keep-id

@@ -103,7 +103,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             polybar=PolybarTheme.BLOCKS,
         ),
         Monitor(
-            device="DP-2.1",
+            device="DP-6",
             resolution="1200x1920",
             position="3840+0",
             is_primary=False,
