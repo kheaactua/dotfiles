@@ -18,6 +18,11 @@ package.json
 ripgreprc
 stow/autorandr/.config/autorandr/home2_1/
 stow/autorandr/.config/autorandr/postswitch.py.backup-enum
+stow/blender/.config/**/cache/
+stow/blender/.config/**/config/quit.blend
+stow/blender/.config/**/config/recent-files.txt
+stow/blender/.config/**/extensions
+stow/blender/.config/4*
 stow/clangd/
 stow/dircolors/
 stow/env-modules/.modulefiles/fo*
