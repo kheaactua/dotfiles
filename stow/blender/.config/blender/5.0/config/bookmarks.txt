@@ -1,3 +1,4 @@
 [Bookmarks]
 [Recent]
+/home/matt/workspace/blender/
 /home/matt/Downloads/blender_addons/

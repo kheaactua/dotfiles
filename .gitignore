@@ -22,7 +22,7 @@ stow/blender/.config/**/cache/
 stow/blender/.config/**/config/quit.blend
 stow/blender/.config/**/config/recent-files.txt
 stow/blender/.config/**/extensions
-stow/blender/.config/4*
+stow/blender/.config/4.2
 stow/clangd/
 stow/dircolors/
 stow/env-modules/.modulefiles/fo*
