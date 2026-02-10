@@ -77,7 +77,6 @@ function goose-podman --description "Run goose in podman to isolate session from
         $HOME/.gitconfig:/home/matt/.gitconfig:ro \
         $HOME/.gitconfig-dev:/home/matt/.gitconfig-dev:ro \
         $HOME/.gitconfig-work:/home/matt/.gitconfig-work:ro \
-        $HOME/.gitconfig-fsb:/home/matt/.gitconfig-fsb:ro \
         $HOME/.gitconfig-proxy:/home/matt/.gitconfig-proxy:ro \
         $HOME/.netrc:/home/matt/.netrc:ro \
         $HOME/.gitcookies:/home/matt/.gitcookies:ro \
@@ -99,22 +98,20 @@ function goose-podman --description "Run goose in podman to isolate session from
 
     # Define directory mounts that should always be mounted (format: host:container)
     set -l always_dir_mounts \
-        /f/phoenix/phx-fsb:/f/phoenix/phx-fsb \
-        /f/phoenix/aosp:/f/phoenix/aosp \
         $HOME/workspace/preprocess-jiras:/home/matt/workspace/preprocess-jiras \
         $HOME/tmp:/home/matt/tmp \
         /etc/localtime:/etc/localtime:ro
 
     # Define conditional directory mounts (format: host:container)
     set -l conditional_dir_mounts \
-        $HOME/.fsb_git_mirror:/home/matt/.fsb_git_mirror \
-        $HOME/.fsb_dl_cache:/home/matt/.fsb_dl_cache \
-        $HOME/.fsb-ccache:/home/matt/.fsb-ccache \
-        $HOME/.pbos_local_srv_root_gcs:/home/matt/.pbos_local_srv_root_gcs \
-        $HOME/.pbos_local_srv_root_s3:/home/matt/.pbos_local_srv_root_s3 \
-        $HOME/.qnx:/home/matt/.qnx \
-        $HOME/qnx:/home/matt/qnx \
         $HOME/.config/wireshark:/home/matt/.config/wireshark
+
+    # Add work-specific mounts (both files and directories) if function exists
+    if type -q goose-podman-work-mounts
+        for mount in (goose-podman-work-mounts)
+            set -a conditional_dir_mounts $mount
+        end
+    end
 
     # Collect all mount paths for duplicate detection
     set -l explicit_mounts
@@ -131,7 +128,7 @@ function goose-podman --description "Run goose in podman to isolate session from
     for mount in $conditional_dir_mounts
         set -l parts (string split : $mount)
         set -l host_path $parts[1]
-        if test -d $host_path
+        if test -e $host_path  # Check for files OR directories
             set -a cmd -v $mount
             set -a explicit_mounts $host_path
         end
