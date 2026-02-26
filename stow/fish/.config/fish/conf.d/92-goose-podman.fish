@@ -130,7 +130,6 @@ function goose-container --description "Run goose in container to isolate sessio
     set -l CONTAINER_USER "$(whoami)"
     set -l CONTAINER_HOME "/home/$CONTAINER_USER"
     set -l WORK_DIR (pwd)  # Use current working directory
-    set -l HOST_TMP_DIR "$HOME/tmp"  # Temp directory (same path on host and container)
 
     # Base command array - easier to read and modify
     set -l cmd podman run -it --rm
@@ -138,6 +137,13 @@ function goose-container --description "Run goose in container to isolate sessio
     # Container name (makes it easier to identify in podman ps)
     set -l container_name "goose-podman-"(date +%H%M%S)
     set -a cmd --name $container_name
+
+    # Container-specific tmpdir - unique per container to avoid collisions
+    # Mounted at same path on host and container for consistency
+    # Only goose process will use this as TMPDIR, not the entire container OS
+    set -l GOOSE_TMPDIR "$HOME/tmp/sessions/$container_name"
+    mkdir -p $GOOSE_TMPDIR  # Create on host before mounting
+    __goose_print_verbose "  📁 Created container tmpdir: $GOOSE_TMPDIR"
 
     # Keep user ID mapping for proper file permissions
     set -a cmd --userns=keep-id
@@ -185,14 +191,18 @@ function goose-container --description "Run goose in container to isolate sessio
     # (keyring requires system-level access that may not work well in containers)
     set -a cmd -e GOOSE_DISABLE_KEYRING=1
 
-    # Set temporary directory to avoid conflicts with mounting host /tmp
-    # Uses same path on both host and container so temp files are accessible from both sides.
-    # This is mounted as a volume below.
-    set -a cmd -e TMPDIR=$HOST_TMP_DIR
+    # Set TMPDIR for the goose process to use container-specific temp directory
+    # This only affects goose, not other container processes (which use their own /tmp)
+    # Mounted at same path on host and container for easy access from both sides
+    set -a cmd -e TMPDIR=$GOOSE_TMPDIR
 
     # ========================================
     # Volume Mounts
     # ========================================
+    # Container-specific tmpdir (mounted before other dirs to ensure it's available)
+    set -a cmd -v $GOOSE_TMPDIR:$GOOSE_TMPDIR
+    __goose_print_verbose "  📁 Mounting tmpdir: $GOOSE_TMPDIR"
+
     # Goose config (persistent sessions, preferences) - always mount
     set -a cmd -v $HOME/.config/goose:$CONTAINER_HOME/.config/goose
 
@@ -220,7 +230,6 @@ function goose-container --description "Run goose in container to isolate sessio
 
     # Define directory mounts that should always be mounted (format: host:container)
     set -l always_dir_mounts \
-        $HOST_TMP_DIR:$HOST_TMP_DIR \
         /etc/localtime:/etc/localtime:ro \
         (goose-podman-work-mounts $CONTAINER_HOME)  # Add work-specific mounts from function (if it exists)
 
