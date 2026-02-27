@@ -235,6 +235,7 @@ function goose-container --description "Run goose in container to isolate sessio
 
     # Define conditional directory mounts (format: host:container)
     set -l conditional_dir_mounts \
+        $HOME/.config/gh:$CONTAINER_HOME/.config/gh \
         $HOME/.config/wireshark:$CONTAINER_HOME/.config/wireshark \
         $HOME/workspace/preprocess-jiras:$CONTAINER_HOME/workspace/preprocess-jiras
 
