@@ -1,13 +1,8 @@
-# Linuxbrew setup
-if test -e "$HOME/.linuxbrew"
-    set -gx LINUXBREWHOME "$HOME/.linuxbrew"
-else if test -e /home/linuxbrew/.linuxbrew
-    set -gx LINUXBREWHOME /home/linuxbrew/.linuxbrew
-end
+# Linuxbrew/Homebrew setup
+# Use the official `brew shellenv` for proper initialization
 
-if set -q LINUXBREWHOME
-    fish_add_path --path --prepend "$LINUXBREWHOME/bin"
-    fish_add_path --path --prepend "$LINUXBREWHOME/sbin"
-    set -gx MANPATH "$LINUXBREWHOME/share/man" $MANPATH
-    set -gx INFOPATH "$LINUXBREWHOME/share/info" $INFOPATH
+if test -e "$HOME/.linuxbrew/bin/brew"
+    eval ("$HOME/.linuxbrew/bin/brew" shellenv)
+else if test -e /home/linuxbrew/.linuxbrew/bin/brew
+    eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 end
