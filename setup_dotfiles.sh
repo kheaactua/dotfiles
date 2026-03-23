@@ -242,6 +242,9 @@ _exists pwsh && stows+=('pwsh')
 # Setup pwsh on linux
 _exists fsb && stows+=('fsb')
 
+# Setup pwsh on linux
+_exists micasa && stows+=('micasa')
+
 # Install fzf
 if [[ "1" != "${skip_fzf}" ]]; then
   dotfiles_install_fzf "${h}"
