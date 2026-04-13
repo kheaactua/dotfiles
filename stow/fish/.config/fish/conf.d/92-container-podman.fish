@@ -1,6 +1,6 @@
-# Goose with Podman - Container-based AI assistant environments
+# Generic Container Launcher with Podman - For Goose, Copilot, and other AI tools
 #
-# Tools goose commonly uses:
+# Tools commonly used by AI assistants:
 # - git (version control)
 # - rg/ripgrep (code search - CRITICAL)
 # - fd (file finder)
@@ -15,13 +15,13 @@
 # Helper Functions (don't modify these unless you know what you're doing)
 # ========================================
 
-function __goose_print_verbose --description "Print verbose messages if GOOSE_CONTAINER_VERBOSE is set"
-    if set -q GOOSE_CONTAINER_VERBOSE
+function __container_print_verbose --description "Print verbose messages if CONTAINER_VERBOSE is set"
+    if set -q CONTAINER_VERBOSE
         echo $argv 1>&2
     end
 end
 
-function __goose_mount_files --description "Mount files from list if they exist"
+function __container_mount_files --description "Mount files from list if they exist"
     set -l file_mounts $argv
 
     for mount in $file_mounts
@@ -30,12 +30,12 @@ function __goose_mount_files --description "Mount files from list if they exist"
         if test -e $host_path
             echo "-v"
             echo $mount
-            __goose_print_verbose "  📄 Mounting file: $mount"
+            __container_print_verbose "  📄 Mounting file: $mount"
         end
     end
 end
 
-function __goose_mount_directories --description "Mount directories and track paths"
+function __container_mount_directories --description "Mount directories and files, tracking paths"
     set -l dir_mounts $argv
 
     for mount in $dir_mounts
@@ -45,12 +45,19 @@ function __goose_mount_directories --description "Mount directories and track pa
             echo "-v"
             echo $mount
             echo "EXPLICIT_MOUNT:$host_path"
-            __goose_print_verbose "  📁 Mounting directory: $mount"
+            # Check if it's a file or directory for proper emoji
+            if test -f $host_path
+                __container_print_verbose "  📄 Mounting file: $mount"
+            else if test -d $host_path
+                __container_print_verbose "  📁 Mounting directory: $mount"
+            else
+                __container_print_verbose "  📦 Mounting: $mount"
+            end
         end
     end
 end
 
-function __goose_mount_workdir --description "Mount working directory or git root if not already covered"
+function __container_mount_workdir --description "Mount working directory or git root if not already covered"
     set -l work_dir $argv[1]
     set -l explicit_mount_list $argv[2..-1]
 
@@ -59,7 +66,7 @@ function __goose_mount_workdir --description "Mount working directory or git roo
     for mount_path in $explicit_mount_list
         if string match -q "$mount_path*" $work_dir
             set cwd_mounted true
-            __goose_print_verbose "  ✓ Working directory already covered by mount: $mount_path"
+            __container_print_verbose "  ✓ Working directory already covered by mount: $mount_path"
             break
         end
     end
@@ -79,54 +86,66 @@ function __goose_mount_workdir --description "Mount working directory or git roo
             # Not in a git repo - mount current directory
             echo "-v"
             echo "$work_dir:$work_dir"
-            __goose_print_verbose "  📁 Mounting working directory: $work_dir"
+            __container_print_verbose "  📁 Mounting working directory: $work_dir"
         end
     end
 end
 
-function __goose_build_command --description "Build the final goose command from arguments"
+function __container_build_command --description "Build the final container command from arguments"
     set -l image $argv[1]
     set -l work_dir $argv[2]
-    set -l remaining_args $argv[3..-1]
+    set -l entrypoint_cmd $argv[3]
+    set -l remaining_args $argv[4..-1]
 
     # Set working directory BEFORE the image
     echo "-w"
     echo $work_dir
-    __goose_print_verbose "  📍 Working directory: $work_dir"
+    __container_print_verbose "  📍 Working directory: $work_dir"
 
     # Add image to command
     echo $image
 
-    # Pass through any arguments to goose (or run bash/other commands for debugging)
+    # Pass through any arguments to entrypoint (or run bash/other commands for debugging)
     if test (count $remaining_args) -gt 0
         # Check if first arg is 'bash' or other shell commands (for debugging)
         if test "$remaining_args[1]" = "bash" -o "$remaining_args[1]" = "sh" -o "$remaining_args[1]" = "fish"
             for arg in $remaining_args
                 echo $arg
             end
-            __goose_print_verbose "  🐚 Launching shell: $remaining_args[1]"
+            __container_print_verbose "  🐚 Launching shell: $remaining_args[1]"
         else
-            echo "goose"
+            echo $entrypoint_cmd
             for arg in $remaining_args
                 echo $arg
             end
-            __goose_print_verbose "  🪿 Running: goose $remaining_args"
+            __container_print_verbose "  🚀 Running: $entrypoint_cmd $remaining_args"
         end
     else
-        # Default: start an interactive goose session
-        echo "goose"
+        # Default: start an interactive session with the entrypoint
+        echo $entrypoint_cmd
         echo "session"
-        __goose_print_verbose "  🪿 Starting interactive goose session"
+        __container_print_verbose "  🚀 Starting interactive $entrypoint_cmd session"
     end
 end
 
 # ========================================
-# Main Function (customize this section)
+# Generic Container Launcher (customize this section)
 # ========================================
 
-function goose-container --description "Run goose in container to isolate session from host"
-    # Configuration - easy to modify
-    set -l IMAGE "goose-ubuntu:latest"
+function __container_launcher --description "Generic container launcher with common mounts and env vars"
+    # Parse arguments
+    set -l IMAGE $argv[1]
+    set -l ENTRYPOINT_CMD $argv[2]
+    set -l TOOL_NAME $argv[3]  # For display purposes (e.g., "goose", "copilot")
+    set -l remaining_args $argv[4..-1]
+
+    # Validate required arguments
+    if test -z "$IMAGE" -o -z "$ENTRYPOINT_CMD" -o -z "$TOOL_NAME"
+        echo "Error: __container_launcher requires IMAGE, ENTRYPOINT_CMD, and TOOL_NAME" >&2
+        return 1
+    end
+
+    # Configuration
     set -l CONTAINER_USER "$(whoami)"
     set -l CONTAINER_HOME "/home/$CONTAINER_USER"
     set -l WORK_DIR (pwd)  # Use current working directory
@@ -135,15 +154,14 @@ function goose-container --description "Run goose in container to isolate sessio
     set -l cmd podman run -it --rm
 
     # Container name (makes it easier to identify in podman ps)
-    set -l container_name "goose-podman-"(date +%H%M%S)
+    set -l container_name "$TOOL_NAME-podman-"(date +%H%M%S)
     set -a cmd --name $container_name
 
     # Container-specific tmpdir - unique per container to avoid collisions
     # Mounted at same path on host and container for consistency
-    # Only goose process will use this as TMPDIR, not the entire container OS
-    set -l GOOSE_TMPDIR "$HOME/tmp/sessions/$container_name"
-    mkdir -p $GOOSE_TMPDIR  # Create on host before mounting
-    __goose_print_verbose "  📁 Created container tmpdir: $GOOSE_TMPDIR"
+    set -l CONTAINER_TMPDIR "$HOME/tmp/sessions/$container_name"
+    mkdir -p $CONTAINER_TMPDIR  # Create on host before mounting
+    __container_print_verbose "  📁 Created container tmpdir: $CONTAINER_TMPDIR"
 
     # Keep user ID mapping for proper file permissions
     set -a cmd --userns=keep-id
@@ -151,7 +169,7 @@ function goose-container --description "Run goose in container to isolate sessio
     # User
     set -a cmd --user $CONTAINER_USER
 
-    # Network mode - use host network like your compose file
+    # Network mode - use host network
     set -a cmd --network host
 
     # ========================================
@@ -183,28 +201,21 @@ function goose-container --description "Run goose in container to isolate sessio
     #
     # Always set these (not conditional)
 
-    # Disable Langfuse telemetry - prevents sending usage data, prompts, and responses
-    # to external analytics services (important for privacy and corporate security)
-    set -a cmd -e LANGFUSE_ENABLED=false
-
-    # Disable keyring - use environment variables for credentials instead
-    # (keyring requires system-level access that may not work well in containers)
-    set -a cmd -e GOOSE_DISABLE_KEYRING=1
-
-    # Set TMPDIR for the goose process to use container-specific temp directory
-    # This only affects goose, not other container processes (which use their own /tmp)
+    # Set TMPDIR for the process to use container-specific temp directory
+    # This only affects the tool, not other container processes (which use their own /tmp)
     # Mounted at same path on host and container for easy access from both sides
-    set -a cmd -e TMPDIR=$GOOSE_TMPDIR
+    set -a cmd -e TMPDIR=$CONTAINER_TMPDIR
 
     # ========================================
     # Volume Mounts
     # ========================================
     # Container-specific tmpdir (mounted before other dirs to ensure it's available)
-    set -a cmd -v $GOOSE_TMPDIR:$GOOSE_TMPDIR
-    __goose_print_verbose "  📁 Mounting tmpdir: $GOOSE_TMPDIR"
+    set -a cmd -v $CONTAINER_TMPDIR:$CONTAINER_TMPDIR
+    __container_print_verbose "  📁 Mounting tmpdir: $CONTAINER_TMPDIR"
 
-    # Goose config (persistent sessions, preferences) - always mount
+    # Tool config directories (persistent sessions, preferences) - always mount
     set -a cmd -v $HOME/.config/goose:$CONTAINER_HOME/.config/goose
+    set -a cmd -v $HOME/.config/github-copilot:$CONTAINER_HOME/.config/github-copilot
 
     # Define conditional file mounts (format: host_path:container_path:options)
     set -l file_mounts \
@@ -219,7 +230,7 @@ function goose-container --description "Run goose in container to isolate sessio
         $HOME/.git-credentials:$CONTAINER_HOME/.git-credentials:ro
 
     # Mount files if they exist (uses helper function)
-    for item in (__goose_mount_files $file_mounts)
+    for item in (__container_mount_files $file_mounts)
         set -a cmd $item
     end
 
@@ -231,7 +242,7 @@ function goose-container --description "Run goose in container to isolate sessio
     # Define directory mounts that should always be mounted (format: host:container)
     set -l always_dir_mounts \
         /etc/localtime:/etc/localtime:ro \
-        (goose-podman-work-mounts $CONTAINER_HOME)  # Add work-specific mounts from function (if it exists)
+        $HOME/tmp:$CONTAINER_HOME/tmp
 
     # Define conditional directory mounts (format: host:container)
     set -l conditional_dir_mounts \
@@ -240,8 +251,8 @@ function goose-container --description "Run goose in container to isolate sessio
         $HOME/workspace/preprocess-jiras:$CONTAINER_HOME/workspace/preprocess-jiras
 
     # Add work-specific mounts (both files and directories) if function exists
-    if type -q goose-podman-work-mounts
-        for mount in (goose-podman-work-mounts)
+    if type -q container-work-mounts
+        for mount in (container-work-mounts)
             set -a conditional_dir_mounts $mount
         end
     end
@@ -250,16 +261,16 @@ function goose-container --description "Run goose in container to isolate sessio
     set -l explicit_mounts
 
     # Mount directories and track paths (uses helper function)
-    for result in (__goose_mount_directories $always_dir_mounts)
+    for result in (__container_mount_directories $always_dir_mounts)
         if string match -q "EXPLICIT_MOUNT:*" $result
-            set -l path (string sub -s 16 $result)
+            # set -l path (string sub -s 16 $result)
             set -a explicit_mounts $path
         else
             set -a cmd $result
         end
     end
 
-    for result in (__goose_mount_directories $conditional_dir_mounts)
+    for result in (__container_mount_directories $conditional_dir_mounts)
         if string match -q "EXPLICIT_MOUNT:*" $result
             set -l path (string sub -s 16 $result)
             set -a explicit_mounts $path
@@ -269,68 +280,85 @@ function goose-container --description "Run goose in container to isolate sessio
     end
 
     # Mount working directory or git root if not already covered (uses helper function)
-    for item in (__goose_mount_workdir $WORK_DIR $explicit_mounts)
+    for item in (__container_mount_workdir $WORK_DIR $explicit_mounts)
         set -a cmd $item
     end
 
     # ========================================
     # Build final command and execute
     # ========================================
-    __goose_print_verbose ""
-    __goose_print_verbose "🪿 Container Configuration:"
-    __goose_print_verbose "  Image: $IMAGE"
-    __goose_print_verbose "  User: $CONTAINER_USER"
-    __goose_print_verbose "  Container name: $container_name"
-    __goose_print_verbose ""
+    __container_print_verbose ""
+    __container_print_verbose "🚀 Container Configuration:"
+    __container_print_verbose "  Tool: $TOOL_NAME"
+    __container_print_verbose "  Image: $IMAGE"
+    __container_print_verbose "  User: $CONTAINER_USER"
+    __container_print_verbose "  Container name: $container_name"
+    __container_print_verbose ""
 
-    # Build the final command (adds image, working directory, and goose command)
-    for item in (__goose_build_command $IMAGE $WORK_DIR $argv)
+    # Build the final command (adds image, working directory, and entrypoint command)
+    for item in (__container_build_command $IMAGE $WORK_DIR $ENTRYPOINT_CMD $remaining_args)
         set -a cmd $item
     end
 
     # Execute
-    echo "🪿 Starting goose-container..."
+    echo "🚀 Starting $TOOL_NAME container..."
     echo "Working directory: $WORK_DIR"
-    __goose_print_verbose ""
-    __goose_print_verbose "Full command:"
-    __goose_print_verbose "  $cmd"
-    __goose_print_verbose ""
+    __container_print_verbose ""
+    __container_print_verbose "Full command:"
+    __container_print_verbose "  $cmd"
+    __container_print_verbose ""
     eval $cmd
 end
 
-# Template for additional environments - uncomment and modify:
+# ========================================
+# Tool-Specific Wrappers
+# ========================================
+
+function goose-container --description "Run goose in container to isolate session from host"
+    # Set goose-specific environment variables
+    set -x GOOSE_DISABLE_KEYRING 1
+    set -x LANGFUSE_ENABLED false
+
+    # Pass through GOOSE_MOIM_MESSAGE_TEXT if it exists
+    if set -q GOOSE_MOIM_MESSAGE_TEXT
+        set -x GOOSE_MOIM_MESSAGE_TEXT "$GOOSE_MOIM_MESSAGE_TEXT"
+    end
+
+    __container_launcher "goose-ubuntu:latest" "goose" "goose" $argv
+
+    # Clean up exported variables
+    set -e GOOSE_DISABLE_KEYRING
+    set -e LANGFUSE_ENABLED
+    if set -q GOOSE_MOIM_MESSAGE_TEXT
+        set -e GOOSE_MOIM_MESSAGE_TEXT
+    end
+end
+
+function copilot-container --description "Run GitHub Copilot CLI in container"
+    __container_launcher "goose-ubuntu:latest" "gh" "copilot" "copilot" $argv
+end
+
+# Backwards compatibility alias
+function goose-podman --description "Alias for goose-container (backwards compatibility)"
+    goose-container $argv
+end
+
+# Template for additional tool containers - uncomment and modify:
 #
-# function goose-web --description "Run goose for web development"
-#     set -l IMAGE "goose-ubuntu:latest"
-#     set -l CONTAINER_USER "developer"
-#     set -l CONTAINER_HOME "/home/$CONTAINER_USER"
-#
-#     set -l cmd podman run -it --rm
-#     set -a cmd --userns=keep-id
-#     set -a cmd -v $PWD:/workspace -w /workspace
-#
-#     # Environment variables
-#     test -n "$OPENAI_API_KEY" && set -a cmd -e OPENAI_API_KEY
-#     test -n "$ANTHROPIC_API_KEY" && set -a cmd -e ANTHROPIC_API_KEY
-#
-#     # Mounts
-#     set -a cmd -v $HOME/.config/goose:$CONTAINER_HOME/.config/goose
-#     set -a cmd -v $HOME/.ssh:$CONTAINER_HOME/.ssh:ro
-#     set -a cmd -v $HOME/.gitconfig:$CONTAINER_HOME/.gitconfig:ro
-#
-#     set -a cmd $IMAGE
-#     test (count $argv) -gt 0 && set -a cmd $argv || set -a cmd goose session
-#
-#     eval $cmd
+# function my-tool-container --description "Run my-tool in container"
+#     __container_launcher "goose-ubuntu:latest" "my-tool" "my-tool" $argv
 # end
 
-# Quick reference for adding mounts:
-# test -d /path/to/dir && set -a cmd -v /host/path:/container/path[:ro]
+# Quick reference for the generic launcher:
+# __container_launcher IMAGE ENTRYPOINT_CMD TOOL_NAME [args...]
 #
-# Quick reference for adding env vars:
-# test -n "\$VAR_NAME" && set -a cmd -e VAR_NAME
+# Examples:
+# __container_launcher "goose-ubuntu:latest" "goose" "goose" session --profile dev
+# __container_launcher "goose-ubuntu:latest" "gh" "copilot" "copilot" "explain this code"
 #
 # Usage examples:
 # goose-container                 # Start interactive goose session
 # goose-container --help          # Pass arguments to goose
 # goose-container bash            # Drop into bash shell instead
+# copilot-container               # Start GitHub Copilot CLI
+# copilot-container explain       # Run copilot with "explain" command

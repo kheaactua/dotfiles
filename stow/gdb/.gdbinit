@@ -23,7 +23,9 @@ set confirm off
 set breakpoint pending on
 
 set auto-load safe-path /f/phoenix/phx-fsb
+add-auto-load-safe-path /usr/share/gdb/auto-load/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33-gdb.py
 set auto-load safe-path /
+
 
 # This won't help for my code, but it does get the system libs on linux
 # Disabling it breaks ntoaarch64-gdb

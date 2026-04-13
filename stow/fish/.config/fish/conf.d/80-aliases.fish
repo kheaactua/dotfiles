@@ -85,6 +85,10 @@ alias gd="git dft"  # Custom: different from plugin's 'git diff'
 alias rs="repo sync -j8 -q -c --no-tags"
 alias rl="repo sync -j8 -q -c --no-tags"
 
+# I prefer aliases to fish abbreviations
+alias gco="git checkout"
+alias grb="git rebase"
+
 # GPG aliases
 alias gpg-fixtty="gpg-connect-agent updatestartuptty /bye"
 alias gpg-reload="gpg-connect-agent reloadagent /bye"

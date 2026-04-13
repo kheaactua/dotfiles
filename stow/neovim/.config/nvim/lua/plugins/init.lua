@@ -732,7 +732,7 @@ return {
             "madeofcode",
             "maroloccio",
             "materialbox",
-            "materialtheme",
+            -- "materialtheme",
             "mint",
             "monokai-chris",
             "mopkai",
