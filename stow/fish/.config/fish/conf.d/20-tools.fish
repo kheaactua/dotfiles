@@ -1,6 +1,6 @@
 # Initialize zoxide (smarter cd command)
 if type -q zoxide
-    zoxide init fish | source
+    zoxide init fish --cmd cd | source
     # Optional: also load custom config if it exists
     if test -e "$HOME/.config/zoxide/zoxide.fish"
         source "$HOME/.config/zoxide/zoxide.fish"
