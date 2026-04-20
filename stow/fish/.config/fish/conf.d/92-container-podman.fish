@@ -94,7 +94,7 @@ end
 function __container_build_command --description "Build the final container command from arguments"
     set -l image $argv[1]
     set -l work_dir $argv[2]
-    set -l entrypoint_cmd $argv[3]
+    set -l tool_cmd $argv[3]
     set -l remaining_args $argv[4..-1]
 
     # Set working directory BEFORE the image
@@ -114,17 +114,25 @@ function __container_build_command --description "Build the final container comm
             end
             __container_print_verbose "  🐚 Launching shell: $remaining_args[1]"
         else
-            echo $entrypoint_cmd
+            echo $tool_cmd
             for arg in $remaining_args
                 echo $arg
             end
-            __container_print_verbose "  🚀 Running: $entrypoint_cmd $remaining_args"
+            __container_print_verbose "  🚀 Running: $tool_cmd $remaining_args"
         end
     else
-        # Default: start an interactive session with the entrypoint
-        echo $entrypoint_cmd
-        echo "session"
-        __container_print_verbose "  🚀 Starting interactive $entrypoint_cmd session"
+        # Default behavior depends on the tool
+        echo $tool_cmd
+        if test "$tool_cmd" = "goose"
+            echo "session"
+            __container_print_verbose "  🚀 Starting interactive goose session"
+        else if test "$tool_cmd" = "copilot"
+            # copilot with no args starts interactive mode
+            __container_print_verbose "  🚀 Starting interactive copilot session"
+        else
+            echo "--help"
+            __container_print_verbose "  🚀 Running $tool_cmd --help"
+        end
     end
 end
 
@@ -135,13 +143,12 @@ end
 function __container_launcher --description "Generic container launcher with common mounts and env vars"
     # Parse arguments
     set -l IMAGE $argv[1]
-    set -l ENTRYPOINT_CMD $argv[2]
-    set -l TOOL_NAME $argv[3]  # For display purposes (e.g., "goose", "copilot")
-    set -l remaining_args $argv[4..-1]
+    set -l TOOL_CMD $argv[2]
+    set -l remaining_args $argv[3..-1]
 
     # Validate required arguments
-    if test -z "$IMAGE" -o -z "$ENTRYPOINT_CMD" -o -z "$TOOL_NAME"
-        echo "Error: __container_launcher requires IMAGE, ENTRYPOINT_CMD, and TOOL_NAME" >&2
+    if test -z "$IMAGE" -o -z "$TOOL_CMD"
+        echo "Error: __container_launcher requires IMAGE and TOOL_CMD" >&2
         return 1
     end
 
@@ -154,7 +161,7 @@ function __container_launcher --description "Generic container launcher with com
     set -l cmd podman run -it --rm
 
     # Container name (makes it easier to identify in podman ps)
-    set -l container_name "$TOOL_NAME-podman-"(date +%H%M%S)
+    set -l container_name "$TOOL_CMD-podman-"(date +%H%M%S)
     set -a cmd --name $container_name
 
     # Container-specific tmpdir - unique per container to avoid collisions
@@ -216,6 +223,7 @@ function __container_launcher --description "Generic container launcher with com
     # Tool config directories (persistent sessions, preferences) - always mount
     set -a cmd -v $HOME/.config/goose:$CONTAINER_HOME/.config/goose
     set -a cmd -v $HOME/.config/github-copilot:$CONTAINER_HOME/.config/github-copilot
+    set -a cmd -v $HOME/.copilot:$CONTAINER_HOME/.copilot
 
     # Define conditional file mounts (format: host_path:container_path:options)
     set -l file_mounts \
@@ -289,19 +297,19 @@ function __container_launcher --description "Generic container launcher with com
     # ========================================
     __container_print_verbose ""
     __container_print_verbose "🚀 Container Configuration:"
-    __container_print_verbose "  Tool: $TOOL_NAME"
+    __container_print_verbose "  Tool: $TOOL_CMD"
     __container_print_verbose "  Image: $IMAGE"
     __container_print_verbose "  User: $CONTAINER_USER"
     __container_print_verbose "  Container name: $container_name"
     __container_print_verbose ""
 
     # Build the final command (adds image, working directory, and entrypoint command)
-    for item in (__container_build_command $IMAGE $WORK_DIR $ENTRYPOINT_CMD $remaining_args)
+    for item in (__container_build_command $IMAGE $WORK_DIR $TOOL_CMD $remaining_args)
         set -a cmd $item
     end
 
     # Execute
-    echo "🚀 Starting $TOOL_NAME container..."
+    echo "🚀 Starting $TOOL_CMD container..."
     echo "Working directory: $WORK_DIR"
     __container_print_verbose ""
     __container_print_verbose "Full command:"
@@ -324,7 +332,7 @@ function goose-container --description "Run goose in container to isolate sessio
         set -x GOOSE_MOIM_MESSAGE_TEXT "$GOOSE_MOIM_MESSAGE_TEXT"
     end
 
-    __container_launcher "goose-ubuntu:latest" "goose" "goose" $argv
+    __container_launcher "goose-ubuntu:latest" "goose" $argv
 
     # Clean up exported variables
     set -e GOOSE_DISABLE_KEYRING
@@ -335,7 +343,20 @@ function goose-container --description "Run goose in container to isolate sessio
 end
 
 function copilot-container --description "Run GitHub Copilot CLI in container"
-    __container_launcher "goose-ubuntu:latest" "gh" "copilot" "copilot" $argv
+    # Set gh-specific environment variables
+    # Prefer WORK_GITHUB_TOKEN, fall back to GITHUB_TOKEN
+    if set -q WORK_GITHUB_TOKEN
+        set -x GH_TOKEN "$WORK_GITHUB_TOKEN"
+    else if set -q GITHUB_TOKEN
+        set -x GH_TOKEN "$GITHUB_TOKEN"
+    end
+
+    __container_launcher "goose-ubuntu:latest" "copilot" $argv
+
+    # Clean up exported variables
+    if set -q GH_TOKEN
+        set -e GH_TOKEN
+    end
 end
 
 # Backwards compatibility alias
