@@ -2,6 +2,8 @@
 for_window [class="org.gnome.Nautilus"] floating enable, border normal 0
 for_window [class="matplotlib"] floating enable, border normal 0
 for_window [title="^Event Tester$"] floating enable, border normal 0
+for_window [class="rdesktop"] floating enable, border normal 0
+for_window [class="xfreerdp"] floating enable, border normal 0
 
 # Float qBittorrent download dialog windows (but not the main window)
 # Main window title is "qBittorrent v*", dialogs have torrent names
