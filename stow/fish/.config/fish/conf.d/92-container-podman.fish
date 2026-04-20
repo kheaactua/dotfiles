@@ -130,8 +130,7 @@ function __container_build_command --description "Build the final container comm
             # copilot with no args starts interactive mode
             __container_print_verbose "  🚀 Starting interactive copilot session"
         else
-            echo "--help"
-            __container_print_verbose "  🚀 Running $tool_cmd --help"
+            __container_print_verbose "  🚀 Running $tool_cmd"
         end
     end
 end
@@ -332,7 +331,7 @@ function goose-container --description "Run goose in container to isolate sessio
         set -x GOOSE_MOIM_MESSAGE_TEXT "$GOOSE_MOIM_MESSAGE_TEXT"
     end
 
-    __container_launcher "goose-ubuntu:latest" "goose" $argv
+    __container_launcher "ai-ubuntu:latest" "goose" $argv
 
     # Clean up exported variables
     set -e GOOSE_DISABLE_KEYRING
@@ -343,20 +342,10 @@ function goose-container --description "Run goose in container to isolate sessio
 end
 
 function copilot-container --description "Run GitHub Copilot CLI in container"
-    # Set gh-specific environment variables
-    # Prefer WORK_GITHUB_TOKEN, fall back to GITHUB_TOKEN
-    if set -q WORK_GITHUB_TOKEN
-        set -x GH_TOKEN "$WORK_GITHUB_TOKEN"
-    else if set -q GITHUB_TOKEN
-        set -x GH_TOKEN "$GITHUB_TOKEN"
-    end
+    # Copilot uses OAuth from gh auth login, not PATs
+    # No need to set GH_TOKEN - it uses ~/.config/gh/ OAuth tokens
 
-    __container_launcher "goose-ubuntu:latest" "copilot" $argv
-
-    # Clean up exported variables
-    if set -q GH_TOKEN
-        set -e GH_TOKEN
-    end
+    __container_launcher "ai-ubuntu:latest" "copilot" $argv
 end
 
 # Backwards compatibility alias
