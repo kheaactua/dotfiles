@@ -363,4 +363,17 @@ EOF
   echo "Neovim launcher created at ${desktop_file}"
 }
 
+function setup_local_tmp() {
+  echo <<TOHERE
+Install the following:
+
+# Type Path              Mode UID GID Age Argument
+v     /home/matt/tmp     1777 -    -    mM:20d
+
+to /etc/tmpfiles.d/home-tmp.conf
+
+Run it on demand with: sudo systemd-tmpfiles --clean
+TOHERE
+}
+
 # vim: ts=2 sw=2 sts=0 ff=unix expandtab ft=sh :
