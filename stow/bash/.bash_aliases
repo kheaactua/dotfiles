@@ -265,6 +265,15 @@ function logs() {
   fi
 }
 
+function rdesktop-stulon {
+	# Clipboard still doesn't work
+	# This isn't a good place for this, no idea where a good place is
+	# Because of the password I can't commit this into git
+
+	# Launch RDP with shared folder
+	# xfreerdp /v:hostname /u:username /drive:transfer,/home/matt/transfer /clipboard
+}
+
 # Testing this out to paste from a zellij selection (this works with the copy_command in zellij)
 # alias paste="xclip -o -sel clipboard"
 
