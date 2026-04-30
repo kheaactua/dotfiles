@@ -43,4 +43,7 @@
 [credential]
 	helper = store
 
+[clangFormat]
+	binary = clang-format-18
+
 ; vim: ts=2 sw=2 sts=0 noet ft=gitconfig :
