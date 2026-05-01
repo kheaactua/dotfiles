@@ -199,6 +199,17 @@ function __container_launcher --description "Generic container launcher with com
         end
     end
 
+    # Add work-specific environment variables if function exists
+    if type -q container-work-env-vars
+        for env_var in (container-work-env-vars)
+            set -l parts (string split = $env_var)
+            set -l var_name $parts[1]
+            set -l var_value $parts[2]
+            set -a cmd -e $var_name=$var_value
+            __container_print_verbose "  🔑 Setting env: $var_name=$var_value"
+        end
+    end
+
     # SSH Agent - needs special handling for socket path
     if set -q SSH_AUTH_SOCK
         set -a cmd -e SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock
