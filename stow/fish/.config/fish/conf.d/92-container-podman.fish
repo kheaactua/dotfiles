@@ -184,7 +184,7 @@ function __container_launcher --description "Generic container launcher with com
     # Define environment variables to pass through (if they exist)
     set -l env_vars_to_pass \
         OPENAI_API_KEY OPENAI_API_BASE OPENAI_HOST ANTHROPIC_API_KEY \
-        JIRA_API_TOKEN JIRA_EMAIL JIRA_SERVER \
+        ATLASSIAN_API_TOKEN ATLASSIAN_EMAIL ATLASSIAN_BASE_URL \
         GITHUB_TOKEN WORK_GITHUB_TOKEN \
         JFROG_SH_TOKEN JFROG_EXT_TOKEN \
         GPG_TTY \
