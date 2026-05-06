@@ -3,6 +3,7 @@
 .aider*
 .last_check
 .nvimlog
+*.md
 AUDIO_DEVICE_SELECTION.md
 POLYBAR_PER_MONITOR_THEMES.md
 POLYBAR_PLAYERCTL.md

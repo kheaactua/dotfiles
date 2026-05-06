@@ -85,11 +85,11 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             polybar=PolybarTheme.SHAPES,  # Or use same theme on both
         ),
     ],
-    "UGC14VW7PZ3-3": [  # Work setup
+    "UGC14VW7PZ3-3": [  # Work setup (3 active monitors: DP-0, DP-2.8, DP-6)
         Monitor(
             device="DP-0",
             resolution="1920x1200",
-            position="0+0",
+            position="0+720",
             is_primary=False,
             workspaces=[1, 8],
             polybar=PolybarTheme.BLOCKS,
@@ -97,7 +97,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
         Monitor(
             device="DP-2.8",
             resolution="1920x1200",
-            position="1920+0",
+            position="1920+720",
             is_primary=True,
             workspaces=[2, 5, 6, 7, 9, 10],
             polybar=PolybarTheme.BLOCKS,
@@ -167,22 +167,26 @@ class DisplayManager:
         return subprocess.run(cmd, capture_output=True, text=True, check=check)
 
     def detect_connected_monitors(self) -> List[str]:
-        """Parse xrandr output to get list of connected monitor device names"""
+        """Parse xrandr output to get list of active monitor device names (connected with resolution)"""
         result = self._run_cmd(["xrandr", "--query"])
-        connected = []
+        active = []
 
         for line in result.stdout.splitlines():
             if " connected" in line:
                 parts = line.split()
                 output = parts[0]
-                connected.append(output)
+                # Only count monitors that have a resolution (are actually active)
+                # Format: "DP-0 connected 1920x1200+0+720 ..." has resolution in parts[2]
+                # Format: "DP-2 connected (normal left ...)" has no resolution
+                if len(parts) > 2 and 'x' in parts[2] and '+' in parts[2]:
+                    active.append(output)
 
         logger.info(f"--- {datetime.now()} ---")
         logger.info(
-            f"Detected {len(connected)} connected monitor(s): {', '.join(connected)}"
+            f"Detected {len(active)} active monitor(s): {', '.join(active)}"
         )
 
-        return connected
+        return active
 
     @property
     def monitors(self) -> List[Monitor]:
