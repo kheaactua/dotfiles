@@ -25,6 +25,7 @@ abbr -a dkps 'docker ps'
 # Docker Compose aliases
 # abbr -a dkcr 'docker compose run'
 alias dkcr='docker compose run'
+alias dkcb='docker compose build'
 abbr -a dcup 'docker compose up'
 abbr -a dcupd 'docker compose up -d'
 abbr -a dcdown 'docker compose down'

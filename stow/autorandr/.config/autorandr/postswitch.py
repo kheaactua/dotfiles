@@ -91,7 +91,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             resolution="1920x1200",
             position="0+720",
             is_primary=False,
-            workspaces=[1, 8],
+            workspaces=[1, 4, 8],
             polybar=PolybarTheme.BLOCKS,
         ),
         Monitor(
@@ -107,7 +107,7 @@ DISPLAY_CONFIGS: Dict[str, List[Monitor]] = {
             resolution="1200x1920",
             position="3840+0",
             is_primary=False,
-            workspaces=[3, 4, 11, 12],
+            workspaces=[3, 11, 12],
             polybar=PolybarTheme.BLOCKS,
         ),
     ],
@@ -177,8 +177,15 @@ class DisplayManager:
                 output = parts[0]
                 # Only count monitors that have a resolution (are actually active)
                 # Format: "DP-0 connected 1920x1200+0+720 ..." has resolution in parts[2]
+                # Format: "DP-2.8 connected primary 1920x1200+1920+720 ..." has resolution in parts[3]
                 # Format: "DP-2 connected (normal left ...)" has no resolution
-                if len(parts) > 2 and 'x' in parts[2] and '+' in parts[2]:
+                # Check parts[2] and parts[3] for resolution pattern (WIDTHxHEIGHT+X+Y)
+                has_resolution = False
+                for i in [2, 3]:
+                    if len(parts) > i and 'x' in parts[i] and '+' in parts[i]:
+                        has_resolution = True
+                        break
+                if has_resolution:
                     active.append(output)
 
         logger.info(f"--- {datetime.now()} ---")

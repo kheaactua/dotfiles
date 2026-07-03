@@ -171,7 +171,7 @@ fi
 #
 # Declare the stows we want to install
 declare -a stows;
-stows+=(zsh bash bat vnc gdb neovim vim tmux git p10k env-modules procs rlwrap zellij screenlayout autorandr npm zoxide ripgrep kitty sway ccache fish polybar)
+stows+=(zsh bash bat vnc gdb neovim vim tmux git p10k env-modules procs rlwrap zellij screenlayout autorandr npm zoxide ripgrep kitty sway ccache fish polybar containers)
 
 if [[ "1" != "${skip_powerline}" ]]; then
   dotfiles_install_powerline_fonts

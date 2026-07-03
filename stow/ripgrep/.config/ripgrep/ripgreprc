@@ -70,5 +70,11 @@ conan:conanfile.py
 --type-add
 xtend:*.xtend
 
+--type-add
+slog:*.slog,*slog2,*slogger.txt
+
+--type-add
+logcat:*.logcat
+
 # Using glob patterns to include/exclude files or folders
 --glob=!git/*
