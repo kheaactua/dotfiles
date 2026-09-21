@@ -2,3 +2,4 @@
 lazy-lock.json
 lua/.pyre
 lua/.pyre/pyre.stderr
+*.sh

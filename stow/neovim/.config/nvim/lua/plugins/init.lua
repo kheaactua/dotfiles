@@ -83,16 +83,33 @@ return {
   -- Auto reload files when changes externally
   'TheZoq2/neovim-auto-autoread',
 
+  -- Render-markdown plugin - TEMPORARILY DISABLED due to treesitter errors
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    enabled = false,  -- Disable this plugin completely
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-tree/nvim-web-devicons',
+    },
+    ft = { 'markdown', 'copilot-chat' },
+    config = function()
+      require('render-markdown').setup({
+        file_types = { 'markdown', 'copilot-chat' },
+        render_modes = { 'n', 'c' },
+        start_enabled = false,
+      })
+    end,
+  },
+
   {
     "CopilotC-Nvim/CopilotChat.nvim",
     branch = 'main',
     dependencies = {
       "github/copilot.vim",
       'nvim-lua/plenary.nvim',
-      'nvim-treesitter/nvim-treesitter',
-      'MeanderingProgrammer/render-markdown.nvim',
+      -- Removed treesitter and render-markdown dependencies
     },
-    init = function()
+    config = function()
       -- Configure CopilotChat with minimal settings to avoid conflicts
       local chat_config = {
         prompts = {
@@ -124,26 +141,16 @@ return {
             insert = '<Tab>',
           },
         },
-      }
-
-      -- Initialize the plugin
-      local chat = require("CopilotChat")
-      chat.setup(chat_config)
-
-      local map = require("utils").map
-      map('n', '<leader>c', ":CopilotChatToggle<CR>", { silent = true })
-
-      -- Register copilot-chat filetype
-      require('render-markdown').setup({
-        file_types = { 'markdown', 'copilot-chat' },
-      })
-
-      -- Adjust chat display settings
-      require('CopilotChat').setup({
         highlight_headers = false,
         separator = '---',
         error_header = '> [!ERROR] Error',
-      })
+      }
+
+      -- Initialize the plugin
+      require("CopilotChat").setup(chat_config)
+
+      local map = require("utils").map
+      map('n', '<leader>c', ":CopilotChatToggle<CR>", { silent = true })
     end,
   },
 

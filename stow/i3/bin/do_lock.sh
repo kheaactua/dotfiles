@@ -55,6 +55,9 @@ case "$HOSTNAME" in
         ;;
 esac
 
+# Pause notifications while locked so they don't show through the lock screen
+dunstctl set-paused true
+
 # Lock with hostname-specific theme
 # i3lock-color has tons of customization options!
 i3lock --nofork \
@@ -101,3 +104,6 @@ i3lock --nofork \
 
 # Re-enable numlock after unlocking (because i3lock turns it off)
 numlockx on
+
+# Resume notifications after unlock
+dunstctl set-paused false

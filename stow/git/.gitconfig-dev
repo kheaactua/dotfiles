@@ -27,7 +27,7 @@
   quotepath = false
   commitGraph = true
   commentchar = @
-  ; pager = delta
+  pager = delta
 [gc]
   writeCommitGraph = true
 [merge]
@@ -62,5 +62,15 @@
 
 [protocol]
 	allow = always
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true  # use n and N to move between diff sections
+    dark = true      # or light = true, or omit for auto-detection
+
+[merge]
+    conflictStyle = zdiff3
 
 ; vim: ts=2 sw=2 sts=0 noet ft=gitconfig :
