@@ -2,9 +2,10 @@
 " ) if in vim8
 
 " Used for host detection
-let hostname = substitute(system('hostname'), '\n', '', '')
-let hostos   = substitute(system('uname -o'), '\n', '', '')
-let hostkv   = substitute(system('uname -v'), '\n', '', '')
+" Avoid system() with a string: it goes through 'shell' (fish), which is slow to start
+let hostname = hostname()
+let hostos   = trim(systemlist(['uname', '-o'])[0])
+let hostkv   = trim(systemlist(['uname', '-v'])[0])
 
 " Set up some paths that might be changed later based on the platform.  These
 " are defaulted to their linux path
