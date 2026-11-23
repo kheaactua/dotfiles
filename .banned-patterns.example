@@ -1,0 +1,13 @@
+# Copy to .banned-patterns (gitignored) and list what must never be committed.
+# One extended regex per line, matched case-insensitively against file names,
+# file contents, commit messages, and author/committer identities.
+# Use (^|[^[:alnum:]]) instead of \b for portability (macOS/BSD grep).
+
+# Employer name, anchored at a word start so substrings inside other words do not match
+(^|[^[:alnum:]])acme
+
+# Internal artifact hosts
+artifactory\.internal\.example\.com
+
+# Employer email domain
+@([a-z0-9-]+\.)*example-corp\.com

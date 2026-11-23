@@ -83,3 +83,6 @@ stow/fish/.config/fish/fish_variables
 stow/fish/.config/fish/conf.d/fish_frozen_key_bindings.fish
 stow/fish/.config/fish/conf.d/fish_frozen_theme.fish
 delta/
+
+# Local patterns for the public-repo guard hook (names private content)
+.banned-patterns

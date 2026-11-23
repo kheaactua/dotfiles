@@ -1,0 +1,60 @@
+name: banned-content
+
+# Scans newly pushed commits (push / pull_request) for private/employer-specific
+# content in added lines, file names, messages, and identities. Pre-existing
+# history is not scanned automatically; run it on demand with workflow_dispatch.
+# Patterns come from the BANNED_PATTERNS repository secret (one regex per line);
+# they are never stored in the repo. Output is SHAs only, so logs reveal nothing.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    # Secrets are unavailable to PRs from forks
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine commit range
+        id: range
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+        run: |
+          case "$EVENT" in
+            pull_request) range="${PR_BASE}..HEAD" ;;
+            push)
+              # New branches and force pushes have no usable "before"
+              if [ -n "$PUSH_BEFORE" ] && [ "${PUSH_BEFORE//0/}" != "" ] &&
+                  git cat-file -e "${PUSH_BEFORE}^{commit}" 2> /dev/null; then
+                range="${PUSH_BEFORE}..HEAD"
+              else
+                range="HEAD~1..HEAD"
+              fi
+              ;;
+            *) range="" ;;
+          esac
+          echo "range=$range" >> "$GITHUB_OUTPUT"
+
+      - name: Scan commits
+        env:
+          BANNED_PATTERNS: ${{ secrets.BANNED_PATTERNS }}
+          RANGE: ${{ steps.range.outputs.range }}
+        run: |
+          if [ -z "$BANNED_PATTERNS" ]; then
+            echo "::error::BANNED_PATTERNS secret is not set"
+            exit 1
+          fi
+          printf '%s\n' "$BANNED_PATTERNS" > "$RUNNER_TEMP/banned-patterns"
+          BANNED_PATTERNS_FILE="$RUNNER_TEMP/banned-patterns" \
+            .pre-commit-hooks/check-banned-content.sh history $RANGE
