@@ -1,0 +1,7 @@
+__pycache__/
+.ccls-cache/
+*.orig
+debug-logs/
+!stow/**/.config
+*.bak*
+stow/goose/.config/goose/history.txt

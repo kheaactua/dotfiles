@@ -1,0 +1,148 @@
+# Path functions
+# https://stackoverflow.com/q/370047/1861346
+# Modified to input which VAR.  To be bash/zsh agnostic I had to use evals
+path_append() {
+  local var=${2:-PATH}
+  path_remove "$1" "${var}";
+  if [[ -e "$1" ]]; then
+    export ${var}="$(eval echo \$${var}):$1";
+  fi
+}
+path_prepend() {
+  local var=${2:-PATH}
+  path_remove "$1" "${var}";
+  if [[ -e "$1" ]]; then
+    export ${var}="$1:$(eval echo \$${var})";
+  fi
+}
+path_remove() {
+  local var=${2:-PATH}
+  export ${var}=$(echo -n $(eval echo \$${var}) | awk -v RS=: -v ORS=: '$0 != "'$1'"' | sed 's/:$//');
+}
+
+# Like path_remove but returns the value rather than setting it
+path_filter() {
+  local var=${2:-PATH}
+  echo -n $(eval echo \$${var}) | awk -v RS=: -v ORS=: '$0 != "'$1'"' | sed 's/:$//'
+}
+
+# Clean out path
+declare -a start_path;
+declare -a new_path;
+start_path=($(echo -n $PATH | awk -v RS=: '!($0 in a) {a[$0]; printf("%s%s", length(a) > 1 ? " " : "", $0)}'))
+for p in ${start_path[@]}; do
+  if [[ -e $p ]]; then
+    new_path+=($p)
+  fi
+done
+export PATH=$(echo -n ${new_path[@]} | awk -v RS=' ' '!($0 in a) {a[$0]; printf("%s%s", length(a) > 1 ? ":" : "", $0)}')
+
+# Remove python virtual env from path.  This will be added back later, but if
+# it's in now it'll corrupt tests and proper venv settings due to tmux copying
+# my path
+export PATH=$(echo -n "${PATH}" | awk -v RS=: -v ORS=: '/virtualenv/ {next} {print}' | sed 's/:$//')
+
+# Build Run PATH
+# TODO See if I can replace this and the MANPATH with Environmental Modules.
+#      They're finally being updated again.
+if [[ -e "${HOME}/.linuxbrew" ]]; then
+  export LINUXBREWHOME=${HOME}/.linuxbrew
+elif [[ -e /home/linuxbrew/.linuxbrew ]]; then
+  export LINUXBREWHOME=/home/linuxbrew/.linuxbrew
+fi
+
+# Directories we'll prepend
+declare -a pdirs;
+
+# Directories to append
+declare -a adirs;
+
+# Relative directories to HOME that we'll prepend
+# Note the npm one is here because I did: npm config set prefix "~/.npm_packages", this should also be installed by ~/.npmrc
+declare -a rdirs;
+rdirs=( \
+  bin utils .composer/vendor/bin .rvm/bin .local/bin .fzf/bin \
+  .pyenv/bin utils/bin .cargo/bin \
+  go/bin \
+  platform-tools \
+  .local/share/bob/nvim-bin \
+  .npm_packages/bin
+);
+  # build/kotlin-language-server/server/build/install/server/bin \
+  # .sdkman/candidates/gradle/current/bin \
+
+for d in ${rdirs[@]}; do
+  if [[ -e "${HOME}/$d" ]]; then
+    dirs+=("${HOME}/$d");
+  fi
+done
+
+# paths to PREpend
+pdirs+=( \
+  "${LINUXBREWHOME}/bin" \
+)
+
+# paths to APpend
+adirs+=( \
+  /var/lib/snapd/bin \
+  /snap/bin \
+  /usr/local/go/bin \
+)
+
+# This is not a great place for this.
+if [[ "undefined" != "${ANDROID_SDK_ROOT:-undefined}" ]]; then
+  dirs+=(                                         \
+    "${ANDROID_SDK_ROOT}/tools"                   \
+    "${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin" \
+    "${ANDROID_SDK_ROOT}/platform-tools"          \
+  )
+fi
+
+for d in "${dirs[@]}";  do path_prepend "${d}"; done
+for d in "${pdirs[@]}"; do path_prepend "${d}"; done
+for d in "${adirs[@]}"; do path_append "${d}"; done
+
+# If pyenv exists, initialise it.
+# Disabled now because I haven't used pyenv in years.
+# if [[ -e "${HOME}/.pyenv/bin" ]]; then
+#   eval "$(pyenv init -)"
+#   eval "$(pyenv virtualenv-init -)"
+# fi
+
+# Build MAN path
+dirs=("${LINUXBREWHOME}/man" "${HOME}/.rvm/man" "${HOME}/.local/man");
+for d in "${dirs[@]}"; do
+  path_append "${d}" MANPATH
+done
+path_prepend "${LINUXBREWHOME:-bad_path}/share/man" MANPATH
+path_prepend "${LINUXBREWHOME:-bad_path}/share/info" INFOPATH
+
+# Setup the fpath for completions
+declare -a fdirs;
+if [ -n "$ZSH_VERSION" ]; then
+  fdirs=( \
+    # "${LINUXBREWHOME}/.linuxbrew/share/zsh/site-functions"
+
+    # Pure Prompt https://github.com/sindresorhus/pure
+    # /usr/local/lib/node_modules/pure-prompt/functions
+
+    ${HOME}/dotfiles/completions
+  )
+  for f in $fdirs; do
+    fpath+=($f)
+  done
+fi
+
+if [ -n "$ZSH_VERSION" ]; then
+  # Remove duplicate paths https://til.hashrocket.com/posts/7evpdebn7g-remove-duplicates-in-zsh-path
+  typeset -aU path dirs adirs pdirs fdirs
+else
+  unset path dirs adirs pdirs fdirs
+fi
+
+# Clean up path (remove duplicates).  Don't need because path_* functions check
+# before adding, but I'm keeping this code here anyways
+# https://www.linuxjournal.com/content/removing-duplicate-path-entries
+export PATH=$(echo -n $PATH | awk -v RS=: '!($0 in a) {a[$0]; printf("%s%s", length(a) > 1 ? ":" : "", $0)}')
+
+# vim: sw=4 sts=0 ts=4 noet ff=unix ft=sh :

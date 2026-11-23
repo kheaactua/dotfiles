@@ -503,7 +503,6 @@
       "simplewhite",
       "solarized8_light_low",
       "sierra",
-      "herald",
       "neverland2",
       "nets-away",
       "colorful",
@@ -728,7 +727,6 @@
       "no_quarter",
       "eva01",
       "guepardo",
-      "hotpot",
       "xcode-default",
       "ps_color",
       "base16-atelierforest",
@@ -871,7 +869,6 @@
       "anderson",
       "Atelier_SeasideLight",
       "emacs",
-      "elrodeo",
       "elisex",
       "colorsbox-material",
       "Blue2",
@@ -1034,9 +1031,7 @@
       "PapayaWhip",
       "Revolution",
       "Tomorrow-Night-Eighties",
-      "VIvid",
       "abbott",
-      "abra",
       "anotherdark",
       "argonaut",
       "atom",
@@ -1059,7 +1054,6 @@
       "clarity",
       "clue",
       "cobalt",
-      "cobalt2",
       "codeschool",
       "colorsbox-steighties",
       "colorzone",
@@ -1080,7 +1074,6 @@
       "ecostation",
       "ego",
       "elrodeo",
-      "evolution",
       "flatland",
       "flatlandia",
       "flattened_dark",
@@ -1091,13 +1084,11 @@
       "golden",
       "gor",
       "gotham",
-      "greens",
       "greenvision",
       "gryffin",
       "guardian",
       "guepardo",
       "h80",
-      "herald",
       "herokudoc-gvim",
       "herokudoc",
       "hotpot",
@@ -5142,9 +5133,6 @@
       "defaultVariant": null,
       "name": "greens",
       "path": "github.com/flazz/vim-colorschemes/colors",
-      "tags": [
-        "whitelist"
-      ],
       "variants": []
     },
     {
@@ -5290,17 +5278,6 @@
       "name": "hemisu",
       "path": "github.com/flazz/vim-colorschemes/colors",
       "tags": [],
-      "variants": []
-    },
-    {
-      "__class__": "ColorScheme",
-      "__module__": "cmds",
-      "defaultVariant": null,
-      "name": "herald",
-      "path": "github.com/flazz/vim-colorschemes/colors",
-      "tags": [
-        "whitelist"
-      ],
       "variants": []
     },
     {

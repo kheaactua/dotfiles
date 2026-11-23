@@ -1,0 +1,338 @@
+{
+    "$help": "https://aka.ms/terminal-documentation",
+    "$schema": "https://aka.ms/terminal-profiles-schema-preview",
+    "actions": 
+    [
+        {
+            "command": 
+            {
+                "action": "copy",
+                "singleLine": false
+            },
+            "id": "User.copy.644BA8F2"
+        },
+        {
+            "command": "paste",
+            "id": "User.paste"
+        },
+        {
+            "command": "find",
+            "id": "User.find"
+        },
+        {
+            "command": 
+            {
+                "action": "splitPane",
+                "split": "auto",
+                "splitMode": "duplicate"
+            },
+            "id": "User.splitPane.A6751878"
+        }
+    ],
+    "copyFormatting": "none",
+    "copyOnSelect": false,
+    "defaultProfile": "{713edc70-f5b4-5c68-bbff-24f6b22dcd5c}",
+    "keybindings": 
+    [
+        {
+            "id": "User.copy.644BA8F2",
+            "keys": "ctrl+c"
+        },
+        {
+            "id": "User.find",
+            "keys": "ctrl+shift+f"
+        },
+        {
+            "id": "User.splitPane.A6751878",
+            "keys": "alt+shift+d"
+        }
+    ],
+    "newTabMenu": 
+    [
+        {
+            "type": "remainingProfiles"
+        },
+        {
+            "allowEmpty": false,
+            "entries": 
+            [
+                {
+                    "commandline": null,
+                    "name": null,
+                    "source": "Windows.Terminal.SSH",
+                    "type": "matchProfiles"
+                }
+            ],
+            "icon": "\ue969",
+            "inline": "auto",
+            "name": "SSH",
+            "type": "folder"
+        }
+    ],
+    "profiles": 
+    {
+        "defaults": 
+        {
+            "font": 
+            {
+                "face": "Meslo LG M for Powerline ForPowerline"
+            }
+        },
+        "list": 
+        [
+            {
+                "colorScheme": "BirdsOfParadise",
+                "commandline": "\"%SystemRoot%\\System32\\OpenSSH\\ssh.exe\" UGC14VW7PZ3",
+                "font": 
+                {
+                    "cellHeight": "1.1",
+                    "face": "UbuntuSansMono Nerd Font",
+                    "size": 10
+                },
+                "guid": "{713edc70-f5b4-5c68-bbff-24f6b22dcd5c}",
+                "hidden": false,
+                "name": "SSH - Desktop",
+                "source": "Windows.Terminal.SSH",
+                "tabTitle": "SSH - Desktop"
+            },
+            {
+                "colorScheme": "Dark+",
+                "font": 
+                {
+                    "cellHeight": "1.1",
+                    "face": "Cascadia Code",
+                    "size": 10
+                },
+                "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+                "hidden": false,
+                "name": "PowerShell",
+                "source": "Windows.Terminal.PowershellCore"
+            },
+            {
+                "colorScheme": "One Half Dark",
+                "font": 
+                {
+                    "face": "Meslo LG M",
+                    "size": 10
+                },
+                "guid": "{583a5941-99d7-58a7-b9ff-141754c22d8a}",
+                "hidden": false,
+                "name": "archlinux",
+                "source": "Microsoft.WSL"
+            },
+            {
+                "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                "elevate": true,
+                "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+                "hidden": false,
+                "name": "Windows PowerShell"
+            },
+            {
+                "commandline": "%SystemRoot%\\System32\\cmd.exe",
+                "font": 
+                {
+                    "face": "Lucida Sans Typewriter"
+                },
+                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+                "hidden": false,
+                "name": "Command Prompt"
+            },
+            {
+                "guid": "{2ece5bfe-50ed-5f3a-ab87-5cd4baafed2b}",
+                "hidden": false,
+                "name": "Git Bash",
+                "source": "Git"
+            },
+            {
+                "guid": "{108dc36a-fd56-5099-a92b-bfe10bf117b8}",
+                "hidden": false,
+                "name": "Developer Command Prompt for VS 2022",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{5ad3c3bd-8ee0-550c-9676-631154596233}",
+                "hidden": false,
+                "name": "Developer PowerShell for VS 2022",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "font": 
+                {
+                    "face": "MesloLGS NF"
+                },
+                "guid": "{b45d9db0-2096-516d-a7dd-5d58355ae235}",
+                "hidden": false,
+                "name": "SSH - khea",
+                "source": "Windows.Terminal.SSH"
+            },
+            {
+                "guid": "{c422d6bd-3d58-5843-ad4c-6a9745a309c3}",
+                "hidden": false,
+                "name": "SSH - qnx pdc",
+                "source": "Windows.Terminal.SSH"
+            },
+            {
+                "guid": "{435b1960-f09a-50a5-b530-5580362db092}",
+                "hidden": false,
+                "name": "SSH - laptop",
+                "source": "Windows.Terminal.SSH"
+            },
+            {
+                "colorScheme": "BirdsOfParadise",
+                "commandline": "\"%SystemRoot%\\System32\\OpenSSH\\ssh.exe\" qnx",
+                "font": 
+                {
+                    "cellHeight": "1.1",
+                    "face": "Ubuntu Mono derivative Powerline",
+                    "size": 10
+                },
+                "guid": "{4faf4813-eb5c-421b-99c9-26cfb59c7496}",
+                "hidden": false,
+                "icon": "\ue977",
+                "name": "SSH - QNX"
+            }
+        ]
+    },
+    "schemes": 
+    [
+        {
+            "background": "#2A1F1D",
+            "black": "#573D26",
+            "blue": "#5A86AD",
+            "brightBlack": "#9B6C4A",
+            "brightBlue": "#B8D3ED",
+            "brightCyan": "#93CFD7",
+            "brightGreen": "#95D8BA",
+            "brightPurple": "#D19ECB",
+            "brightRed": "#E84627",
+            "brightWhite": "#FFF9D5",
+            "brightYellow": "#D0D150",
+            "cursorColor": "#573D26",
+            "cyan": "#74A6AD",
+            "foreground": "#E0DBB7",
+            "green": "#6BA18A",
+            "name": "BirdsOfParadise",
+            "purple": "#AC80A6",
+            "red": "#BE2D26",
+            "selectionBackground": "#563C27",
+            "white": "#E0DBB7",
+            "yellow": "#E99D2A"
+        },
+        {
+            "background": "#1D1F21",
+            "black": "#1D1D19",
+            "blue": "#5096BE",
+            "brightBlack": "#1D1D19",
+            "brightBlue": "#61B9D0",
+            "brightCyan": "#D63865",
+            "brightGreen": "#A7D42C",
+            "brightPurple": "#695ABC",
+            "brightRed": "#D22A24",
+            "brightWhite": "#FFFFFF",
+            "brightYellow": "#FF8949",
+            "cursorColor": "#708284",
+            "cyan": "#D63865",
+            "foreground": "#B8DBEF",
+            "green": "#9FD364",
+            "name": "Flatland",
+            "purple": "#695ABC",
+            "red": "#F18339",
+            "selectionBackground": "#2B2A24",
+            "white": "#FFFFFF",
+            "yellow": "#F4EF6D"
+        },
+        {
+            "background": "#283033",
+            "black": "#000000",
+            "blue": "#3A9BDB",
+            "brightBlack": "#555555",
+            "brightBlue": "#A1D7FF",
+            "brightCyan": "#55FFFF",
+            "brightGreen": "#93C863",
+            "brightPurple": "#FF55FF",
+            "brightRed": "#FF0003",
+            "brightWhite": "#FFFFFF",
+            "brightYellow": "#FEF874",
+            "cursorColor": "#C0CAD0",
+            "cyan": "#00BBBB",
+            "foreground": "#CDCDCD",
+            "green": "#00BB00",
+            "name": "Obsidian",
+            "purple": "#BB00BB",
+            "red": "#A60001",
+            "selectionBackground": "#3E4C4F",
+            "white": "#BBBBBB",
+            "yellow": "#FECD22"
+        },
+        {
+            "background": "#1A2B3C",
+            "black": "#000000",
+            "blue": "#2188FF",
+            "brightBlack": "#4F5861",
+            "brightBlue": "#C8E1FF",
+            "brightCyan": "#A2ECEC",
+            "brightGreen": "#BEF5CB",
+            "brightPurple": "#D1BCF9",
+            "brightRed": "#FDAEB7",
+            "brightWhite": "#FFFFFF",
+            "brightYellow": "#FFF5B1",
+            "cursorColor": "#FFFFFF",
+            "cyan": "#15E2E2",
+            "foreground": "#FFFFFF",
+            "green": "#34D058",
+            "name": "Primer",
+            "purple": "#8A63D2",
+            "red": "#EA4A5A",
+            "selectionBackground": "#FFFFFF",
+            "white": "#ECF0F1",
+            "yellow": "#FFDF5D"
+        },
+        {
+            "background": "#0F1419",
+            "black": "#000000",
+            "blue": "#36A3D9",
+            "brightBlack": "#323232",
+            "brightBlue": "#68D5FF",
+            "brightCyan": "#C7FFFD",
+            "brightGreen": "#EAFE84",
+            "brightPurple": "#FFA3AA",
+            "brightRed": "#FF6565",
+            "brightWhite": "#FFFFFF",
+            "brightYellow": "#FFF779",
+            "cursorColor": "#F29718",
+            "cyan": "#95E6CB",
+            "foreground": "#E6E1CF",
+            "green": "#B8CC52",
+            "name": "ayu",
+            "purple": "#F07178",
+            "red": "#FF3333",
+            "selectionBackground": "#253340",
+            "white": "#FFFFFF",
+            "yellow": "#E7C547"
+        },
+        {
+            "background": "#2E3440",
+            "black": "#3B4252",
+            "blue": "#81A1C1",
+            "brightBlack": "#4C566A",
+            "brightBlue": "#81A1C1",
+            "brightCyan": "#8FBCBB",
+            "brightGreen": "#A3BE8C",
+            "brightPurple": "#B48EAD",
+            "brightRed": "#BF616A",
+            "brightWhite": "#ECEFF4",
+            "brightYellow": "#EBCB8B",
+            "cursorColor": "#ECEFF4",
+            "cyan": "#88C0D0",
+            "foreground": "#D8DEE9",
+            "green": "#A3BE8C",
+            "name": "nord",
+            "purple": "#B48EAD",
+            "red": "#BF616A",
+            "selectionBackground": "#ECEFF4",
+            "white": "#E5E9F0",
+            "yellow": "#EBCB8B"
+        }
+    ],
+    "themes": []
+}

@@ -1,0 +1,39 @@
+[include]
+	path = ~/.gitconfig-home
+
+[include]
+	path = ~/.gitconfig-work
+
+[include]
+	# This file will exist if a proxy exists
+	path = /home/matt/.gitconfig-proxy
+
+[include]
+	# Config that includes development tools
+	path = ~/.gitconfig-dev
+
+[commit]
+  gpgsign = true
+[gc]
+  writeCommitGraph = true
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+[push]
+  default = current
+[pull]
+  rebase = true
+[fetch]
+  prune = true
+[rebase]
+  autoStash = true
+
+[uploadpack]
+  allowFilter = true
+
+[init]
+  defaultBranch = main
+
+; vim: ts=2 sw=2 sts=0 noet ft=gitconfig :

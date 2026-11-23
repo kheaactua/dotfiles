@@ -1,12 +1,13 @@
-[submodule "antigen"]
-	path = antigen
-	url = https://github.com/zsh-users/antigen.git
-[submodule "dircolors-solarized"]
-	path = dircolors-solarized
-	url = https://github.com/seebi/dircolors-solarized
 [submodule "gdb-dashboard"]
 	path = gdb-dashboard
 	url = https://github.com/cyrus-and/gdb-dashboard.git
-[submodule "ssh-find-agent"]
-	path = ssh-find-agent
-	url = https://github.com/wwalker/ssh-find-agent
+	branch = master
+[submodule "dotfiles-secret"]
+	path = dotfiles-secret
+	url = https://github.com/kheaactua/dotfiles-secret.git
+	branch = master
+[dotfiles-secret]
+	master = master
+[submodule "stow/rofi/.config/rofi/rofi-themes"]
+	path = stow/rofi/.config/rofi/rofi-themes
+	url = https://github.com/davatorium/rofi-themes.git

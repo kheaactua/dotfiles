@@ -1,0 +1,41 @@
+python
+import sys
+import os
+# import hexdump
+
+# Installed: libstdc++6-10-dbg_10.2.0-5ubuntu1~20.04_amd64.deb
+sys.path.insert(0, '/usr/share/gcc/python')
+from libstdcxx.v6.printers import register_libstdcxx_printers
+#register_libstdcxx_printers (None)
+
+# sys.path.insert(0, '/home/matt/workspace/gdb')
+# import gdb_hexdump
+
+end
+
+set verbose off
+set print pretty on
+set history save
+set history filename ~/.gdb_history
+
+set pagination off
+set confirm off
+set breakpoint pending on
+
+set auto-load safe-path /home/matt/tmp/downloads
+
+# Work-specific settings live in dotfiles-secret (optional)
+python
+import os
+_work = os.path.expanduser("~/.gdbinit.work")
+if os.path.exists(_work):
+    gdb.execute("source " + _work)
+end
+add-auto-load-safe-path /usr/share/gdb/auto-load/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33-gdb.py
+
+# This won't help for my code, but it does get the system libs on linux
+# Disabling it breaks ntoaarch64-gdb
+# set debuginfod enabled on
+
+
+# source ~matt/dotfiles/gdb-dashboard/.gdbinit

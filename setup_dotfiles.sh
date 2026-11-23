@@ -1,184 +1,296 @@
 #!/bin/bash
+# shellcheck disable=SC2155
 
-# This script sets up symlinks to all the dotfiles
-# in the user's home directory.
+# This script used to attempt to use dotfiles from the windows partition if
+# this was running on the WSL (if WINHOME was defined), however this just
+# causes more headaches than it solves
+declare h="${HOME}"
 
-if [[ "$1" == "" ]]; then
-	if [[ "${WINHOME:-undefined}" == "undefined" ]]; then
-		h=${HOME}
-	else
-		h=${WINHOME}
-	fi
-else
-	h=$1
-fi;
-echo "Using home: $h"
-DFTMP=$(mktemp -d)
-echo "Using tmp: ${DFTMP}"
+declare -r DOTFILES_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+source "${DOTFILES_DIR}/detect_platform.dot"
+source "${DOTFILES_DIR}/rclib.dot"
+source "${DOTFILES_DIR}/lib.dot"
 
-# I don't think I've used this in years.  WSL removes the need
-if [[ "$2" == "" ]]; then
-	copy=0
-else
-	copy=1
-fi;
+declare -r DOTFILES_SECRET_DIR="${DOTFILES_DIR}/dotfiles-secret"
 
-if [[ "$(which realpath)" == "" ]]; then
-	echo "Cannot find realpath.  Use apt-get to install it"
-	declare base=${h}/dotfiles
-	#exit 1;
-else
-	declare base=${h}/dotfiles
-fi;
+ARGUMENT_STR_LIST=(
+  "home"
+)
+ARGUMENT_FLAG_LIST=(
+  "skip-apt"
+  "install-powerline"
+  "skip-fzf"
+  "skip-python-venv"
+  "skip-tmux"
+  "skip-submodules"
+  "skip-zplug"
+  "skip-rofi"
+  "skip-i3"
+  "skip-gnupg"
+  "skip-cargo"
+  "small"
+  "stow"
+)
+
+# read arguments
+opts=$(getopt \
+    --longoptions "$(printf "%s:," "${ARGUMENT_STR_LIST[@]}")$(printf "%s," "${ARGUMENT_FLAG_LIST[@]}")" \
+    --name "$(basename "$0")" \
+    --options "" \
+    -- "$@"
+)
+eval set --$opts
+
+declare skip_apt=0
+declare skip_powerline=1
+declare skip_python_venv=0
+declare skip_fzf=0
+declare skip_tmux=0
+declare skip_submodules=0
+declare skip_zplug=0
+declare skip_rofi=0
+declare skip_i3=0
+declare skip_gnupg=0
+declare skip_cargo=0
+declare just_stow=0
+while [[ "" != $1 ]]; do
+  case "$1" in
+  "--home")
+    shift
+    h=$1
+    ;;
+  "--skip-apt")
+    skip_apt=1
+    ;;
+  "--install-powerline")
+    skip_powerline=0
+    ;;
+  "--skip-python-venv")
+    skip_python_venv=1
+    ;;
+  "--skip-fzf")
+    skip_fzf=1
+    ;;
+  "--skip-tmux")
+    skip_tmux=1
+    ;;
+  "--skip-submodules")
+    skip_submodules=1
+    ;;
+  "--skip-zplug")
+    skip_zplug=1
+    ;;
+  "--skip-rofi")
+    skip_rofi=1
+    ;;
+  "--skip-i3")
+    skip_i3=1
+    ;;
+  "--skip-gnupg")
+    skip_gnupg=1
+    ;;
+  "--skip-cargo")
+    skip_cargo=1
+    ;;
+  "--small")
+    skip_apt=1
+    skip_tmux=1
+    skip_fzf=1
+    skip_python_venv=1
+    skip_powerline=1
+    skip_submodules=1
+    skip_rofi=1
+    skip_i3=1
+    skip_gnupg=1
+    skip_cargo=1
+    ;;
+  "--stow")
+    skip_apt=1
+    skip_tmux=1
+    skip_fzf=1
+    skip_python_venv=1
+    skip_powerline=1
+    skip_submodules=1
+    skip_rofi=1
+    skip_i3=1
+    skip_gnupg=1
+    skip_cargo=1
+    just_stow=1
+    ;;
+  "--")
+    shift
+    break
+    ;;
+  esac
+  shift
+done
+
+echo "Using home: ${h}"
+
+declare -r backup_dir="${h}/.dotfiles_backup"
+declare -r DFTMP="$(mktemp -d)"
+declare -r VENVS="${h}/.virtualenvs"
 
 # First ensure that the submodules in this repo
 # are available and up to date:
-if [[ "$(uname -o)" != "Cygwin" ]]; then
-	cd ${base}
-	git submodule init
-	git submodule update
+if [[ ! "1" == "${skip_submodules}" ]]; then
+  dotfiles_clone_submodules
 fi
-cd ${h}
+
+cd "${h}" || exit 1
 
 #
-# TODO deal with Windows Terminal, Oni, PS, etc, files
+# TODO deal with Windows Terminal, PS, etc, files
+# TODO Create a function to mkdir.. I do that a lot here.
 #
 
+if [[ "1" != "${skip_apt}" ]]; then
+  pkgs=(curl stow git rlwrap pinentry-gnome3 pinentry-curses pinentry-tty rofi autorandr)
+  is_ubuntu && sudo apt-get install -qy "${pkgs[@]}" environment-modules pass
+  is_arch   && sudo pacman -S --noconfirm "${pkgs[@]}" which inetutils rofi-pass
+fi
+
+# TODO
+# Other things to setup that aren't handled
+# bash won't stow on a new system because .bashrc exists by default
+# https://github.com/spwhitton/git-remote-gcrypt , which needs python3-docutils
+# Installing rustup: curl https://sh.rustup.rs -sSf | sh
+#   Add this to dotfiles_install_cargo
+# cargo install bob-nvim
+# curl -LsSf https://astral.sh/uv/install.sh | sh
+# docker-credential-helper: https://github.com/docker/docker-credential-helpers/releases
+#   Manually install this (with a symlink) to /usr/local/bin
+# rofi-pass on ubuntu.  https://github.com/carnager/rofi-pass and `sudo make`
+
 #
-# Declare the files that we always want to copy over.
-declare -a files;
-files=(.bash_aliases)
-if [[ "${TRUE_HOST}" != "" ]]; then
-	# We're on Env Can machines
-	files+=(.pathrc .vncrc .gdbinit)
-elif [[ "$(uname -o)" == "Cygwin" ]]; then
-	# Do nothing
-	files+=(.zshrc)
+# Declare the stows we want to install
+declare -a stows;
+stows+=(zsh bash bat vnc gdb neovim vim tmux git p10k env-modules procs rlwrap zellij aider screenlayout autorandr npm zoxide ripgrep goose kitty sway ccache)
+
+if [[ "1" != "${skip_powerline}" ]]; then
+  install_powerline_fonts
 else
-	files+=(.zshrc .pathrc .bashrc .bash_profile .profile .login .logout .modulefiles .vncrc .gdbinit .dircolors)
-
-	if [[ $HOME != *com.termux* ]]; then
-		# For now at least, don't install powerline fonts on termux
-		mkdir -p ${h}/.local/share/fonts
-		# Install fonts
-		if [[ "$(ls ${h}/.local/share/fonts | grep powerline | wc -l)" -lt 3 ]]; then
-			git clone https://github.com/powerline/fonts.git ${DFTMP}/powerline_fonts
-			${DFTMP}/powerline_fonts/install.sh
-		fi
-		# apt-get install ttf-ancient-fonts -y
-		# install http://input.fontbureau.com/download/  and http://larsenwork.com/monoid/ Hack the powerline font install script to mass install
-	fi;
+  echo "Skipped installing powerline fonts"
 fi
 
-# Check if our environment supports these
-if [[ "$(which vi)" != "" ]]; then
-	files+=('.vimrc')
-fi
-if [[ "$(which tmux)" != "" ]]; then
-	files+=('.tmux.conf')
-	if [[ ! -e ${h}/.tmux ]]; then
-		git clone https://github.com/tmux-plugins/tpm ${h}/.tmux/plugins/tpm
-	fi
-fi
-if [[ "$(which screen)" != "" ]]; then
-	files+=('.screenrc')
-fi
-if [[ "$(which sqlite3)" != "" ]]; then
-	files+=('.sqliterc')
-fi
-if [[ "$(which ctags)" != "" ]]; then
-	files+=('.ctags')
-fi
-if [[ "$(which vncserver)" != "" ]]; then
-	files+=('.vnc')
-fi
+[[ "khea" == "$(hostname)" ]] && stows+=('xinit')
 
-# .config/autokey
+[[ $(_exists tmux) && "1" != "${skip_tmux}" ]] && dotfiles_install_tpm "${h}"
 
-declare backup_dir=${h}/.dotfiles_backup
+_exists screen && stows+=('screen')
+_exists sqlite3 && stows+=('sqlite')
+
+if _exists vncserver || _exists tightvncserver; then
+  stows+=('vnc')
+fi
 
 # Create a backup directory:
-mkdir -p ${h}/.dotfiles_backup
+[[ -e "${backup_dir}" ]] || mkdir -p "${backup_dir}"
 
-for f in ${files[@]}; do
-	# Local file in dotfile fir
-	if [[ $f =~ .* ]]; then
-		src=${f/.//}
-	else
-		src=$f
-	fi;
-	if [[ ! -h ${h}/$f ]]; then
-		if [[ -e ${h}/$f && -e ${base}/${src} && ! -h ${h}/${f} ]]; then
-			echo "Backing up $f"
-			mv ${h}/$f ${backup_dir}/$f
-		fi
-		if [[ -e ${base}/${src} ]]; then
-			#echo "Installing $f"
-			if [[ "$copy" == 1 ]]; then
-				# On cygwin, symlinks when used through gvim
-				# can be an issue
-				cp -r ${base}/${src} $f;
-			else
-				if [[ ! -L $f ]]; then
-					ln -s ${base}/${src} $f
-				fi
-			fi;
-		fi
-	else
-		echo "Skipping symlink $f"
-	fi
-done;
+cd "$h" || exit 1
 
-cd $h
+dotfiles_setup_ssh_config "${h}" "${DOTFILES_SECRET_DIR}"
 
-# Install zplug
-if [[ ! -e "${h}/.zplug" ]]; then
-	ztmp=$(mktemp -d)
-	wget -O ${ztmp}/installer.zsh https://raw.githubusercontent.com/zplug/installer/master/installer.zsh \
-		&& zsh ${ztmp}/installer.zsh
+if [[ "1" != "${skip_zplug}" ]]; then
+  dotfiles_install_zplug "${h}" "${DFTMP}"
+else
+  echo "Skipped installing zplug"
 fi
 
-# Install dein
-if [[ ! -e "${h}/dotfiles/bundles/dein" ]]; then
-	wget -O ${DFTMP}/installer.sh https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh
-	sh ${DFTMP}/installer.sh ${h}/dotfiles/bundles/dein
+if [[ "1" != "${skip_rofi}" ]]; then
+  stows+=('rofi')
+  # dotfiles_install_rofi "${h}"
+  # dotfiles_install_rofipass "${h}"
+else
+  echo "Skipped installing rofi"
 fi
 
-if [[ "" != "$(which nvim)" ]]; then
-	# neovim is installed
-	if [[ ! -e "${h}/.config/nvim" ]]; then
-		mkdir -p "${h}/.config/nvim"
-	fi
-	if [[ -e ${h}/.vimrc ]]; then
-		ln -fs ${h}/.vimrc ${h}/.config/nvim/init.vim
-	fi
+# Make sure config directory exists
+[[ -e "${h}/.config" ]] || mkdir -p "${h}/.config"
+
+# Because sway points to i3, this doesn't fit well with stow.  I can remove the
+# complexity once all my systems are using sway.
+declare current_wm;
+if [ "$XDG_SESSION_DESKTOP" = "sway" ] || [ "$DESKTOP_SESSION" = "sway" ]; then
+  current_wm="sway"
+elif [ "$XDG_SESSION_DESKTOP" = "i3" ] || [ "$DESKTOP_SESSION" = "i3" ]; then
+  current_wm="i3"
 fi
 
-if [[ ! -e ${h}/.config/powershell ]]; then
-	mkdir -p ${h}/.config/powershell
-	ln -s $(pwd)/profile.ps1 ${h}/.config/powershell/Microsoft.PowerShell_profile.ps1
+if [[ "1" != "${skip_i3}" ]]; then
+  if [ "i3" == "${current_wm}" ]; then
+    dotfiles_install_i3 "${h}"
+    stows+=('i3')
+  elif [ "sway" == "${current_wm}" ]; then
+    # dotfiles_install_sway "${h}"
+    stows+=('sway')
+  fi
+else
+  echo "Skipped installing i3/sway"
 fi
 
-if [[ -e .modulefiles && ! -L ${h}/.modulerc ]]; then
-	ln -s .modulefiles/.modulerc ${h}/
-fi
+# Setup pwsh on linux
+_exists pwsh && stows+=('pwsh')
+
+# Setup pwsh on linux
+_exists fsb && stows+=('fsb')
 
 # Install fzf
-if [[ ! -e ${h}/.fzf ]]; then
-	git clone --depth 1 https://github.com/junegunn/fzf.git ${h}/.fzf
-	${h}/.fzf/install
+if [[ "1" != "${skip_fzf}" ]]; then
+  dotfiles_install_fzf "${h}"
+else
+  echo "Skipped installing fzf"
 fi
 
-if [[ ! -e "${h}/.virtualenv/default" ]]; then
-	if [[ "$(which virtualenv)" == "" ]]; then
-		sudo apt-get install virtualenv -y
-	fi;
-
-	mkdir -p "${h}/.virtualenv"
-	pushd;
-	cd "${h}/.virtualenv"
-	virtualenv -p python3 default
-	popd
+# Setup default virtualenv
+if [[ "1" != "${skip_python_venv}" ]]; then
+  dotfiles_setup_python_venvs "${h}" "${VENVS}"
+else
+  echo "Skipped setting up python virtual environments"
 fi
 
-# vim: ts=3 sw=3 sts=0 ff=unix noet :
+# GPG-Agent
+if [[ "1" != "${skip_gnupg}" ]]; then
+  dotfiles_install_gnupg "${h}" "${DOTFILES_SECRET_DIR}"
+else
+  echo "Skipped installing gnupg"
+fi
+
+if [[ ! -e "${h}/.ssh/tmp" ]]; then
+  mkdir -p "${h}/.ssh/tmp"
+  chmod 700 "${h}/.ssh"
+fi
+
+for s in "${stows[@]}"; do
+  # set -x
+  stow -d "${DOTFILES_DIR}/stow" -t "${h}" "${s}"
+  # set +x
+done
+
+#
+# Setup's that can or should occur after stow
+#
+
+if [[ "1" != "${just_stow}" ]]; then
+  dotfiles_install_npm "${h}"
+else
+  echo "Skipping npm install"
+fi
+
+# Cargo
+if [[ "1" != "${skip_cargo}" ]]; then
+  dotfiles_install_cargo "${h}"
+  cargo install ripgrep du-dust fd-find
+else
+  echo "Skipped installing cargo config"
+fi
+
+# Run stow on the dotfiles-secret stows
+if [[ -e "${DOTFILES_SECRET_DIR}/install.sh" ]]; then
+  echo "Running secret install script"
+  "${DOTFILES_SECRET_DIR}/install.sh"
+else
+  echo "Couldn't find ${DOTFILES_SECRET_DIR}/install.sh, skipping stow"
+fi
+
+# vim: ts=2 sw=2 sts=0 ff=unix et :
