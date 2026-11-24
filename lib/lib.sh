@@ -102,15 +102,6 @@ function dotfiles_install_cargo_crates()
 }
 
 
-function dotfiles_install_gnupg()
-{
-  local home=${1:-${HOME}}
-
-	stow -d "${DOTFILES_DIR}/stow" -t "${home}" gnupg
-  # ~/.gnupg/sshcontrol is merged from the secret repositories by
-  # dotfiles_secret_install_all
-}
-
 # function dotfiles_install_docker_config()
 # {
 #   local home=${1:-${HOME}}
