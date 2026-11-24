@@ -15,8 +15,7 @@ declare -r DOTFILES_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 source "${DOTFILES_DIR}/lib/detect_platform.sh"
 source "${DOTFILES_DIR}/lib/rclib.sh"
 source "${DOTFILES_DIR}/lib/lib.sh"
-
-declare -r DOTFILES_SECRET_DIR="${DOTFILES_DIR}/dotfiles-secret"
+source "${DOTFILES_DIR}/lib/secret.sh"
 
 ARGUMENT_STR_LIST=(
   "home"
@@ -195,7 +194,7 @@ fi
 
 cd "$h" || exit 1
 
-dotfiles_setup_ssh_config "${h}" "${DOTFILES_SECRET_DIR}"
+dotfiles_setup_ssh_config "${h}"
 
 if [[ "1" != "${skip_zplug}" ]]; then
   dotfiles_install_zplug "${h}" "${DFTMP}"
@@ -261,7 +260,7 @@ fi
 
 # GPG-Agent
 if [[ "1" != "${skip_gnupg}" ]]; then
-  dotfiles_install_gnupg "${h}" "${DOTFILES_SECRET_DIR}"
+  dotfiles_install_gnupg "${h}"
 else
   echo "Skipped installing gnupg"
 fi
@@ -300,12 +299,8 @@ fi
 # Setup Neovim launcher (if bob/nvim is installed)
 dotfiles_setup_neovim_launcher "${h}"
 
-# Run stow on the dotfiles-secret stows
-if [[ -e "${DOTFILES_SECRET_DIR}/install.sh" ]]; then
-  echo "Running secret install script"
-  "${DOTFILES_SECRET_DIR}/install.sh"
-else
-  echo "Couldn't find ${DOTFILES_SECRET_DIR}/install.sh, skipping stow"
-fi
+# Install every dotfiles-secret-<domain> repository present whose
+# host-patterns match this host
+dotfiles_secret_install_all "${h}"
 
 # vim: ts=2 sw=2 sts=0 ff=unix et :

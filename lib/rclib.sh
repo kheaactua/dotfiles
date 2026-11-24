@@ -37,9 +37,11 @@ fi
 # This is done in an annoying way because once in a pipe, any sourceing or even
 # variable setting seems to be scope locked to that block
 declare -a search_dirs
-if [[ -e "${DOTFILES_DIR}/dotfiles-secret" ]]; then
-    search_dirs+=("${DOTFILES_DIR}/dotfiles-secret")
-fi
+source "${DOTFILES_DIR}/lib/secret.sh"
+for secret_repo in $(dotfiles_secret_active_repos); do
+    search_dirs+=("${secret_repo}")
+done
+unset secret_repo
 if [[ -e "${DOTFILES_DIR}/scripts" ]]; then
     search_dirs+=("${DOTFILES_DIR}/scripts")
 fi

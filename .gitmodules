@@ -2,12 +2,6 @@
 	path = gdb-dashboard
 	url = https://github.com/cyrus-and/gdb-dashboard.git
 	branch = master
-[submodule "dotfiles-secret"]
-	path = dotfiles-secret
-	url = https://github.com/kheaactua/dotfiles-secret.git
-	branch = master
-[dotfiles-secret]
-	master = master
 [submodule "stow/rofi/.config/rofi/rofi-themes"]
 	path = stow/rofi/.config/rofi/rofi-themes
 	url = https://github.com/davatorium/rofi-themes.git

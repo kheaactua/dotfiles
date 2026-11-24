@@ -11,7 +11,7 @@ This is a personal dotfiles repository that manages system configuration files a
   - Uses GNU Stow to symlink configurations to the home directory
 - **bin/** - Personal scripts and utilities
 - **scripts/** - Automation and setup scripts
-- **dotfiles-secret/** - Git submodule for sensitive/private configurations
+- **dotfiles-secret-\<domain\>/** - Private repositories (`home`, `work`, `ccnab`, ...) cloned by hand next to this repo and ignored by it. `lib/secret.sh` installs the ones whose `host-patterns` match the host.
 - **.ai/** - Tracking directory for AI-assisted modifications
 
 ## Key Technologies

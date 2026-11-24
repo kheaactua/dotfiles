@@ -1,7 +1,6 @@
 # GITSTATUS_LOG_LEVEL=DEBUG
 
 [[ "undefined" == "${DOTFILES_DIR:-undefined}" ]] && export DOTFILES_DIR="${HOME}/dotfiles"
-[[ "undefined" == "${DOTFILES_SECRET_DIR:-undefined}" ]] && export DOTFILES_SECRET_DIR="${DOTFILES_DIR}/dotfiles-secret"
 
 declare WSL_VERSION=0
 declare IN_DOCKER=0
@@ -194,8 +193,11 @@ fi
 
 [ -e "${DOTFILES_DIR}/load_env_modules.sh" ] && source "${DOTFILES_DIR}/load_env_modules.sh"
 
-# Load host specific profile
-[[ -e "${DOTFILES_SECRET_DIR}/profiles/$(hostname).zsh" ]] && source "${DOTFILES_SECRET_DIR}/profiles/$(hostname).zsh"
+# Load host specific profiles from the matching dotfiles-secret-<domain> repos
+for secret_repo in $(dotfiles_secret_active_repos); do
+  [[ -e "${secret_repo}/profiles/$(hostname).zsh" ]] && source "${secret_repo}/profiles/$(hostname).zsh"
+done
+unset secret_repo
 
 # Load default python virtual env.
 [[ "undefined" == "${DEFAULT_PYTHON_VENV:-undefined}" ]] && DEFAULT_PYTHON_VENV="default"

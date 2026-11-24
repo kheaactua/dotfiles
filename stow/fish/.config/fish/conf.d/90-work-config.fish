@@ -1,5 +1,5 @@
 # Source work-specific fish configurations if they exist
-# These come from ~/dotfiles/dotfiles-secret/work/stow/fish-work/.config/fish-work/
+# These come from ~/dotfiles/dotfiles-secret-work/stow/fish-work/.config/fish-work/
 
 # Source all files in ~/.config/fish-work/conf.d/
 if test -d $HOME/.config/fish-work/conf.d

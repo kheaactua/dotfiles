@@ -1,15 +1,27 @@
-# Load hostname-specific profile
-if set -q DOTFILES_SECRET_DIR
-    # Add work functions directory to fish_function_path for autoloading
-# TODO this should be "domain" dependent
-    set -l work_functions_dir "$DOTFILES_SECRET_DIR/work/functions"
-    if test -d "$work_functions_dir"
-        contains "$work_functions_dir" $fish_function_path; or set -gp fish_function_path "$work_functions_dir"
+# Load the functions and hostname-specific profile of each dotfiles-secret-<domain>
+# repository whose host-patterns match this host (no host-patterns: always).
+set -l host (hostname)
+for repo in $DOTFILES_DIR/dotfiles-secret-*
+    test -d "$repo"; or continue
+
+    set -l matches 1
+    if test -f "$repo/host-patterns"
+        set matches 0
+        for pattern in (string replace -r '#.*' '' < "$repo/host-patterns" | string trim)
+            test -n "$pattern"; or continue
+            if string match -q -- "$pattern" "$host"
+                set matches 1
+                break
+            end
+        end
+    end
+    test $matches -eq 1; or continue
+
+    if test -d "$repo/functions"
+        contains "$repo/functions" $fish_function_path; or set -gp fish_function_path "$repo/functions"
     end
 
-    # Source hostname-specific profile for setup/initialization
-    set -l hostname_profile "$DOTFILES_SECRET_DIR/profiles/"(hostname)".fish"
-    if test -f "$hostname_profile"
-        source "$hostname_profile"
+    if test -f "$repo/profiles/$host.fish"
+        source "$repo/profiles/$host.fish"
     end
 end

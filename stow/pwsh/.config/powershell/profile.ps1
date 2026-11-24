@@ -8,17 +8,14 @@ if ($IsLinux) {
 }
 
 $posh_dir = $(Join-Path ${HOME} dotfiles posh)
-if (Test-Path $(Join-Path ${HOME} dotfiles dotfiles-secret))
+$priv_dir = ""
+foreach ($repo in Get-ChildItem -Directory -Path $(Join-Path ${HOME} dotfiles) -Filter "dotfiles-secret-*")
 {
-	$priv_dir = $(Join-Path ${HOME} dotfiles dotfiles-secret)
-}
-elseif (Test-Path $(Join-Path ${HOME} dotfiles-secret))
-{
-	$priv_dir = $(Join-Path ${HOME} dotfiles-secret)
-}
-else
-{
-	$priv_dir = ""
+	if (Test-Path $(Join-Path $repo.FullName proxy.ps1))
+	{
+		$priv_dir = $repo.FullName
+		break
+	}
 }
 
 

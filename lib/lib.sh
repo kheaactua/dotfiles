@@ -105,13 +105,10 @@ function dotfiles_install_cargo_crates()
 function dotfiles_install_gnupg()
 {
   local home=${1:-${HOME}}
-  local dotfiles_secret_dir=${2:-${DOTFILES_DIR:-${HOME}/dotfiles}/dotfiles-secret}
 
 	stow -d "${DOTFILES_DIR}/stow" -t "${home}" gnupg
-
-  if [[ -e "${dotfiles_secret_dir}" ]]; then
-    symlink "${dotfiles_secret_dir}/global/gnupg/sshcontrol" "${home}/.gnupg/sshcontrol"
-  fi
+  # ~/.gnupg/sshcontrol is merged from the secret repositories by
+  # dotfiles_secret_install_all
 }
 
 # function dotfiles_install_docker_config()
@@ -197,9 +194,12 @@ function dotfiles_install_sdkman()
 function dotfiles_setup_ssh_config()
 {
   local -r home=${1:-${HOME}};
-  local -r dotfiles_secret_dir="${2:-${DOTFILES_DIR:${home}/dotfiles}/dotfiles-secret}"
   local -r ssh_dir="${home}/.ssh"
   local -r ssh_config="${ssh_dir}/config"
+  # ssh/config is shared by every secret repository; config.d holds the
+  # host specific files that dotfiles_secret_link_ssh_config links in.
+  local -r include_shared='Include ~/dotfiles/dotfiles-secret-*/ssh/config'
+  local -r include_hosts='Include ~/.ssh/config.d/*'
 
   if [[ ! -e "${ssh_dir}" ]]; then
     mkdir "${ssh_dir}" && chmod 700 "${ssh_dir}"
@@ -207,10 +207,18 @@ function dotfiles_setup_ssh_config()
 
   if [[ ! -e "${ssh_config}" ]]; then
     cat <<TOHERE > "${ssh_config}"
-Include ~/dotfiles/dotfiles-secret/*/ssh/config
+${include_shared}
+${include_hosts}
 
 # vim: ts=4 sw=4 sts=0 expandtab ft=sshconfig
 TOHERE
+  elif grep -q '^Include ~/dotfiles/dotfiles-secret/\*/ssh/config$' "${ssh_config}"; then
+    # Migrate from the single dotfiles-secret layout
+    local tmp
+    tmp="$(mktemp)"
+    { echo "${include_shared}"; echo "${include_hosts}"; grep -v '^Include ~/dotfiles/dotfiles-secret/\*/ssh/config$' "${ssh_config}"; } > "${tmp}"
+    cat "${tmp}" > "${ssh_config}"
+    rm -f "${tmp}"
   fi
 }
 
