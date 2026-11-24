@@ -1,0 +1,5 @@
+# Paths exempt from the banned-content check (see .pre-commit-hooks/check-banned-content.sh).
+# One repo-relative path per line; '#' comments and blank lines are ignored.
+
+# Third-party colour scheme names that happen to match a banned word.
+colos.json

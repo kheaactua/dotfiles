@@ -610,7 +610,6 @@ return {
   'azabiong/vim-highlighter',
 
   -- syntax highlighting for *.hal, *.bp, and *.rc files.
-  -- 'https://github.work.com/work/aosp-vim-syntax.git'
   -- 'rubberduck203/aosp-vim',
 
   {

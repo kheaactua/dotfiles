@@ -359,6 +359,10 @@ let g:github_enterprise_urls = ['https://github.work.com']
 " Directory aliases.  TODO generalize this somehow
 " nnoremap <leader>2 :@"<CR>
 " vmap <space> "xy:@x<CR> " https://stackoverflow.com/a/31441749/1861346
+" Work-specific settings live in dotfiles-secret (nvim-work package)
+if filereadable(expand('~/.config/nvim-work/work.vim'))
+  source ~/.config/nvim-work/work.vim
+endif
 
 " Append modeline after last line in buffer.
 " Use substitute() instead of printf() to handle '%%s' modeline in LaTeX

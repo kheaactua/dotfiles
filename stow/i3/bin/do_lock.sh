@@ -36,7 +36,7 @@ case "$HOSTNAME" in
         WRONG_COLOR="ef4444ff"        # Red when wrong
         ;;
     WGC30047YVDS3)
-        # work laptop - Orange theme
+        # Work laptop - Orange theme
         BG_COLOR="9a3412ff"           # Dark orange background
         RING_COLOR="f97316ff"         # Orange ring
         INSIDE_COLOR="c2410cff"       # Inside color

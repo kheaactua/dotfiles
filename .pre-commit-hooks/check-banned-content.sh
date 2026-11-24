@@ -7,6 +7,9 @@
 # Format: one extended regex per line, '#' comments and blank lines ignored,
 # matched case-insensitively. See .banned-patterns.example.
 #
+# Paths listed in the tracked file .banned-content-allowlist are exempt from the
+# file and history scans (author, identity and commit message checks still apply).
+#
 # Usage:
 #   check-banned-content.sh files FILE...   scan file names and contents
 #   check-banned-content.sh author          scan author/committer identities
@@ -38,12 +41,32 @@ if [ ! -s "$compiled" ]; then
     exit 2
 fi
 
+# Exempt paths: one repo-relative path per line in .banned-content-allowlist
+allowlist_file="${repo_root}/.banned-content-allowlist"
+allowed=()
+exclude_specs=()
+if [ -f "$allowlist_file" ]; then
+    while IFS= read -r allowed_path; do
+        allowed+=("$allowed_path")
+        exclude_specs+=(":(exclude,literal)${allowed_path}")
+    done < <(sed -e 's/[[:space:]]*#.*$//' -e 's/[[:space:]]*$//' -e '/^[[:space:]]*$/d' "$allowlist_file")
+fi
+
+is_allowed() {
+    local candidate="${1#./}" entry
+    for entry in "${allowed[@]+"${allowed[@]}"}"; do
+        [ "$candidate" = "$entry" ] && return 0
+    done
+    return 1
+}
+
 status=0
 
 case "$mode" in
     files)
         for f in "$@"; do
             [ -f "$f" ] || continue
+            is_allowed "$f" && continue
             if printf '%s\n' "$f" | grep -Eiq -f "$compiled"; then
                 echo "BANNED (file name): $f"
                 status=1
@@ -89,13 +112,13 @@ case "$mode" in
             done
         }
         if [ -n "$range_arg" ]; then
-            report "diff content" < <(git log -p -U0 --no-color --format='@@@%H' "${revs[@]}" |
+            report "diff content" < <(git log -p -U0 --no-color --format='@@@%H' "${revs[@]}" -- . "${exclude_specs[@]+"${exclude_specs[@]}"}" |
                 awk '/^@@@/ {sha = substr($0, 4); next} /^\+\+\+/ {next} /^\+/ {print sha "\t" substr($0, 2)}' |
                 while IFS=$'\t' read -r sha line; do
                     printf '%s\n' "$line" | grep -Eiq -f "$compiled" && echo "$sha"
                 done | sort -u)
         else
-            report "diff content" < <(git log "${revs[@]}" -E -i -G "$combined" --format='%H')
+            report "diff content" < <(git log "${revs[@]}" -E -i -G "$combined" --format='%H' -- . "${exclude_specs[@]+"${exclude_specs[@]}"}")
         fi
         report "commit message" < <(git log "${revs[@]}" -E -i --grep "$combined" --format='%H')
         report "author" < <(git log "${revs[@]}" -E -i --author "$combined" --format='%H')
@@ -105,7 +128,7 @@ case "$mode" in
                 echo "BANNED (file name): ${sha}"
                 status=1
             fi
-        done < <(git log "${revs[@]}" --diff-filter=AMR --name-only --format='@%H' |
+        done < <(git log "${revs[@]}" --diff-filter=AMR --name-only --format='@%H' -- . "${exclude_specs[@]+"${exclude_specs[@]}"}" |
             awk '/^@/ {sha = substr($0, 2); next} NF {print sha "\t" $0}')
         ;;
     message)
