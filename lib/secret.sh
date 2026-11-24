@@ -119,12 +119,39 @@ function dotfiles_secret_link_ssh_config()
   done
 }
 
+# Links left by the single-repository layout (…/dotfiles-secret/<domain>/stow/…)
+# or by a repository that has since moved confuse stow: it refuses to touch
+# a target it does not own.  Remove those, and only those, before stowing.
+function dotfiles_secret_remove_stale_links()
+{
+  local -r repo="${1}"
+  local -r home="${2:-${HOME}}"
+
+  [[ -d "${repo}/stow" ]] || return 0
+
+  local entry rel target link
+  while IFS= read -r entry; do
+    rel="${entry#"${repo}/stow/"}"
+    # Drop the package name: stow/<pkg>/<path> maps to <home>/<path>
+    [[ "${rel}" == */* ]] || continue
+    target="${home}/${rel#*/}"
+    [[ -L "${target}" ]] || continue
+    link="$(readlink "${target}")"
+    if [[ "${link}" =~ dotfiles-secret(/|$) ]] || [[ ! -e "${target}" && "${link}" =~ dotfiles-secret ]]; then
+      echo "Removing stale link ${target} -> ${link}"
+      rm -f "${target}"
+    fi
+  done < <(find "${repo}/stow" -mindepth 2 \( -type f -o -type l -o -type d \) | sort)
+}
+
 function dotfiles_secret_stow()
 {
   local -r repo="${1}"
   local -r home="${2:-${HOME}}"
 
   [[ -d "${repo}/stow" ]] || return 0
+
+  dotfiles_secret_remove_stale_links "${repo}" "${home}"
 
   local pkg_dir
   for pkg_dir in "${repo}"/stow/*/; do
@@ -176,7 +203,8 @@ function dotfiles_secret_run_hook()
 
   [[ -x "${repo}/install.sh" ]] || return 0
 
-  DOTFILES_DIR="${DOTFILES_DIR:-${HOME}/dotfiles}" DOTFILES_SECRET_DIR="${repo}" "${repo}/install.sh" "${home}"
+  # env, because DOTFILES_DIR may be readonly in the calling shell
+  env "DOTFILES_DIR=${DOTFILES_DIR:-${HOME}/dotfiles}" "DOTFILES_SECRET_DIR=${repo}" "${repo}/install.sh" "${home}"
 }
 
 function dotfiles_secret_install_all()
