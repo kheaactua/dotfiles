@@ -44,7 +44,7 @@ function _dotfiles_check_if_fonts_are_installed()
 function dotfiles_install_powerline_fonts()
 {
   local home=${1:-${HOME}};
-  local DFTMP=${2:-"$(mktemp -d)"}
+  local tmp=${2:-"$(mktemp -d)"}
 
   if [[ $HOME == *com.termux* ]]; then
     echo "Avoiding install on termux"
@@ -58,10 +58,10 @@ function dotfiles_install_powerline_fonts()
   if _dotfiles_check_if_fonts_are_installed "${home}" "Powerline"; then
     echo "Powerline fonts already installed"
   else
-    if [[ ! -e "${DFTMP}/powerline_fonts" ]]; then
-      git clone https://github.com/powerline/fonts.git "${DFTMP}/powerline_fonts"
+    if [[ ! -e "${tmp}/powerline_fonts" ]]; then
+      git clone https://github.com/powerline/fonts.git "${tmp}/powerline_fonts"
     fi
-    "${DFTMP}/powerline_fonts/install.sh"
+    "${tmp}/powerline_fonts/install.sh"
   fi
 
   # apt-get install ttf-ancient-fonts -y
@@ -69,10 +69,10 @@ function dotfiles_install_powerline_fonts()
 
   # Install nerd-fonts
   if _dotfiles_check_if_fonts_are_installed "${home}" "NerdFonts"; then
-    if [[ ! -e "${DFTMP}/nerd_fonts/nerd_fonts" ]]; then
-      git clone https://github.com/ryanoasis/nerd-fonts "${DFTMP}/nerd_fonts"
+    if [[ ! -e "${tmp}/nerd_fonts/nerd_fonts" ]]; then
+      git clone https://github.com/ryanoasis/nerd-fonts "${tmp}/nerd_fonts"
     fi
-    "${DFTMP}/nerd_fonts/install.sh Meslo"
+    "${tmp}/nerd_fonts/install.sh Meslo"
   fi
 }
 
@@ -84,21 +84,27 @@ function dotfiles_install_cargo()
   symlink "${DOTFILES_DIR:-${HOME}/dotfiles}/cargo" "${home}/.cargo"
 
   source "${DOTFILES_DIR:-${HOME}/dotfiles}/cargo/env"
-  if _exists rustup; then
+  if ! _exists rustup; then
     echo "Cargo configuration files are setup, but rustup is not installed.  To install it, run:"
     echo "  curl https://sh.rustup.rs -sSf | sh"
     echo
     echo "Then, toolchains from ~/.cargo/config can be installed by running (example)"
     echo "  rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android"
+    return 1
   fi
+
+  # Crates raise their minimum rustc over time, so a stale toolchain makes
+  # `cargo install` fail
+  rustup update stable
 }
 
 function dotfiles_install_cargo_crates()
 {
-  # This function isn't complete, isn't even tested.. Right now it's better
-  # thought of as a list of crates to install
-  crates=( exa choose sd )
-  cargo install ${crates[@]}
+  local -a crates=( ripgrep du-dust fd-find )
+
+  _exists cargo || return 1
+  # --locked builds with the versions the crate was released with
+  cargo install --locked "${crates[@]}"
 }
 
 
@@ -223,18 +229,20 @@ function dotfiles_clone_submodules() {
 function dotfiles_install_npm() {
   local home=${1:-${HOME}}
 
-  if ! _exists nvm; then
+  # nvm is a shell function, not a binary, so it is never on PATH in this
+  # script: load it if it's installed, install it otherwise
+  export NVM_DIR="${home}/.nvm"
+  if [[ ! -s "${NVM_DIR}/nvm.sh" ]]; then
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-
-    export NVM_DIR="${home}/.nvm"
-    if [[ ! -s "$NVM_DIR/nvm.sh" ]]; then
+    if [[ ! -s "${NVM_DIR}/nvm.sh" ]]; then
       echo "Error: nvm installation failed" >&2
       return 1
     fi
-    \. "$NVM_DIR/nvm.sh"
   fi
+  \. "${NVM_DIR}/nvm.sh"
 
-  nvm install latest
+  # "node" is nvm's alias for the latest release
+  nvm install node || return 1
 
   [[ -e "${HOME}/.npm_packages" ]] || mkdir -p "${HOME}/.npm_packages"
 
@@ -243,7 +251,7 @@ function dotfiles_install_npm() {
   # Sept 15 2025: Disabled this as it seems incompatible with a nvm install
   # npm config set prefix "${HOME}/.npm_packages" 2>&1 > /dev/null
 
-  # This can take some time
+  # This can take some time.  Updates nvm's npm, never the system one.
   npm install -g npm
 }
 
@@ -282,7 +290,9 @@ function dotfiles_install_fzf()
 function dotfiles_install_pyvenv()
 {
   local home=${1:-${HOME}}
-  local VENVS="${2:-"${home}/.virtualenvs"}"
+  # Lower case: the caller's VENVS is readonly, and bash refuses to shadow a
+  # readonly variable with local
+  local venvs="${2:-"${home}/.virtualenvs"}"
 
   if [[ "${DEFAULT_PYTHON_VENV:-undefined}" == "undefined" ]]; then
     DEFAULT_PYTHON_VENV="default"
@@ -292,10 +302,10 @@ function dotfiles_install_pyvenv()
     echo "Please install uv: https://docs.astral.sh/uv/getting-started/installation/"
   else
 
-    if [[ ! -e "${VENVS}/${DEFAULT_PYTHON_VENV}" ]]; then
-      mkdir -p "${VENVS}"
+    if [[ ! -e "${venvs}/${DEFAULT_PYTHON_VENV}" ]]; then
+      mkdir -p "${venvs}"
       pushd .
-      cd "${VENVS}" || return 1
+      cd "${venvs}" || return 1
       echo "Creating virtual python environment ${DEFAULT_PYTHON_VENV}"
       # python3 -m env "${DEFAULT_PYTHON_VENV}"
       uv venv "${DEFAULT_PYTHON_VENV}"
@@ -373,6 +383,43 @@ to /etc/tmpfiles.d/home-tmp.conf
 
 Run it on demand with: sudo systemd-tmpfiles --clean
 TOHERE
+}
+
+
+# Stow a package.  A plain file in the way (stow refuses to replace anything
+# that isn't a link or directory) is moved into backup_dir, keeping its path
+# relative to home, and the stow is retried.
+function dotfiles_stow_package()
+{
+  local -r stow_dir="${1}"
+  local -r home="${2}"
+  local -r pkg="${3}"
+  local -r backup_root="${4:-${home}/.dotfiles_backup}"
+
+  local output
+  output="$(stow -d "${stow_dir}" -t "${home}" "${pkg}" 2>&1)" && return 0
+
+  local -a conflicts=()
+  local target
+  while IFS= read -r target; do
+    conflicts+=("${target}")
+  done < <(sed -nE 's/.*over existing target (.*) since neither a link nor a directory.*/\1/p' <<< "${output}")
+
+  if [[ ${#conflicts[@]} -eq 0 ]]; then
+    echo "WARNING! stowing ${pkg} failed:" >&2
+    echo "${output}" >&2
+    return 1
+  fi
+
+  local backup
+  for target in "${conflicts[@]}"; do
+    backup="${backup_root}/${target}.$(date +%Y%m%d-%H%M%S)"
+    mkdir -p "$(dirname "${backup}")"
+    echo "stow ${pkg}: moving ~/${target} to ${backup}"
+    mv "${home}/${target}" "${backup}" || return 1
+  done
+
+  stow -d "${stow_dir}" -t "${home}" "${pkg}"
 }
 
 # vim: ts=2 sw=2 sts=0 ff=unix expandtab ft=sh :

@@ -3,6 +3,17 @@
 # Hostname-aware i3lock-color with different themes for each machine
 # Makes it easy to identify which computer is locked
 
+# Plain i3lock rejects the i3lock-color options below and would exit without
+# locking, so fall back to a simple lock.  i3lock-color's version ends in ".c.N".
+if ! i3lock --version 2>&1 | grep -qE '[0-9]\.c\.[0-9]'; then
+    # Same as the old plain script: lock, then blank the displays
+    i3lock --ignore-empty-password --nofork &
+    sleep 3 && xset dpms force suspend
+    wait
+    command -v numlockx >/dev/null && numlockx on
+    exit 0
+fi
+
 HOSTNAME=$(hostname)
 
 # Define color themes for each hostname
@@ -56,7 +67,7 @@ case "$HOSTNAME" in
 esac
 
 # Pause notifications while locked so they don't show through the lock screen
-dunstctl set-paused true
+command -v dunstctl >/dev/null && dunstctl set-paused true
 
 # Lock with hostname-specific theme
 # i3lock-color has tons of customization options!
@@ -103,7 +114,7 @@ i3lock --nofork \
     --ind-pos="x+w/2:y+h/2"
 
 # Re-enable numlock after unlocking (because i3lock turns it off)
-numlockx on
+command -v numlockx >/dev/null && numlockx on
 
 # Resume notifications after unlock
-dunstctl set-paused false
+command -v dunstctl >/dev/null && dunstctl set-paused false

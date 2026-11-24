@@ -267,9 +267,7 @@ if [[ ! -e "${h}/.ssh/tmp" ]]; then
 fi
 
 for s in "${stows[@]}"; do
-  # set -x
-  stow -d "${DOTFILES_DIR}/stow" -t "${h}" "${s}"
-  # set +x
+  dotfiles_stow_package "${DOTFILES_DIR}/stow" "${h}" "${s}" "${backup_dir}"
 done
 
 #
@@ -278,7 +276,6 @@ done
 
 # NPM packages
 if [[ "1" != "${just_stow}" ]]; then
-  echo "skipping npm"
   dotfiles_install_npm "${h}"
 else
   echo "Skipping npm install"
@@ -286,8 +283,7 @@ fi
 
 # Cargo
 if [[ "1" != "${skip_cargo}" ]]; then
-  dotfiles_install_cargo "${h}"
-  cargo install ripgrep du-dust fd-find
+  dotfiles_install_cargo "${h}" && dotfiles_install_cargo_crates
 else
   echo "Skipped installing cargo config"
 fi
