@@ -249,7 +249,7 @@ fi
 
 # Setup default virtualenv
 if [[ "1" != "${skip_python_venv}" ]]; then
-  dotfiles_setup_python_venvs "${h}" "${VENVS}"
+  dotfiles_install_pyvenv "${h}" "${VENVS}"
 else
   echo "Skipped setting up python virtual environments"
 fi
