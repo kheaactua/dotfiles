@@ -57,23 +57,6 @@ if [[ -e "${HOME}/bin/yubioath-desktop-5.0.1-linux.AppImage" ]]; then
    alias yubiAuth="${HOME}/bin/yubioath-desktop-5.0.1-linux.AppImage"
 fi
 
-# Looks like this converts a PDF to a black and white
-function pdfwb() {
-   input=$1
-   output=${1/pdf/bw.pdf}
-
-   gs \
-    -sOutputFile="${output}" \
-    -sDEVICE=pdfwrite \
-    -sColorConversionStrategy=Gray \
-    -dProcessColorModel=/DeviceGray \
-    -dCompatibilityLevel=1.4 \
-    -dNOPAUSE \
-    -dBATCH \
-    -dPDFSETTINGS=/ebook \
-    $input
-}
-
 function git_current_remote() {
    # This is a hack for now, soon this should be changes to detect if we're in
    # a repo workspace and use the python manifest tools to select the proper
@@ -171,108 +154,9 @@ alias powershell.exe="powershell.exe -ExecutionPolicy ByPass"
 
 alias reboot="echo no........"
 
-alias plex-refresh="/usr/lib/plexmediaserver/Plex\ Media\ Scanner -s -v"
+# deleted cdl - function to download files with curl, now that a different tool works much better I don't use this anymore
 
-# https://superuser.com/a/999132/184123
-alias sqlite="rlwrap -a -c -i sqlite3"
-
-# Follow symlinks
-alias rg="rg -L"
-
-# Unzip everything recursively
-alias unzip-all="fd \.zip -x unzip -d {//}/{/.} {}"
-
-function cdl() {
-   # Used to download work images.  Now that work works better I don't use
-   # this anymore
-
-   # alias cdl='curl -LnOC -'
-   if [[ "-o" == "$1" ]]; then
-      shift
-      output_dir=$1
-      shift
-   else
-      output_dir="/tmp"
-   fi
-   curl -o "${output_dir}/$(basename $1)" -LnC - "$1"
-   # echo curl -LnOC - "$1"
-}
-
-if _exists wslpath; then
-   if [[ "${WSL_VERSION}" != 0 ]]; then
-      # Will have to deal with the username if I start using the WSL in more places..
-      alias win_tmp=$(wslpath -u "C:\\Users\\work\\AppData\\Local\\Temp")
-   fi;
-fi
-
-# Sometimes on reboot, the default sinks (sound) aren't set
-function fix-sound() {
-  echo "List sinks"
-  echo "  pacmd list-sinks | grep -e 'name:' -e 'index:'"
-  echo "Set default sink"
-  echo "  pacmd set-default-sink <sink_name>"
-  echo
-  echo "Usually we're looking for <alsa_output.usb-Jieli_Technology_USB_Composite_Device-00.iec958-stereo>"
-}
-
-function fix-default-audio-sink() {
-  # This function originally used pacmd, but that is deprecated in favor of wpctl (WirePlumber)
-
-  # I may have to have this read the name of the device I want from some file
-  # on the host, as the one specified here only exists at home
-
-  # mawk sucks!  Use gawk:
-  #   sudo apt install gawk
-  # Otherwise you'll get syntax errors
-
-  # Set the default sink to the sink with the name "USB Composite Device Analog Stereo"
-  local -r sink_id=$(wpctl status | awk '
-/.*Sinks:/ { in_sinks = 1; next }
-/.*Sources:/ { in_sinks = 0 }
-in_sinks && /USB Composite/ {
-  match($0, ".*[ ]([0-9]+)\\. USB Composite Device", arr)
-  if (arr[1]) {
-    print arr[1]
-    exit
-  }
-}')
-
-  if [ -n "${sink_id}" ]; then
-      wpctl set-default "${sink_id}"
-      echo "Default audio sink set to USB Composite Device Analog Stereo (ID: ${sink_id})"
-  else
-      echo "Error: USB Composite Device Analog Stereo sink not found."
-  fi
-}
-
-function _ps-fsb-stalled-pids() {
-  pgrep -f '(git ls-remote|SendEnv=GIT_PROTOCOL).*git@github.com'
-}
-
-function ps-fsb-stalled() {
-  ps -u -p $(_ps-fsb-stalled-pids)
-}
-
-function kill-ps-fsb-stalled() {
-  kill -15 $(_ps-fsb-stalled-pids)
-}
-
-function logs() {
-  if [[ -n "${work_FSB_ROOT}" ]]; then
-    tail -f $(fd -t f --changed-within=5m 'package-.*log' ${work_FSB_ROOT}/logs)
-  else
-    echo "work_FSB_ROOT not set"
-  fi
-}
-
-function rdesktop-stulon {
-	# Clipboard still doesn't work
-	# This isn't a good place for this, no idea where a good place is
-	# Because of the password I can't commit this into git
-
-	# Launch RDP with shared folder
-	# xfreerdp /v:hostname /u:username /drive:transfer,/home/matt/transfer /clipboard
-}
+# Work-specific functions (logs, RDP, WSL paths) live in dotfiles-secret (~/.bash_aliases.local)
 
 # Testing this out to paste from a zellij selection (this works with the copy_command in zellij)
 # alias paste="xclip -o -sel clipboard"

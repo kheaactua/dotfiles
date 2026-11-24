@@ -96,25 +96,20 @@ alias gpg-reload="gpg-connect-agent reloadagent /bye"
 # Safety alias
 alias reboot="echo no........"
 
-# SQLite with readline support
-alias sqlite="rlwrap -a -c -i sqlite3"
-
-# ripgrep - follow symlinks
-alias rg="rg -L"
-
-# Unzip recursively
-alias unzip-all="fd \.zip -x unzip -d {//}/{/.} {}"
-
-# Git helper functions
-function git_current_remote
-    set -l grc (git config remotes.default 2>/dev/null)
-    if test -n "$grc"
-        echo $grc
-    else
-        git remote | head -n 1
-    end
+# Simple wrappers, only defined when the tool is installed
+if type -q rlwrap; and type -q sqlite3
+    alias sqlite="rlwrap -a -c -i sqlite3"
 end
 
+if type -q rg
+    alias rg="rg -L"
+end
+
+if test -x "/usr/lib/plexmediaserver/Plex Media Scanner"
+    alias plex-refresh="/usr/lib/plexmediaserver/Plex\ Media\ Scanner -s -v"
+end
+
+# Git helper functions (git_current_remote lives in functions/)
 function gcr
     git_current_remote
 end
@@ -149,23 +144,6 @@ function gf
     git fetch $remote $argv
 end
 
-# PDF to black and white conversion
-function pdfwb
-    set -l input $argv[1]
-    set -l output (string replace .pdf .bw.pdf $input)
-
-    gs \
-        -sOutputFile="$output" \
-        -sDEVICE=pdfwrite \
-        -sColorConversionStrategy=Gray \
-        -dProcessColorModel=/DeviceGray \
-        -dCompatibilityLevel=1.4 \
-        -dNOPAUSE \
-        -dBATCH \
-        -dPDFSETTINGS=/ebook \
-        $input
-end
-
 # Vi git diff - open changed files in vi
 function vigd
     set -l remote $argv[1]
@@ -180,11 +158,6 @@ function vigd
 
     set -l merge_base (git merge-base $branch $remote)
     vi -p (git diff --name-only $branch $merge_base)
-end
-
-# Post to 0x0.st
-function post_st
-    curl -F 'file=@-' 0x0.st
 end
 
 # Curl download with resume
@@ -202,8 +175,7 @@ end
 # WSL-specific
 if command -v wslpath >/dev/null 2>&1
     if set -q WSL_VERSION; and test "$WSL_VERSION" != 0
-        # Adjust username as needed
-        set -gx win_tmp (wslpath -u 'C:\Users\work\AppData\Local\Temp')
+        # Work-specific WSL paths (win_tmp) live in dotfiles-secret (fish-work/conf.d)
 
         # PowerShell aliases (if on WSL)
         alias pwsh="pwsh -ExecutionPolicy ByPass"
@@ -211,58 +183,7 @@ if command -v wslpath >/dev/null 2>&1
     end
 end
 
-# Sound fix helpers
-function fix-sound
-    echo "List sinks"
-    echo "  pacmd list-sinks | grep -e 'name:' -e 'index:'"
-    echo "Set default sink"
-    echo "  pacmd set-default-sink <sink_name>"
-    echo
-    echo "Usually we're looking for <alsa_output.usb-Jieli_Technology_USB_Composite_Device-00.iec958-stereo>"
-end
-
-function fix-default-audio-sink
-    # Using wpctl (WirePlumber) instead of deprecated pacmd
-    set -l sink_id (wpctl status | awk '
-/.*Sinks:/ { in_sinks = 1; next }
-/.*Sources:/ { in_sinks = 0 }
-in_sinks && /USB Composite/ {
-  match($0, ".*[ ]([0-9]+)\\. USB Composite Device", arr)
-  if (arr[1]) {
-    print arr[1]
-    exit
-  }
-}')
-
-    if test -n "$sink_id"
-        wpctl set-default $sink_id
-        echo "Default audio sink set to USB Composite Device Analog Stereo (ID: $sink_id)"
-    else
-        echo "Error: USB Composite Device Analog Stereo sink not found."
-    end
-end
-
-# FSB stalled process helpers
-function _ps-fsb-stalled-pids
-    pgrep -f '(git ls-remote|SendEnv=GIT_PROTOCOL).*git@github.com'
-end
-
-function ps-fsb-stalled
-    ps -u -p (_ps-fsb-stalled-pids)
-end
-
-function kill-ps-fsb-stalled
-    kill -15 (_ps-fsb-stalled-pids)
-end
-
-# Logs function
-function logs
-    if set -q work_FSB_ROOT
-        tail -f (fd -t f --changed-within=5m 'package-.*log' $work_FSB_ROOT/logs)
-    else
-        echo "work_FSB_ROOT not set"
-    end
-end
+# The work-specific `logs` function lives in dotfiles-secret (fish-work/functions)
 
 # Source local fish aliases if they exist
 if test -e ~/.config/fish/conf.d/aliases.local.fish
