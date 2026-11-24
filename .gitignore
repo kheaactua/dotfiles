@@ -1,5 +1,6 @@
 **/autorandr/**/.tmp
 dotfiles-secret*/
+TEST.dotfiles-secret*/
 *.swp
 .aider*
 .last_check
